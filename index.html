@@ -225,6 +225,36 @@
     let isLogged = false;
     let slideIdx = 0;
 
+    // --- HÀM NÉN ẢNH MỚI THÊM VÀO ---
+    async function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 1200; // Nén ảnh về chiều ngang tối đa 1200px
+                    if (width > height) {
+                        if (width > max_size) { height *= max_size / width; width = max_size; }
+                    } else {
+                        if (height > max_size) { width *= max_size / height; height = max_size; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', 0.7); // Chất lượng 70% (cực nhẹ mà vẫn nét)
+                };
+            };
+        });
+    }
+
     function switchView(v) {
         if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
         document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
@@ -246,7 +276,7 @@
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
         
-        btn.disabled = true; btn.innerText = "ĐANG TẢI LÊN...";
+        btn.disabled = true; btn.innerText = "ĐANG NÉN & TẢI ẢNH...";
 
         const payload = {
             name: document.getElementById('ad-name').value,
@@ -267,9 +297,13 @@
             if(files.length > 0) {
                 let urls = [];
                 for(let f of files) {
-                    const fd = new FormData(); fd.append("image", f);
+                    // Bước nén ảnh trước khi gửi
+                    const compressedFile = await compressImage(f);
+                    const fd = new FormData(); 
+                    fd.append("image", compressedFile);
                     const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json(); urls.push(d.data.url);
+                    const d = await r.json(); 
+                    if(d.data && d.data.url) urls.push(d.data.url);
                 }
                 payload.images = urls;
             }
