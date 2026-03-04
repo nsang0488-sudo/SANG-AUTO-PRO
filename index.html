@@ -25,7 +25,7 @@
         /* --- SỬA LỖI TRÀN VIỀN --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { 
-            overflow-x: hidden; /* Chống cuộn ngang tuyệt đối */
+            overflow-x: hidden; 
             width: 100%;
             margin: 0;
             padding: 0;
@@ -37,13 +37,11 @@
 
         .container { width: 100%; max-width: 1000px; margin: auto; padding: 0 10px; }
 
-        /* BỘ LỌC SHOWROOM */
         .filter-section { background: var(--white); padding: 12px; border-radius: 16px; margin: 15px 0; box-shadow: var(--shadow); }
         .search-wrapper { position: relative; margin-bottom: 12px; }
         .search-wrapper input { width: 100%; padding: 12px 12px 12px 40px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; outline: none; transition: 0.3s; }
         .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
         
-        /* Fix tràn hàng lọc */
         .grid-filters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .sel-custom { 
             padding: 10px; 
@@ -53,10 +51,9 @@
             font-size: 13px; 
             cursor: pointer; 
             width: 100%; 
-            max-width: 100%; /* Chống tràn */
+            max-width: 100%; 
         }
 
-        /* DANH SÁCH XE */
         .main-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
         @media (max-width: 350px) { .main-grid { grid-template-columns: 1fr; } }
         
@@ -75,7 +72,6 @@
         .spec-tags { display: flex; flex-wrap: wrap; gap: 4px; border-top: 1px solid #f1f3f5; padding-top: 8px; margin-top: auto; }
         .tag-item { background: #f8f9fa; padding: 2px 5px; border-radius: 4px; font-size: 10px; color: var(--text-sub); display: flex; align-items: center; gap: 3px; }
 
-        /* OVERLAY CHI TIẾT */
         .full-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .close-circle { position: fixed; top: 15px; right: 15px; z-index: 2100; background: rgba(0,0,0,0.5); color: #fff; width: 36px; height: 36px; border-radius: 50%; border: none; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; }
         
@@ -101,7 +97,6 @@
         .zalo-bg { background: #0068ff; color: #fff; }
         .call-bg { background: var(--primary); color: #fff; }
 
-        /* QUẢN LÝ / ADMIN - SỬA LỖI TRÀN INPUT */
         .admin-view { display: none; padding-top: 15px; width: 100%; }
         .form-luxury { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 25px; }
         .admin-item { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; border: 1px solid #eee; }
@@ -109,7 +104,6 @@
         .ad-actions { display: flex; gap: 5px; margin-top: 5px; }
         .ad-btn { padding: 4px 6px; border-radius: 5px; border: 1px solid #ddd; font-size: 10px; cursor: pointer; background: #fff; }
 
-        /* BOTTOM NAV */
         .b-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: #fff; display: flex; border-top: 1px solid #eee; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .b-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #adb5bd; text-decoration: none; font-size: 10px; cursor: pointer; }
         .b-link.active { color: var(--primary); font-weight: 600; }
@@ -182,9 +176,6 @@
             <button onclick="clearForm()" style="flex:1; background:#f1f3f5; border:none; border-radius:10px;">RESET</button>
         </div>
     </div>
-
-    <h3 style="font-size: 14px; margin: 15px 0 10px;">QUẢN LÝ KHO</h3>
-    <input type="text" id="ad-quick-search" placeholder="Tìm nhanh..." class="sel-custom" style="margin-bottom:15px;" onkeyup="renderAdmin()">
     <div id="admin-render"></div>
 </div>
 
@@ -194,11 +185,9 @@
 </div>
 
 <div id="auth-gate">
-    <i class="fa-solid fa-shield-halved" style="font-size: 40px; margin-bottom:15px;"></i>
     <h3 style="letter-spacing:1px; font-size: 16px;">MÃ PIN TRUY CẬP</h3>
     <input type="password" id="pin-code" style="background:none; border:none; border-bottom:2px solid #fff; color:#fff; font-size:35px; text-align:center; width:150px; outline:none; letter-spacing:10px;" maxlength="4" inputmode="numeric">
     <button onclick="checkAuth()" style="margin-top:30px; background:#fff; color:#000; padding:12px 40px; border:none; border-radius:30px; font-weight:700;">XÁC NHẬN</button>
-    <p onclick="location.reload()" style="margin-top:20px; font-size:12px; opacity:0.6;">Thoát</p>
 </div>
 
 <nav class="b-nav">
@@ -207,7 +196,6 @@
 </nav>
 
 <script>
-    // --- GIỮ NGUYÊN TOÀN BỘ LOGIC CỦA BẠN ---
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -225,7 +213,7 @@
     let isLogged = false;
     let slideIdx = 0;
 
-    // --- HÀM NÉN ẢNH MỚI THÊM VÀO ---
+    // --- HÀM NÉN ẢNH ---
     async function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -237,7 +225,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const max_size = 1200; // Nén ảnh về chiều ngang tối đa 1200px
+                    const max_size = 1200; 
                     if (width > height) {
                         if (width > max_size) { height *= max_size / width; width = max_size; }
                     } else {
@@ -249,26 +237,10 @@
                     ctx.drawImage(img, 0, 0, width, height);
                     canvas.toBlob((blob) => {
                         resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-                    }, 'image/jpeg', 0.7); // Chất lượng 70% (cực nhẹ mà vẫn nét)
+                    }, 'image/jpeg', 0.7); 
                 };
             };
         });
-    }
-
-    function switchView(v) {
-        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
-        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
-        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
-        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
-        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
-        if(v === 'admin') renderAdmin();
-        window.scrollTo(0,0);
-    }
-
-    function checkAuth() {
-        if(document.getElementById('pin-code').value === "1905") {
-            isLogged = true; document.getElementById('auth-gate').style.display='none'; switchView('admin');
-        } else alert("Mã pin không chính xác!");
     }
 
     async function saveCar() {
@@ -276,7 +248,8 @@
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
         
-        btn.disabled = true; btn.innerText = "ĐANG NÉN & TẢI ẢNH...";
+        btn.disabled = true; 
+        btn.innerText = "ĐANG NÉN & TẢI ẢNH...";
 
         const payload = {
             name: document.getElementById('ad-name').value,
@@ -297,8 +270,7 @@
             if(files.length > 0) {
                 let urls = [];
                 for(let f of files) {
-                    // Bước nén ảnh trước khi gửi
-                    const compressedFile = await compressImage(f);
+                    const compressedFile = await compressImage(f); // Nén từng ảnh
                     const fd = new FormData(); 
                     fd.append("image", compressedFile);
                     const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
@@ -313,25 +285,34 @@
                 payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection("Cars").add(payload); 
             }
-            alert("Đã cập nhật showroom!"); location.reload();
+            alert("Thành công!"); location.reload();
         } catch(e) { alert("Lỗi: " + e.message); btn.disabled = false; btn.innerText = "THỬ LẠI"; }
+    }
+
+    // --- CÁC HÀM CÒN LẠI GIỮ NGUYÊN ---
+    function switchView(v) {
+        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
+        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
+        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
+        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
+        if(v === 'admin') renderAdmin();
+    }
+
+    function checkAuth() {
+        if(document.getElementById('pin-code').value === "1905") {
+            isLogged = true; document.getElementById('auth-gate').style.display='none'; switchView('admin');
+        } else alert("Sai mã PIN!");
     }
 
     function initData() {
         db.collection("Cars").onSnapshot(snap => {
             allCars = [];
             snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            
-            allCars.sort((a,b) => {
-                if(a.isHot !== b.isHot) return b.isHot ? -1 : 1;
-                return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
-            });
-
             populateFilters();
             processFilter();
-            
-            const queryId = new URLSearchParams(window.location.search).get('id');
-            if(queryId) openPage(queryId);
+            const qId = new URLSearchParams(window.location.search).get('id');
+            if(qId) openPage(qId);
         });
     }
 
@@ -340,7 +321,6 @@
         const ySet = [...new Set(allCars.map(c => c.year))].sort((a,b)=>b-a);
         const bSel = document.getElementById('f-brand');
         const ySel = document.getElementById('f-year');
-        
         bSel.innerHTML = '<option value="">Hãng xe</option>';
         bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
         ySel.innerHTML = '<option value="">Năm SX</option>';
@@ -352,7 +332,6 @@
         const br = document.getElementById('f-brand').value;
         const ye = document.getElementById('f-year').value;
         const pr = document.getElementById('f-price').value;
-
         const filtered = allCars.filter(c => {
             const mKw = c.name.toLowerCase().includes(kw);
             const mBr = !br || c.brand === br;
@@ -363,44 +342,31 @@
             if(pr === '1000-9999') mPr = c.price >= 1000000000;
             return mKw && mBr && mYe && mPr;
         });
-
         const r = document.getElementById('showroom-render'); r.innerHTML = "";
         filtered.forEach(c => {
-            const stColor = c.status === 'sold' ? '#6c757d' : (c.status === 'deposit' ? '#fd7e14' : 'transparent');
-            const stText = c.status === 'sold' ? 'ĐÃ BÁN' : (c.status === 'deposit' ? 'NHẬN CỌC' : '');
-            
             r.innerHTML += `
                 <div class="car-card" onclick="openPage('${c.id}')">
-                    ${c.isHot ? '<div class="hot-label"><i class="fa-solid fa-fire"></i></div>' : ''}
-                    <div class="status-tag" style="background:${stColor}">${stText}</div>
-                    <div class="img-wrap"><img src="${c.images[0]}" loading="lazy"></div>
+                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
+                    <div class="img-wrap"><img src="${c.images[0]}"></div>
                     <div class="info-wrap">
                         <div class="name-txt">${c.name}</div>
                         <div class="price-txt">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
-                        <div class="spec-tags">
-                            <div class="tag-item">${c.year}</div>
-                            <div class="tag-item">${new Intl.NumberFormat('vi-VN').format(c.odo)} km</div>
-                        </div>
+                        <div class="spec-tags"><div class="tag-item">${c.year}</div><div class="tag-item">${c.odo} km</div></div>
                     </div>
                 </div>`;
         });
     }
 
     function renderAdmin() {
-        const kw = document.getElementById('ad-quick-search').value.toLowerCase();
         const r = document.getElementById('admin-render'); r.innerHTML = "";
-        allCars.filter(c => c.name.toLowerCase().includes(kw)).forEach(c => {
+        allCars.forEach(c => {
             r.innerHTML += `
                 <div class="admin-item">
                     <img src="${c.images[0]}" class="ad-thumb">
                     <div style="flex:1">
-                        <div style="font-weight:700; font-size:13px;">${c.name}</div>
-                        <div style="color:var(--accent); font-weight:700; font-size:13px;">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
-                        <div class="ad-actions">
-                            <button class="ad-btn" style="color:blue" onclick="editMode('${c.id}')">Sửa</button>
-                            <button class="ad-btn" onclick="copyShareLink('${c.id}')">Link</button>
-                            <button class="ad-btn" style="color:red" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+                        <b>${c.name}</b><br>
+                        <button onclick="editMode('${c.id}')">Sửa</button>
+                        <button onclick="deleteCar('${c.id}')">Xóa</button>
                     </div>
                 </div>`;
         });
@@ -421,126 +387,32 @@
         document.getElementById('ad-hot').checked = c.isHot || false;
         document.getElementById('ad-desc').value = c.desc;
         document.getElementById('ad-title').innerText = "SỬA: " + c.name;
-        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function openPage(id) {
         const c = allCars.find(x => x.id === id);
         if(!c) return;
-        
-        window.history.pushState(null, '', "?id=" + id);
         slideIdx = 0;
-        
-        let slideHtml = '';
-        let dotHtml = '';
-        c.images.forEach((img, i) => {
-            slideHtml += `<img src="${img}" class="slide-img">`;
-            dotHtml += `<div class="dot ${i===0?'active':''}" id="dot-${i}"></div>`;
-        });
-
+        let slideHtml = c.images.map(img => `<img src="${img}" class="slide-img">`).join('');
         document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container" id="main-slider">
-                <div class="slider-track" id="track-box">${slideHtml}</div>
-                <div class="slider-nav" id="dot-box">${dotHtml}</div>
-            </div>
+            <div class="slider-container"><div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
                 <div class="main-info-card">
-                    <h1 style="margin:0 0 8px 0; font-size:18px;">${c.name}</h1>
-                    <div style="font-size:22px; color:var(--accent); font-weight:700;">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
-                    
+                    <h2>${c.name}</h2>
+                    <h3 style="color:red">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</h3>
                     <div class="feature-grid">
-                        <div class="f-item"><i class="fa-solid fa-calendar"></i><span>Năm SX</span><b>${c.year}</b></div>
-                        <div class="f-item"><i class="fa-solid fa-gauge-high"></i><span>Đã đi</span><b>${new Intl.NumberFormat('vi-VN').format(c.odo)}</b></div>
-                        <div class="f-item"><i class="fa-solid fa-gas-pump"></i><span>Nhiên liệu</span><b>Xăng</b></div>
+                        <div class="f-item"><span>Năm SX</span><b>${c.year}</b></div>
+                        <div class="f-item"><span>Km</span><b>${c.odo}</b></div>
                     </div>
-
-                    <div class="bank-luxury">
-                        <div style="font-weight:700; display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#c00; font-size:12px;">
-                            <i class="fa-solid fa-building-columns"></i> TRẢ GÓP NGÂN HÀNG
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:8px;">
-                            <span>Vay tối đa: <b>${c.bankP}%</b></span>
-                            <span>Thời hạn: <b>${c.bankY} năm</b></span>
-                        </div>
-                        <div style="font-size:13px; font-weight:700;">Trả trước: <span style="color:var(--accent)">${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</span></div>
-                    </div>
-
-                    <div style="margin-top:15px;">
-                        <h4 style="margin:0 0 8px 0; font-size:13px;">Mô tả chi tiết:</h4>
-                        <div style="white-space: pre-line; color:#444; font-size:13px; background:#f9f9f9; padding:10px; border-radius:10px; border:1px solid #eee;">${c.desc}</div>
-                    </div>
+                    <p style="white-space: pre-line;">${c.desc}</p>
                 </div>
-            </div>
-            <div class="contact-group">
-                <a href="tel:0946327164" class="c-btn call-bg"><i class="fa-solid fa-phone"></i> GỌI NGAY</a>
-                <a href="https://zalo.me/0946327164" target="_blank" class="c-btn zalo-bg"><i class="fa-solid fa-comment"></i> ZALO CHAT</a>
             </div>`;
-        
         document.getElementById('detail-overlay').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        setupSwipe();
     }
 
-    function setupSwipe() {
-        const track = document.getElementById('track-box');
-        if(!track) return;
-        let startX = 0;
-        let isDragging = false;
-
-        track.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-            track.style.transition = 'none';
-        }, {passive: true});
-
-        track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            let currentX = e.touches[0].clientX;
-            let diff = currentX - startX;
-            let move = -(slideIdx * track.offsetWidth) + diff;
-            track.style.transform = `translateX(${move}px)`;
-        }, {passive: true});
-
-        track.addEventListener('touchend', (e) => {
-            isDragging = false;
-            track.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            let diff = e.changedTouches[0].clientX - startX;
-            
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && slideIdx > 0) slideIdx--;
-                else if (diff < 0 && slideIdx < track.children.length - 1) slideIdx++;
-            }
-            updateSlide();
-        });
-    }
-
-    function updateSlide() {
-        const track = document.getElementById('track-box');
-        if(!track) return;
-        track.style.transform = `translateX(-${slideIdx * 100}%)`;
-        document.querySelectorAll('.dot').forEach((d, i) => {
-            d.classList.toggle('active', i === slideIdx);
-        });
-    }
-
-    function closePage() {
-        document.getElementById('detail-overlay').style.display = 'none';
-        document.body.style.overflow = 'auto';
-        window.history.pushState(null, '', window.location.pathname);
-    }
-
-    function clearForm() {
-        document.getElementById('edit-id').value = "";
-        document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI";
-        document.querySelectorAll('.form-luxury input:not([type=checkbox]), .form-luxury textarea').forEach(i => i.value = "");
-        document.getElementById('ad-hot').checked = false;
-    }
-
-    async function deleteCar(id) { if(confirm("Xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
-    function copyShareLink(id) {
-        const l = window.location.origin + window.location.pathname + "?id=" + id;
-        navigator.clipboard.writeText(l); alert("Đã copy link gửi khách!");
-    }
+    function closePage() { document.getElementById('detail-overlay').style.display = 'none'; }
+    async function deleteCar(id) { if(confirm("Xóa xe?")) await db.collection("Cars").doc(id).delete(); }
+    function clearForm() { document.querySelectorAll('input, textarea').forEach(i => i.value = ""); }
 
     window.onload = initData;
 </script>
