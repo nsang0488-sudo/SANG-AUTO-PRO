@@ -37,6 +37,7 @@
 
         .container { width: 100%; max-width: 1000px; margin: auto; padding: 0 10px; }
 
+        /* BỘ LỌC SHOWROOM */
         .filter-section { background: var(--white); padding: 12px; border-radius: 16px; margin: 15px 0; box-shadow: var(--shadow); }
         .search-wrapper { position: relative; margin-bottom: 12px; }
         .search-wrapper input { width: 100%; padding: 12px 12px 12px 40px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; outline: none; transition: 0.3s; }
@@ -54,6 +55,7 @@
             max-width: 100%; 
         }
 
+        /* DANH SÁCH XE */
         .main-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
         @media (max-width: 350px) { .main-grid { grid-template-columns: 1fr; } }
         
@@ -61,10 +63,9 @@
         .car-card:active { transform: scale(0.97); }
         
         .hot-label { position: absolute; top: 8px; right: 8px; background: linear-gradient(45deg, #ff9a00, #ff0000); color: #fff; padding: 3px 8px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 10; }
-        .status-tag { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 30px; font-size: 9px; font-weight: 700; color: #fff; z-index: 10; text-transform: uppercase; }
-
+        
         .img-wrap { width: 100%; aspect-ratio: 4/3; background: #ececec; overflow: hidden; }
-        .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
 
         .info-wrap { padding: 10px; flex: 1; display: flex; flex-direction: column; }
         .name-txt { font-size: 13px; font-weight: 600; color: #1a202c; margin-bottom: 5px; height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
@@ -72,38 +73,28 @@
         .spec-tags { display: flex; flex-wrap: wrap; gap: 4px; border-top: 1px solid #f1f3f5; padding-top: 8px; margin-top: auto; }
         .tag-item { background: #f8f9fa; padding: 2px 5px; border-radius: 4px; font-size: 10px; color: var(--text-sub); display: flex; align-items: center; gap: 3px; }
 
+        /* OVERLAY CHI TIẾT */
         .full-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .close-circle { position: fixed; top: 15px; right: 15px; z-index: 2100; background: rgba(0,0,0,0.5); color: #fff; width: 36px; height: 36px; border-radius: 50%; border: none; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; }
         
         .slider-container { width: 100%; aspect-ratio: 16/10; background: #000; position: relative; overflow: hidden; touch-action: pan-y; }
         .slider-track { display: flex; height: 100%; transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
         .slide-img { min-width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-        .slider-nav { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 10; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: 0.3s; }
-        .dot.active { background: #fff; width: 15px; border-radius: 10px; }
 
         .detail-body { width: 100%; max-width: 800px; margin: -25px auto 0; position: relative; z-index: 5; padding: 0 10px 100px; }
         .main-info-card { background: #fff; padding: 15px; border-radius: 20px; box-shadow: var(--shadow); }
         .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 15px 0; }
         .f-item { background: #f8f9fa; padding: 8px 4px; border-radius: 10px; text-align: center; }
-        .f-item i { display: block; font-size: 14px; margin-bottom: 4px; color: var(--primary); }
         .f-item span { font-size: 8px; color: var(--text-sub); display: block; text-transform: uppercase; }
         .f-item b { font-size: 11px; display: block; }
 
-        .bank-luxury { background: #fff8f8; border: 1px solid #ffe3e3; padding: 12px; border-radius: 12px; margin: 15px 0; border-left: 4px solid var(--accent); }
-        
-        .contact-group { display: flex; gap: 10px; margin-top: 25px; position: fixed; bottom: 15px; left: 10px; right: 10px; z-index: 100; }
-        .c-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        .zalo-bg { background: #0068ff; color: #fff; }
-        .call-bg { background: var(--primary); color: #fff; }
-
+        /* ADMIN VIEW */
         .admin-view { display: none; padding-top: 15px; width: 100%; }
         .form-luxury { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 25px; }
         .admin-item { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; border: 1px solid #eee; }
-        .ad-thumb { width: 70px; height: 55px; object-fit: cover; border-radius: 8px; }
-        .ad-actions { display: flex; gap: 5px; margin-top: 5px; }
-        .ad-btn { padding: 4px 6px; border-radius: 5px; border: 1px solid #ddd; font-size: 10px; cursor: pointer; background: #fff; }
+        .ad-thumb { width: 70px; height: 55px; object-fit: cover; border-radius: 8px; background: #eee; }
 
+        /* BOTTOM NAV */
         .b-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: #fff; display: flex; border-top: 1px solid #eee; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .b-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #adb5bd; text-decoration: none; font-size: 10px; cursor: pointer; }
         .b-link.active { color: var(--primary); font-weight: 600; }
@@ -202,8 +193,7 @@
         projectId: "sang-pro-ab41f",
         storageBucket: "sang-pro-ab41f.firebasestorage.app",
         messagingSenderId: "332384180945",
-        appId: "1:332384180945:web:999a85760a1909850c83f0",
-        measurementId: "G-VHGV61JJ05"
+        appId: "1:332384180945:web:999a85760a1909850c83f0"
     };
     const IMGBB_KEY = "a4b55574ff83037588382d5f83783ea1";
     firebase.initializeApp(firebaseConfig);
@@ -211,33 +201,24 @@
 
     let allCars = [];
     let isLogged = false;
-    let slideIdx = 0;
 
-    // --- HÀM NÉN ẢNH ---
+    // --- BỘ NÉN ẢNH TỰ ĐỘNG ---
     async function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = (event) => {
+            reader.onload = (e) => {
                 const img = new Image();
-                img.src = event.target.result;
+                img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const max_size = 1200; 
-                    if (width > height) {
-                        if (width > max_size) { height *= max_size / width; width = max_size; }
-                    } else {
-                        if (height > max_size) { width *= max_size / height; height = max_size; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
+                    let w = img.width, h = img.height, max = 1200;
+                    if(w > h) { if(w > max) { h *= max/w; w = max; } }
+                    else { if(h > max) { w *= max/h; h = max; } }
+                    canvas.width = w; canvas.height = h;
                     const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    canvas.toBlob((blob) => {
-                        resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-                    }, 'image/jpeg', 0.7); 
+                    ctx.drawImage(img, 0, 0, w, h);
+                    canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
                 };
             };
         });
@@ -247,9 +228,7 @@
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
-        
-        btn.disabled = true; 
-        btn.innerText = "ĐANG NÉN & TẢI ẢNH...";
+        btn.disabled = true; btn.innerText = "ĐANG NÉN ẢNH...";
 
         const payload = {
             name: document.getElementById('ad-name').value,
@@ -270,26 +249,93 @@
             if(files.length > 0) {
                 let urls = [];
                 for(let f of files) {
-                    const compressedFile = await compressImage(f); // Nén từng ảnh
-                    const fd = new FormData(); 
-                    fd.append("image", compressedFile);
+                    btn.innerText = `ĐANG TẢI ${urls.length + 1}/${files.length}...`;
+                    const compressed = await compressImage(f);
+                    const fd = new FormData(); fd.append("image", compressed);
                     const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json(); 
+                    const d = await r.json();
                     if(d.data && d.data.url) urls.push(d.data.url);
                 }
                 payload.images = urls;
             }
-
-            if(id) { await db.collection("Cars").doc(id).update(payload); }
-            else { 
-                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await db.collection("Cars").add(payload); 
-            }
-            alert("Thành công!"); location.reload();
+            if(id) await db.collection("Cars").doc(id).update(payload);
+            else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
+            alert("Đã đăng thành công!"); location.reload();
         } catch(e) { alert("Lỗi: " + e.message); btn.disabled = false; btn.innerText = "THỬ LẠI"; }
     }
 
-    // --- CÁC HÀM CÒN LẠI GIỮ NGUYÊN ---
+    // --- SỬA LỖI HIỂN THỊ TRONG SHOWROOM ---
+    function processFilter() {
+        const kw = document.getElementById('sr-search').value.toLowerCase();
+        const br = document.getElementById('f-brand').value;
+        const ye = document.getElementById('f-year').value;
+        const pr = document.getElementById('f-price').value;
+        const filtered = allCars.filter(c => {
+            const mKw = c.name.toLowerCase().includes(kw);
+            const mBr = !br || c.brand === br;
+            const mYe = !ye || c.year == ye;
+            let mPr = true;
+            if(pr === '0-500') mPr = c.price < 500000000;
+            if(pr === '500-1000') mPr = c.price >= 500000000 && c.price < 1000000000;
+            if(pr === '1000-9999') mPr = c.price >= 1000000000;
+            return mKw && mBr && mYe && mPr;
+        });
+        const r = document.getElementById('showroom-render'); r.innerHTML = "";
+        filtered.forEach(c => {
+            // SỬA LỖI: Kiểm tra mảng ảnh
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=No+Image';
+            r.innerHTML += `
+                <div class="car-card" onclick="openPage('${c.id}')">
+                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
+                    <div class="img-wrap"><img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Loi+Anh'"></div>
+                    <div class="info-wrap">
+                        <div class="name-txt">${c.name}</div>
+                        <div class="price-txt">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
+                        <div class="spec-tags"><div class="tag-item">${c.year}</div><div class="tag-item">${c.odo} km</div></div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // --- SỬA LỖI HIỂN THỊ CHI TIẾT ---
+    function openPage(id) {
+        const c = allCars.find(x => x.id === id);
+        if(!c) return;
+        const imgs = (c.images && Array.isArray(c.images)) ? c.images : ['https://via.placeholder.com/800x600?text=No+Image'];
+        let slideHtml = imgs.map(img => `<img src="${img}" class="slide-img" onerror="this.src='https://via.placeholder.com/800x600?text=Loi+Anh'">`).join('');
+        document.getElementById('detail-render-box').innerHTML = `
+            <div class="slider-container"><div class="slider-track" id="track-box">${slideHtml}</div></div>
+            <div class="detail-body">
+                <div class="main-info-card">
+                    <h2>${c.name}</h2>
+                    <h3 style="color:red">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</h3>
+                    <div class="feature-grid">
+                        <div class="f-item"><span>Năm SX</span><b>${c.year}</b></div>
+                        <div class="f-item"><span>Km</span><b>${c.odo}</b></div>
+                        <div class="f-item"><span>Gốc</span><b>${c.brand}</b></div>
+                    </div>
+                    <p style="white-space: pre-line; font-size:14px; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">${c.desc}</p>
+                </div>
+            </div>`;
+        document.getElementById('detail-overlay').style.display = 'block';
+    }
+
+    function renderAdmin() {
+        const r = document.getElementById('admin-render'); r.innerHTML = "";
+        allCars.forEach(c => {
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : '';
+            r.innerHTML += `
+                <div class="admin-item">
+                    <img src="${thumb}" class="ad-thumb">
+                    <div style="flex:1">
+                        <b>${c.name}</b><br>
+                        <button onclick="editMode('${c.id}')" style="padding:4px 10px; margin-top:5px;">Sửa</button>
+                        <button onclick="deleteCar('${c.id}')" style="padding:4px 10px; color:red;">Xóa</button>
+                    </div>
+                </div>`;
+        });
+    }
+
     function switchView(v) {
         if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
         document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
@@ -311,8 +357,6 @@
             snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
             populateFilters();
             processFilter();
-            const qId = new URLSearchParams(window.location.search).get('id');
-            if(qId) openPage(qId);
         });
     }
 
@@ -325,51 +369,6 @@
         bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
         ySel.innerHTML = '<option value="">Năm SX</option>';
         ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
-    }
-
-    function processFilter() {
-        const kw = document.getElementById('sr-search').value.toLowerCase();
-        const br = document.getElementById('f-brand').value;
-        const ye = document.getElementById('f-year').value;
-        const pr = document.getElementById('f-price').value;
-        const filtered = allCars.filter(c => {
-            const mKw = c.name.toLowerCase().includes(kw);
-            const mBr = !br || c.brand === br;
-            const mYe = !ye || c.year == ye;
-            let mPr = true;
-            if(pr === '0-500') mPr = c.price < 500000000;
-            if(pr === '500-1000') mPr = c.price >= 500000000 && c.price < 1000000000;
-            if(pr === '1000-9999') mPr = c.price >= 1000000000;
-            return mKw && mBr && mYe && mPr;
-        });
-        const r = document.getElementById('showroom-render'); r.innerHTML = "";
-        filtered.forEach(c => {
-            r.innerHTML += `
-                <div class="car-card" onclick="openPage('${c.id}')">
-                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
-                    <div class="img-wrap"><img src="${c.images[0]}"></div>
-                    <div class="info-wrap">
-                        <div class="name-txt">${c.name}</div>
-                        <div class="price-txt">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
-                        <div class="spec-tags"><div class="tag-item">${c.year}</div><div class="tag-item">${c.odo} km</div></div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function renderAdmin() {
-        const r = document.getElementById('admin-render'); r.innerHTML = "";
-        allCars.forEach(c => {
-            r.innerHTML += `
-                <div class="admin-item">
-                    <img src="${c.images[0]}" class="ad-thumb">
-                    <div style="flex:1">
-                        <b>${c.name}</b><br>
-                        <button onclick="editMode('${c.id}')">Sửa</button>
-                        <button onclick="deleteCar('${c.id}')">Xóa</button>
-                    </div>
-                </div>`;
-        });
     }
 
     function editMode(id) {
@@ -386,33 +385,13 @@
         document.getElementById('ad-bankmin').value = c.bankMin;
         document.getElementById('ad-hot').checked = c.isHot || false;
         document.getElementById('ad-desc').value = c.desc;
-        document.getElementById('ad-title').innerText = "SỬA: " + c.name;
-    }
-
-    function openPage(id) {
-        const c = allCars.find(x => x.id === id);
-        if(!c) return;
-        slideIdx = 0;
-        let slideHtml = c.images.map(img => `<img src="${img}" class="slide-img">`).join('');
-        document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container"><div class="slider-track" id="track-box">${slideHtml}</div></div>
-            <div class="detail-body">
-                <div class="main-info-card">
-                    <h2>${c.name}</h2>
-                    <h3 style="color:red">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</h3>
-                    <div class="feature-grid">
-                        <div class="f-item"><span>Năm SX</span><b>${c.year}</b></div>
-                        <div class="f-item"><span>Km</span><b>${c.odo}</b></div>
-                    </div>
-                    <p style="white-space: pre-line;">${c.desc}</p>
-                </div>
-            </div>`;
-        document.getElementById('detail-overlay').style.display = 'block';
+        document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
+        window.scrollTo(0,0);
     }
 
     function closePage() { document.getElementById('detail-overlay').style.display = 'none'; }
-    async function deleteCar(id) { if(confirm("Xóa xe?")) await db.collection("Cars").doc(id).delete(); }
-    function clearForm() { document.querySelectorAll('input, textarea').forEach(i => i.value = ""); }
+    async function deleteCar(id) { if(confirm("Xác nhận xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
+    function clearForm() { document.getElementById('edit-id').value = ""; document.querySelectorAll('input, textarea').forEach(i => i.value = ""); document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; }
 
     window.onload = initData;
 </script>
