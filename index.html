@@ -7,101 +7,521 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* =========================================
+           1. CSS VARIABLES & RESET
+           ========================================= */
         :root {
             --primary: #000000;
             --accent: #e31b23;
-            --bg: #f2f4f7;
+            --bg: #f4f6f9;
             --white: #ffffff;
-            --border: #dee2e6;
-            --text-main: #1c1e21;
-            --text-sub: #606770;
-            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
 
-        /* --- SỬA LỖI TRÀN VIỀN --- */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+        }
+
         html, body { 
             overflow-x: hidden; 
             width: 100%;
-            margin: 0;
-            padding: 0;
+            font-family: 'Lexend', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            padding-bottom: 90px; 
+            line-height: 1.6; 
+            scroll-behavior: smooth;
         }
-        body { font-family: 'Lexend', sans-serif; background: var(--bg); color: var(--text-main); padding-bottom: 90px; line-height: 1.6; }
         
-        header { background: var(--primary); color: var(--white); padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; }
-        .logo-text { font-size: 18px; font-weight: 700; letter-spacing: 2px; text-align: center; text-transform: uppercase; }
+        /* =========================================
+           2. HEADER & LAYOUT
+           ========================================= */
+        header { 
+            background: var(--primary); 
+            color: var(--white); 
+            padding: 16px 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: var(--shadow-md); 
+            width: 100%; 
+        }
+        .logo-text { 
+            font-size: 20px; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            text-align: center; 
+            text-transform: uppercase; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: auto; 
+            padding: 0 12px; 
+        }
 
-        .container { width: 100%; max-width: 1000px; margin: auto; padding: 0 10px; }
-
-        /* BỘ LỌC SHOWROOM */
-        .filter-section { background: var(--white); padding: 12px; border-radius: 16px; margin: 15px 0; box-shadow: var(--shadow); }
-        .search-wrapper { position: relative; margin-bottom: 12px; }
-        .search-wrapper input { width: 100%; padding: 12px 12px 12px 40px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; outline: none; transition: 0.3s; }
-        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-        
-        .grid-filters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .sel-custom { 
-            padding: 10px; 
-            border-radius: 8px; 
+        /* =========================================
+           3. BỘ LỌC SHOWROOM (FILTER)
+           ========================================= */
+        .filter-section { 
+            background: var(--white); 
+            padding: 15px; 
+            border-radius: var(--radius-lg); 
+            margin: 20px 0; 
+            box-shadow: var(--shadow-sm); 
+            border: 1px solid var(--border);
+        }
+        .search-wrapper { 
+            position: relative; 
+            margin-bottom: 12px; 
+        }
+        .search-wrapper input { 
+            width: 100%; 
+            padding: 14px 14px 14px 45px; 
+            border-radius: var(--radius-md); 
             border: 1px solid var(--border); 
-            background: #f9fafb; 
-            font-size: 13px; 
+            font-size: 15px; 
+            outline: none; 
+            transition: all 0.3s; 
+            font-family: inherit;
+        }
+        .search-wrapper input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+        }
+        .search-wrapper i { 
+            position: absolute; 
+            left: 16px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--text-sub); 
+            font-size: 16px;
+        }
+        .grid-filters { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+        }
+        .sel-custom { 
+            padding: 12px; 
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--border); 
+            background: #f8fafc; 
+            font-size: 14px; 
             cursor: pointer; 
             width: 100%; 
-            max-width: 100%; 
+            font-family: inherit;
+            color: var(--text-main);
+            outline: none;
         }
+        .sel-custom:focus { border-color: var(--text-sub); }
 
-        /* DANH SÁCH XE */
-        .main-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        /* =========================================
+           4. DANH SÁCH XE (GRID SHOWROOM)
+           ========================================= */
+        .main-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin-top: 15px; 
+        }
         @media (max-width: 350px) { .main-grid { grid-template-columns: 1fr; } }
         
-        .car-card { background: var(--white); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; }
-        .car-card:active { transform: scale(0.97); }
+        .car-card { 
+            background: var(--white); 
+            border-radius: var(--radius-lg); 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: var(--shadow-sm);
+        }
+        .car-card:active { transform: scale(0.98); }
         
-        .hot-label { position: absolute; top: 8px; right: 8px; background: linear-gradient(45deg, #ff9a00, #ff0000); color: #fff; padding: 3px 8px; border-radius: 30px; font-size: 9px; font-weight: 700; z-index: 10; }
+        .hot-label { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+            background: linear-gradient(45deg, #ff8a00, #e52e71); 
+            color: #fff; 
+            padding: 4px 10px; 
+            border-radius: 30px; 
+            font-size: 10px; 
+            font-weight: 700; 
+            z-index: 10; 
+            box-shadow: 0 4px 10px rgba(229, 46, 113, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .img-wrap { 
+            width: 100%; 
+            aspect-ratio: 4/3; 
+            background: #f1f5f9; 
+            overflow: hidden; 
+            position: relative;
+        }
+        .img-wrap img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: 0.3s; 
+        }
+
+        .info-wrap { 
+            padding: 12px; 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .name-txt { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--text-main); 
+            margin-bottom: 6px; 
+            height: 40px; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            line-height: 1.4; 
+        }
+        .price-txt { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: var(--accent); 
+            margin-bottom: 10px; 
+        }
+        .spec-tags { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            border-top: 1px solid #f1f5f9; 
+            padding-top: 10px; 
+            margin-top: auto; 
+        }
+        .tag-item { 
+            background: #f8fafc; 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            color: var(--text-sub); 
+            font-weight: 500;
+            border: 1px solid var(--border);
+        }
+
+        /* =========================================
+           5. TRANG CHI TIẾT (DETAIL OVERLAY)
+           ========================================= */
+        .full-page { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: var(--bg); 
+            z-index: 2000; 
+            display: none; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
         
-        .img-wrap { width: 100%; aspect-ratio: 4/3; background: #ececec; overflow: hidden; }
-        .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-
-        .info-wrap { padding: 10px; flex: 1; display: flex; flex-direction: column; }
-        .name-txt { font-size: 13px; font-weight: 600; color: #1a202c; margin-bottom: 5px; height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
-        .price-txt { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
-        .spec-tags { display: flex; flex-wrap: wrap; gap: 4px; border-top: 1px solid #f1f3f5; padding-top: 8px; margin-top: auto; }
-        .tag-item { background: #f8f9fa; padding: 2px 5px; border-radius: 4px; font-size: 10px; color: var(--text-sub); display: flex; align-items: center; gap: 3px; }
-
-        /* OVERLAY CHI TIẾT */
-        .full-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .close-circle { position: fixed; top: 15px; right: 15px; z-index: 2100; background: rgba(0,0,0,0.5); color: #fff; width: 36px; height: 36px; border-radius: 50%; border: none; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; }
+        .close-circle { 
+            position: fixed; 
+            top: 15px; right: 15px; 
+            z-index: 2100; 
+            background: rgba(0,0,0,0.6); 
+            color: #fff; 
+            width: 40px; height: 40px; 
+            border-radius: 50%; 
+            border: none; 
+            font-size: 20px; 
+            cursor: pointer; 
+            backdrop-filter: blur(5px); 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 0.3s;
+        }
+        .close-circle:active { transform: scale(0.9); background: rgba(0,0,0,0.8); }
         
-        .slider-container { width: 100%; aspect-ratio: 16/10; background: #000; position: relative; overflow: hidden; touch-action: pan-y; }
-        .slider-track { display: flex; height: 100%; transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
-        .slide-img { min-width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        /* BỘ SLIDER ẢNH */
+        .slider-container { 
+            width: 100%; 
+            aspect-ratio: 4/3; 
+            background: #000; 
+            position: relative; 
+            overflow: hidden; 
+            touch-action: pan-y; 
+        }
+        .slider-track { 
+            display: flex; 
+            height: 100%; 
+            transition: transform 0.3s ease-out; 
+            will-change: transform; 
+        }
+        .slide-img { 
+            min-width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            pointer-events: none; 
+        }
+        
+        /* Nút điều hướng Slider */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.4);
+            color: white;
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        .slider-btn.left { left: 10px; }
+        .slider-btn.right { right: 10px; }
+        .slide-counter-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            letter-spacing: 1px;
+        }
 
-        .detail-body { width: 100%; max-width: 800px; margin: -25px auto 0; position: relative; z-index: 5; padding: 0 10px 100px; }
-        .main-info-card { background: #fff; padding: 15px; border-radius: 20px; box-shadow: var(--shadow); }
-        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 15px 0; }
-        .f-item { background: #f8f9fa; padding: 8px 4px; border-radius: 10px; text-align: center; }
-        .f-item span { font-size: 8px; color: var(--text-sub); display: block; text-transform: uppercase; }
-        .f-item b { font-size: 11px; display: block; }
+        /* NỘI DUNG CHI TIẾT */
+        .detail-body { 
+            width: 100%; 
+            max-width: 800px; 
+            margin: -20px auto 0; 
+            position: relative; 
+            z-index: 5; 
+            padding: 0 12px 120px; 
+        }
+        .main-info-card { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-lg); 
+        }
+        .main-info-card h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+        .main-info-card h3 {
+            color: var(--accent);
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
 
-        /* ADMIN VIEW */
-        .admin-view { display: none; padding-top: 15px; width: 100%; }
-        .form-luxury { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 25px; }
-        .admin-item { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; border: 1px solid #eee; }
-        .ad-thumb { width: 70px; height: 55px; object-fit: cover; border-radius: 8px; background: #eee; }
+        /* LƯỚI THÔNG TIN XE (Grid) */
+        .feature-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin: 20px 0; 
+        }
+        .f-item { 
+            background: #f8fafc; 
+            padding: 12px 6px; 
+            border-radius: var(--radius-md); 
+            text-align: center; 
+            border: 1px solid var(--border);
+        }
+        .f-item span { 
+            font-size: 10px; 
+            color: var(--text-sub); 
+            display: block; 
+            text-transform: uppercase; 
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        .f-item b { 
+            font-size: 14px; 
+            display: block; 
+            color: var(--text-main);
+        }
 
-        /* BOTTOM NAV */
-        .b-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: #fff; display: flex; border-top: 1px solid #eee; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .b-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #adb5bd; text-decoration: none; font-size: 10px; cursor: pointer; }
-        .b-link.active { color: var(--primary); font-weight: 600; }
-        .b-link i { font-size: 18px; margin-bottom: 2px; }
+        /* THÔNG TIN NGÂN HÀNG (Nếu có) */
+        .bank-luxury { 
+            background: #fff8f8; 
+            border: 1px solid #ffe3e3; 
+            padding: 15px; 
+            border-radius: var(--radius-md); 
+            margin: 20px 0; 
+            border-left: 4px solid var(--accent); 
+        }
+        .bank-luxury h4 { font-size: 13px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
+        .bank-luxury p { font-size: 13px; margin: 4px 0; color: #475569; display: flex; justify-content: space-between; }
+        .bank-luxury p b { color: var(--text-main); }
 
-        #auth-gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+        /* MÔ TẢ XE */
+        .desc-box {
+            margin-top: 20px; 
+            border-top: 1px solid var(--border); 
+            padding-top: 20px;
+        }
+        .desc-box p {
+            white-space: pre-line; 
+            font-size: 15px; 
+            line-height: 1.7;
+            color: #334155;
+        }
 
+        /* NÚT LIÊN HỆ CỐ ĐỊNH Ở DƯỚI (Gọi / Zalo) */
+        .contact-group { 
+            display: flex; 
+            gap: 12px; 
+            position: fixed; 
+            bottom: 20px; 
+            left: 12px; 
+            right: 12px; 
+            z-index: 100; 
+            max-width: 776px;
+            margin: 0 auto;
+        }
+        .c-btn { 
+            flex: 1; 
+            padding: 14px; 
+            border-radius: var(--radius-lg); 
+            text-align: center; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            box-shadow: var(--shadow-md); 
+            transition: 0.3s;
+        }
+        .c-btn:active { transform: translateY(2px); }
+        .zalo-bg { background: #0068ff; color: #fff; }
+        .call-bg { background: var(--primary); color: #fff; }
+
+        /* =========================================
+           6. CỬA HÀNG / QUẢN LÝ (ADMIN VIEW)
+           ========================================= */
+        .admin-view { display: none; padding-top: 20px; width: 100%; }
+        .form-luxury { 
+            background: #fff; 
+            border: 1px solid var(--border); 
+            padding: 20px; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-md); 
+            margin-bottom: 30px; 
+        }
+        .admin-item { 
+            background: #fff; 
+            padding: 12px; 
+            border-radius: var(--radius-lg); 
+            margin-bottom: 12px; 
+            display: flex; 
+            gap: 12px; 
+            align-items: center; 
+            border: 1px solid var(--border); 
+            box-shadow: var(--shadow-sm);
+        }
+        .ad-thumb { 
+            width: 80px; 
+            height: 60px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            background: #f1f5f9; 
+        }
+        .ad-actions { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: 8px; 
+            flex-wrap: wrap;
+        }
+        .ad-btn { 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            border: none; 
+            font-size: 11px; 
+            font-weight: 600;
+            cursor: pointer; 
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-edit { background: #e2e8f0; color: #1e293b; }
+        .btn-del { background: #fee2e2; color: #ef4444; }
+        .btn-copy { background: #dcfce7; color: #16a34a; }
+
+        /* =========================================
+           7. BOTTOM NAVIGATION
+           ========================================= */
+        .b-nav { 
+            position: fixed; 
+            bottom: 0; left: 0; 
+            width: 100%; height: 70px; 
+            background: #fff; 
+            display: flex; 
+            border-top: 1px solid var(--border); 
+            z-index: 1000; 
+            padding-bottom: env(safe-area-inset-bottom); 
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+        .b-link { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: #94a3b8; 
+            text-decoration: none; 
+            font-size: 11px; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .b-link.active { color: var(--primary); font-weight: 700; }
+        .b-link i { font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
+        .b-link.active i { transform: translateY(-2px); }
+
+        /* MÀN HÌNH NHẬP MÃ PIN */
+        #auth-gate { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 3000; 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            color: #fff; 
+            backdrop-filter: blur(10px);
+        }
+
+        /* Reponsive cho Tablet/PC */
         @media (min-width: 600px) {
             .main-grid { grid-template-columns: repeat(3, 1fr); }
             .grid-filters { grid-template-columns: repeat(4, 1fr); }
@@ -110,24 +530,26 @@
 </head>
 <body>
 
-<header><div class="logo-text">SANG PRO AUTO</div></header>
+<header>
+    <div class="logo-text">SANG PRO AUTO</div>
+</header>
 
 <div id="showroom-tab" class="container">
     <div class="filter-section">
         <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="sr-search" placeholder="Tìm Mazda 3, CX5..." onkeyup="processFilter()">
+            <input type="text" id="sr-search" placeholder="Tìm kiếm tên xe (VD: Mazda 3, Xpander)..." onkeyup="processFilter()">
         </div>
         <div class="grid-filters">
-            <select id="f-brand" class="sel-custom" onchange="processFilter()"><option value="">Hãng xe</option></select>
-            <select id="f-year" class="sel-custom" onchange="processFilter()"><option value="">Năm SX</option></select>
+            <select id="f-brand" class="sel-custom" onchange="processFilter()"><option value="">Tất cả Hãng xe</option></select>
+            <select id="f-year" class="sel-custom" onchange="processFilter()"><option value="">Năm Sản Xuất</option></select>
             <select id="f-price" class="sel-custom" onchange="processFilter()">
                 <option value="">Khoảng giá</option>
-                <option value="0-500">Dưới 500Tr</option>
-                <option value="500-1000">500Tr - 1 Tỷ</option>
+                <option value="0-500">Dưới 500 Triệu</option>
+                <option value="500-1000">500 Triệu - 1 Tỷ</option>
                 <option value="1000-9999">Trên 1 Tỷ</option>
             </select>
-            <button onclick="location.reload()" class="sel-custom" style="background:#000; color:#fff; border:none;">Tải lại</button>
+            <button onclick="location.reload()" class="sel-custom" style="background:var(--primary); color:#fff; border:none; font-weight: 600;">Tải lại trang</button>
         </div>
     </div>
     <div class="main-grid" id="showroom-render"></div>
@@ -135,37 +557,43 @@
 
 <div id="admin-tab" class="container admin-view">
     <div class="form-luxury">
-        <h3 id="ad-title" style="margin:0 0 15px 0; font-size: 15px; border-left: 4px solid #000; padding-left: 10px;">ĐĂNG XE MỚI</h3>
+        <h3 id="ad-title" style="margin:0 0 20px 0; font-size: 16px; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase;">Đăng Xe Mới</h3>
         <input type="hidden" id="edit-id">
         <div class="grid-filters">
-            <input type="text" id="ad-name" placeholder="Tên xe" class="sel-custom" style="grid-column: span 2;">
-            <input type="number" id="ad-price" placeholder="Giá (VNĐ)" class="sel-custom">
-            <input type="text" id="ad-brand" placeholder="Hãng" class="sel-custom">
-            <input type="number" id="ad-year" placeholder="Năm SX" class="sel-custom">
-            <input type="number" id="ad-odo" placeholder="Số Km" class="sel-custom">
+            <input type="text" id="ad-name" placeholder="Tên xe đầy đủ" class="sel-custom" style="grid-column: span 2;">
+            <input type="number" id="ad-price" placeholder="Giá bán (VNĐ)" class="sel-custom">
+            <input type="text" id="ad-brand" placeholder="Hãng xe" class="sel-custom">
+            <input type="number" id="ad-year" placeholder="Năm sản xuất" class="sel-custom">
+            <input type="number" id="ad-odo" placeholder="Số Km đã đi" class="sel-custom">
             <select id="ad-status" class="sel-custom" style="grid-column: span 2;">
-                <option value="available">Đang bán</option>
-                <option value="deposit">Đã nhận cọc</option>
-                <option value="sold">Đã bán</option>
+                <option value="available">Tình trạng: Đang bán</option>
+                <option value="deposit">Tình trạng: Đã nhận cọc</option>
+                <option value="sold">Tình trạng: Đã bán</option>
             </select>
         </div>
-        <div class="grid-filters" style="margin-top:10px;">
-            <input type="number" id="ad-bankp" placeholder="Vay %" class="sel-custom">
-            <input type="number" id="ad-banky" placeholder="Năm vay" class="sel-custom">
-            <input type="number" id="ad-bankmin" placeholder="Trả trước" class="sel-custom" style="grid-column: span 2;">
+        <h4 style="font-size: 13px; margin: 20px 0 10px; color: var(--text-sub);">HỖ TRỢ NGÂN HÀNG</h4>
+        <div class="grid-filters">
+            <input type="number" id="ad-bankp" placeholder="Vay tối đa (%)" class="sel-custom">
+            <input type="number" id="ad-banky" placeholder="Thời hạn vay (Năm)" class="sel-custom">
+            <input type="number" id="ad-bankmin" placeholder="Trả trước tối thiểu (VNĐ)" class="sel-custom" style="grid-column: span 2;">
         </div>
-        <label style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:12px; margin: 12px 0;">
-            <input type="checkbox" id="ad-hot" style="width:18px; height:18px;"> ƯU TIÊN XE HOT 🔥
+        <label style="display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px; margin: 20px 0; padding: 10px; background: #fff7ed; border-radius: 8px; border: 1px solid #fed7aa;">
+            <input type="checkbox" id="ad-hot" style="width:20px; height:20px; accent-color: #ea580c;"> ƯU TIÊN HIỂN THỊ XE HOT 🔥
         </label>
-        <textarea id="ad-desc" placeholder="Mô tả xe & Cam kết..." class="sel-custom" style="height:80px; margin-bottom:10px;"></textarea>
-        <div style="margin-bottom:15px;">
-            <label style="font-size:12px; font-weight:600;">Hình ảnh (Chọn nhiều):</label>
-            <input type="file" id="ad-files" multiple class="sel-custom" style="margin-top:5px; padding: 5px;">
+        <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
+        <div style="margin-bottom:20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border);">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">Hình ảnh xe (Chọn nhiều ảnh cùng lúc):</label>
+            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0;">
+            <p style="font-size: 11px; color: var(--text-sub); margin-top: 5px;">* Hệ thống sẽ tự động nén ảnh để tải lên nhanh hơn.</p>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:#000; color:#fff; padding:12px; border:none; border-radius:10px; font-weight:700;">CẬP NHẬT</button>
-            <button onclick="clearForm()" style="flex:1; background:#f1f3f5; border:none; border-radius:10px;">RESET</button>
+        <div style="display:flex; gap:15px;">
+            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer;">CẬP NHẬT XE</button>
+            <button onclick="clearForm()" style="flex:1; background:#f1f5f9; border:none; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
         </div>
+    </div>
+    
+    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 16px;">QUẢN LÝ KHO XE</h3>
     </div>
     <div id="admin-render"></div>
 </div>
@@ -176,17 +604,25 @@
 </div>
 
 <div id="auth-gate">
-    <h3 style="letter-spacing:1px; font-size: 16px;">MÃ PIN TRUY CẬP</h3>
-    <input type="password" id="pin-code" style="background:none; border:none; border-bottom:2px solid #fff; color:#fff; font-size:35px; text-align:center; width:150px; outline:none; letter-spacing:10px;" maxlength="4" inputmode="numeric">
-    <button onclick="checkAuth()" style="margin-top:30px; background:#fff; color:#000; padding:12px 40px; border:none; border-radius:30px; font-weight:700;">XÁC NHẬN</button>
+    <div style="background: #fff; padding: 30px; border-radius: 20px; text-align: center; color: var(--text-main); width: 90%; max-width: 350px;">
+        <i class="fa-solid fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+        <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px;">MÃ PIN TRUY CẬP</h3>
+        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 10px; color:#000; font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="4" inputmode="numeric">
+        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:10px; font-weight:700; font-size: 16px;">XÁC NHẬN ĐĂNG NHẬP</button>
+    </div>
 </div>
 
 <nav class="b-nav">
-    <div class="b-link active" id="n-sr" onclick="switchView('showroom')"><i class="fa-solid fa-car-side"></i><span>Showroom</span></div>
-    <div class="b-link" id="n-ad" onclick="switchView('admin')"><i class="fa-solid fa-toolbox"></i><span>Cửa hàng</span></div>
+    <div class="b-link active" id="n-sr" onclick="switchView('showroom')">
+        <i class="fa-solid fa-car-side"></i><span>Showroom</span>
+    </div>
+    <div class="b-link" id="n-ad" onclick="switchView('admin')">
+        <i class="fa-solid fa-toolbox"></i><span>Cửa hàng</span>
+    </div>
 </nav>
 
 <script>
+    /* CẤU HÌNH FIREBASE & IMGBB */
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -196,13 +632,29 @@
         appId: "1:332384180945:web:999a85760a1909850c83f0"
     };
     const IMGBB_KEY = "a4b55574ff83037588382d5f83783ea1";
+    
+    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // Biến Toàn cục
     let allCars = [];
     let isLogged = false;
+    let initialLoadDone = false;
+    
+    // Biến cho Slider Ảnh
+    let currentSlideIndex = 0;
+    let totalSlides = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-    // --- BỘ NÉN ẢNH TỰ ĐỘNG ---
+    // THÔNG TIN LIÊN HỆ GỐC (Thay đổi số điện thoại của bạn ở đây)
+    const PHONE_NUMBER = "0933111222"; // Điền số điện thoại gọi
+    const ZALO_LINK = "https://zalo.me/0933111222"; // Điền số zalo
+
+    /* =========================================
+       1. HÀM NÉN ẢNH (CHỐNG LỖI LOAD FAILED)
+       ========================================= */
     async function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -212,15 +664,299 @@
                 img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height, max = 1200;
+                    let w = img.width, h = img.height, max = 1200; // Giới hạn kích thước 1200px
                     if(w > h) { if(w > max) { h *= max/w; w = max; } }
                     else { if(h > max) { w *= max/h; h = max; } }
-                    canvas.width = w; canvas.height = h;
+                    
+                    canvas.width = w; 
+                    canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
+                    
+                    // Nén chất lượng xuống 70% (0.7)
                     canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
                 };
             };
+        });
+    }
+
+    /* =========================================
+       2. TẢI DỮ LIỆU & LỌC TÌM KIẾM
+       ========================================= */
+    function initData() {
+        db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
+            allCars = [];
+            snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
+            
+            populateFilters();
+            processFilter();
+            
+            // Cập nhật view Admin nếu đang mở
+            if(document.getElementById('admin-tab').style.display === 'block') {
+                renderAdmin();
+            }
+
+            // Xử lý chia sẻ link (Share Link)
+            if (!initialLoadDone) {
+                initialLoadDone = true;
+                const urlParams = new URLSearchParams(window.location.search);
+                const qId = urlParams.get('id');
+                if(qId) {
+                    setTimeout(() => openPage(qId), 500); // Đợi DOM load xong rồi mở
+                }
+            }
+        });
+    }
+
+    function populateFilters() {
+        const bSet = [...new Set(allCars.map(c => c.brand).filter(Boolean))].sort();
+        const ySet = [...new Set(allCars.map(c => c.year).filter(Boolean))].sort((a,b)=>b-a);
+        
+        const bSel = document.getElementById('f-brand');
+        const ySel = document.getElementById('f-year');
+        
+        bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>';
+        bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
+        
+        ySel.innerHTML = '<option value="">Năm Sản Xuất</option>';
+        ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
+    }
+
+    function processFilter() {
+        const kw = document.getElementById('sr-search').value.toLowerCase();
+        const br = document.getElementById('f-brand').value;
+        const ye = document.getElementById('f-year').value;
+        const pr = document.getElementById('f-price').value;
+        
+        const filtered = allCars.filter(c => {
+            const mKw = c.name && c.name.toLowerCase().includes(kw);
+            const mBr = !br || c.brand === br;
+            const mYe = !ye || String(c.year) === String(ye);
+            let mPr = true;
+            if(pr === '0-500') mPr = c.price < 500000000;
+            if(pr === '500-1000') mPr = c.price >= 500000000 && c.price <= 1000000000;
+            if(pr === '1000-9999') mPr = c.price > 1000000000;
+            return mKw && mBr && mYe && mPr;
+        });
+        
+        // Sắp xếp: Ưu tiên xe HOT lên đầu
+        filtered.sort((a, b) => (b.isHot === true) - (a.isHot === true));
+
+        const r = document.getElementById('showroom-render'); 
+        r.innerHTML = "";
+        
+        if(filtered.length === 0) {
+            r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`;
+            return;
+        }
+
+        filtered.forEach(c => {
+            // Lấy ảnh đầu tiên, nếu không có thì gán ảnh trống
+            const thumb = (c.images && Array.isArray(c.images) && c.images.length > 0) 
+                            ? c.images[0] 
+                            : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
+            
+            // Xử lý giá tiền
+            let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
+
+            r.innerHTML += `
+                <div class="car-card" onclick="openPage('${c.id}')">
+                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
+                    <div class="img-wrap">
+                        <img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Lỗi+Load+Ảnh'" loading="lazy">
+                    </div>
+                    <div class="info-wrap">
+                        <div class="name-txt">${c.name || 'Đang cập nhật'}</div>
+                        <div class="price-txt">${priceTxt}</div>
+                        <div class="spec-tags">
+                            <div class="tag-item"><i class="fa-regular fa-calendar"></i> ${c.year || '--'}</div>
+                            <div class="tag-item"><i class="fa-solid fa-gauge-high"></i> ${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    /* =========================================
+       3. TRANG CHI TIẾT (SLIDER & THÔNG TIN)
+       ========================================= */
+    function openPage(id) {
+        const c = allCars.find(x => x.id === id);
+        if(!c) return;
+
+        // Xử lý mảng ảnh
+        const imgs = (c.images && Array.isArray(c.images) && c.images.length > 0) 
+                        ? c.images 
+                        : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        
+        totalSlides = imgs.length;
+        currentSlideIndex = 0; // Reset về ảnh đầu
+
+        let slideHtml = imgs.map(img => `
+            <img src="${img}" class="slide-img" onerror="this.src='https://via.placeholder.com/800x600?text=Lỗi+Load+Ảnh'">
+        `).join('');
+
+        // Nút điều hướng Slider (Chỉ hiện nếu có > 1 ảnh)
+        let navHtml = '';
+        if (totalSlides > 1) {
+            navHtml = `
+                <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
+                <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>
+            `;
+        }
+
+        // Xử lý bank info
+        let bankHtml = '';
+        if(c.bankP || c.bankmin) {
+            bankHtml = `
+                <div class="bank-luxury">
+                    <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
+                    ${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}
+                    ${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}
+                    ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
+                </div>`;
+        }
+
+        // Đổ dữ liệu ra DOM
+        document.getElementById('detail-render-box').innerHTML = `
+            <div class="slider-container" id="slider-touch-area">
+                ${navHtml}
+                <div class="slider-track" id="track-box">${slideHtml}</div>
+            </div>
+            
+            <div class="detail-body">
+                <div class="main-info-card">
+                    <h2>${c.name}</h2>
+                    <h3>${c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi'}</h3>
+                    
+                    <div class="feature-grid">
+                        <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
+                        <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
+                        <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
+                    </div>
+                    
+                    ${bankHtml}
+                    
+                    <div class="desc-box">
+                        <h4 style="font-size: 15px; margin-bottom: 10px; text-transform:uppercase;"><i class="fa-solid fa-clipboard-list"></i> Thông tin & Tình trạng xe</h4>
+                        <p>${c.desc || 'Chưa có mô tả chi tiết.'}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-group">
+                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg">
+                    <i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp
+                </a>
+                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo
+                </a>
+            </div>
+        `;
+        
+        document.getElementById('detail-overlay').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Khóa cuộn màn hình nền
+
+        // Gắn sự kiện vuốt cảm ứng cho Slider
+        const touchArea = document.getElementById('slider-touch-area');
+        if(touchArea) {
+            touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+            touchArea.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+        }
+    }
+
+    // ĐÓNG TRANG CHI TIẾT
+    function closePage() { 
+        document.getElementById('detail-overlay').style.display = 'none'; 
+        document.body.style.overflow = 'auto'; // Mở lại cuộn
+        // Xóa param id trên thanh địa chỉ nếu có
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    /* =========================================
+       4. LOGIC SLIDER ẢNH (VUỐT & CLICK)
+       ========================================= */
+    function changeSlide(direction, event) {
+        if(event) event.stopPropagation(); // Ngăn click nhầm
+        currentSlideIndex += direction;
+        
+        // Vòng lặp
+        if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
+        if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
+        
+        updateSliderDOM();
+    }
+
+    function handleSwipe() {
+        const threshold = 50; // Khoảng cách vuốt tối thiểu
+        if (touchEndX < touchStartX - threshold) {
+            changeSlide(1); // Vuốt trái -> Next
+        }
+        if (touchEndX > touchStartX + threshold) {
+            changeSlide(-1); // Vuốt phải -> Prev
+        }
+    }
+
+    function updateSliderDOM() {
+        const track = document.getElementById('track-box');
+        if (track) {
+            track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        }
+        const counter = document.getElementById('slide-counter');
+        if (counter) {
+            counter.innerText = `${currentSlideIndex + 1} / ${totalSlides}`;
+        }
+    }
+
+    /* =========================================
+       5. QUẢN LÝ (ADMIN VIEW & CRUD)
+       ========================================= */
+    function renderAdmin() {
+        const r = document.getElementById('admin-render'); 
+        r.innerHTML = "";
+        
+        if(allCars.length === 0) {
+            r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`;
+            return;
+        }
+
+        allCars.forEach(c => {
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
+            let statusBadge = "";
+            if(c.status === 'deposit') statusBadge = '<span style="color:#d97706; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>';
+            if(c.status === 'sold') statusBadge = '<span style="color:#dc2626; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>';
+            
+            r.innerHTML += `
+                <div class="admin-item">
+                    <img src="${thumb}" class="ad-thumb">
+                    <div style="flex:1">
+                        <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
+                        <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
+                        
+                        <div class="ad-actions">
+                            <button class="ad-btn btn-copy" onclick="copyShareLink('${c.id}')"><i class="fa-solid fa-link"></i> Copy Link</button>
+                            <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i> Sửa</button>
+                            <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i> Xóa</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // HÀM COPY LINK GỬI KHÁCH
+    function copyShareLink(id) {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?id=${id}`;
+        
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert("Đã Copy Link thành công!\nBạn có thể dán (paste) gửi cho khách.");
+        }).catch(err => {
+            // Backup cho điện thoại cũ không support clipboard API
+            prompt("Thiết bị không tự copy, vui lòng copy link dưới đây:", shareUrl);
         });
     }
 
@@ -228,7 +964,15 @@
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
-        btn.disabled = true; btn.innerText = "ĐANG NÉN ẢNH...";
+        
+        // Validate cơ bản
+        if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) {
+            alert("Vui lòng nhập Tên xe và Giá bán!"); return;
+        }
+
+        btn.disabled = true; 
+        btn.innerText = "ĐANG XỬ LÝ ẢNH...";
+        btn.style.opacity = '0.7';
 
         const payload = {
             name: document.getElementById('ad-name').value,
@@ -246,154 +990,132 @@
         };
 
         try {
+            // Upload ảnh qua ImgBB
             if(files.length > 0) {
                 let urls = [];
-                for(let f of files) {
-                    btn.innerText = `ĐANG TẢI ${urls.length + 1}/${files.length}...`;
-                    const compressed = await compressImage(f);
-                    const fd = new FormData(); fd.append("image", compressed);
+                for(let i=0; i < files.length; i++) {
+                    const f = files[i];
+                    btn.innerText = `ĐANG TẢI ẢNH ${i + 1}/${files.length}...`;
+                    
+                    const compressed = await compressImage(f); // NÉN ẢNH
+                    const fd = new FormData(); 
+                    fd.append("image", compressed);
+                    
                     const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
                     const d = await r.json();
-                    if(d.data && d.data.url) urls.push(d.data.url);
+                    
+                    if(d.data && d.data.url) {
+                        urls.push(d.data.url);
+                    }
                 }
-                payload.images = urls;
+                payload.images = urls; // Lưu mảng url mới
             }
-            if(id) await db.collection("Cars").doc(id).update(payload);
-            else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
-            alert("Đã đăng thành công!"); location.reload();
-        } catch(e) { alert("Lỗi: " + e.message); btn.disabled = false; btn.innerText = "THỬ LẠI"; }
-    }
 
-    // --- SỬA LỖI HIỂN THỊ TRONG SHOWROOM ---
-    function processFilter() {
-        const kw = document.getElementById('sr-search').value.toLowerCase();
-        const br = document.getElementById('f-brand').value;
-        const ye = document.getElementById('f-year').value;
-        const pr = document.getElementById('f-price').value;
-        const filtered = allCars.filter(c => {
-            const mKw = c.name.toLowerCase().includes(kw);
-            const mBr = !br || c.brand === br;
-            const mYe = !ye || c.year == ye;
-            let mPr = true;
-            if(pr === '0-500') mPr = c.price < 500000000;
-            if(pr === '500-1000') mPr = c.price >= 500000000 && c.price < 1000000000;
-            if(pr === '1000-9999') mPr = c.price >= 1000000000;
-            return mKw && mBr && mYe && mPr;
-        });
-        const r = document.getElementById('showroom-render'); r.innerHTML = "";
-        filtered.forEach(c => {
-            // SỬA LỖI: Kiểm tra mảng ảnh
-            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=No+Image';
-            r.innerHTML += `
-                <div class="car-card" onclick="openPage('${c.id}')">
-                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
-                    <div class="img-wrap"><img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Loi+Anh'"></div>
-                    <div class="info-wrap">
-                        <div class="name-txt">${c.name}</div>
-                        <div class="price-txt">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</div>
-                        <div class="spec-tags"><div class="tag-item">${c.year}</div><div class="tag-item">${c.odo} km</div></div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    // --- SỬA LỖI HIỂN THỊ CHI TIẾT ---
-    function openPage(id) {
-        const c = allCars.find(x => x.id === id);
-        if(!c) return;
-        const imgs = (c.images && Array.isArray(c.images)) ? c.images : ['https://via.placeholder.com/800x600?text=No+Image'];
-        let slideHtml = imgs.map(img => `<img src="${img}" class="slide-img" onerror="this.src='https://via.placeholder.com/800x600?text=Loi+Anh'">`).join('');
-        document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container"><div class="slider-track" id="track-box">${slideHtml}</div></div>
-            <div class="detail-body">
-                <div class="main-info-card">
-                    <h2>${c.name}</h2>
-                    <h3 style="color:red">${new Intl.NumberFormat('vi-VN').format(c.price)} đ</h3>
-                    <div class="feature-grid">
-                        <div class="f-item"><span>Năm SX</span><b>${c.year}</b></div>
-                        <div class="f-item"><span>Km</span><b>${c.odo}</b></div>
-                        <div class="f-item"><span>Gốc</span><b>${c.brand}</b></div>
-                    </div>
-                    <p style="white-space: pre-line; font-size:14px; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">${c.desc}</p>
-                </div>
-            </div>`;
-        document.getElementById('detail-overlay').style.display = 'block';
-    }
-
-    function renderAdmin() {
-        const r = document.getElementById('admin-render'); r.innerHTML = "";
-        allCars.forEach(c => {
-            const thumb = (c.images && c.images.length > 0) ? c.images[0] : '';
-            r.innerHTML += `
-                <div class="admin-item">
-                    <img src="${thumb}" class="ad-thumb">
-                    <div style="flex:1">
-                        <b>${c.name}</b><br>
-                        <button onclick="editMode('${c.id}')" style="padding:4px 10px; margin-top:5px;">Sửa</button>
-                        <button onclick="deleteCar('${c.id}')" style="padding:4px 10px; color:red;">Xóa</button>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function switchView(v) {
-        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
-        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
-        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
-        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
-        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
-        if(v === 'admin') renderAdmin();
-    }
-
-    function checkAuth() {
-        if(document.getElementById('pin-code').value === "1905") {
-            isLogged = true; document.getElementById('auth-gate').style.display='none'; switchView('admin');
-        } else alert("Sai mã PIN!");
-    }
-
-    function initData() {
-        db.collection("Cars").onSnapshot(snap => {
-            allCars = [];
-            snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            populateFilters();
-            processFilter();
-        });
-    }
-
-    function populateFilters() {
-        const bSet = [...new Set(allCars.map(c => c.brand))].sort();
-        const ySet = [...new Set(allCars.map(c => c.year))].sort((a,b)=>b-a);
-        const bSel = document.getElementById('f-brand');
-        const ySel = document.getElementById('f-year');
-        bSel.innerHTML = '<option value="">Hãng xe</option>';
-        bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-        ySel.innerHTML = '<option value="">Năm SX</option>';
-        ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
+            if(id) {
+                // Sửa xe (Nếu không up ảnh mới, Firebase tự giữ mảng ảnh cũ do ta chỉ update fields có trong payload)
+                await db.collection("Cars").doc(id).update(payload);
+                alert("Đã cập nhật xe thành công!");
+            } else {
+                // Thêm xe mới
+                if(!payload.images || payload.images.length === 0) {
+                    if(!confirm("Bạn chưa chọn ảnh nào. Vẫn muốn đăng?")) {
+                        btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; btn.style.opacity = '1';
+                        return;
+                    }
+                }
+                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); 
+                await db.collection("Cars").add(payload); 
+                alert("Đã Đăng xe mới thành công!");
+            }
+            
+            clearForm();
+            window.scrollTo(0, 0); // Cuộn lên trên cùng
+            
+        } catch(e) { 
+            alert("Lỗi tải lên: " + e.message); 
+        } finally {
+            btn.disabled = false; 
+            btn.innerText = "CẬP NHẬT XE";
+            btn.style.opacity = '1';
+        }
     }
 
     function editMode(id) {
         const c = allCars.find(x => x.id === id);
+        if(!c) return;
+        
         document.getElementById('edit-id').value = c.id;
-        document.getElementById('ad-name').value = c.name;
-        document.getElementById('ad-price').value = c.price;
-        document.getElementById('ad-brand').value = c.brand;
-        document.getElementById('ad-year').value = c.year;
-        document.getElementById('ad-odo').value = c.odo;
-        document.getElementById('ad-status').value = c.status;
-        document.getElementById('ad-bankp').value = c.bankP;
-        document.getElementById('ad-banky').value = c.bankY;
-        document.getElementById('ad-bankmin').value = c.bankMin;
+        document.getElementById('ad-name').value = c.name || "";
+        document.getElementById('ad-price').value = c.price || "";
+        document.getElementById('ad-brand').value = c.brand || "";
+        document.getElementById('ad-year').value = c.year || "";
+        document.getElementById('ad-odo').value = c.odo || "";
+        document.getElementById('ad-status').value = c.status || "available";
+        document.getElementById('ad-bankp').value = c.bankP || "";
+        document.getElementById('ad-banky').value = c.bankY || "";
+        document.getElementById('ad-bankmin').value = c.bankMin || "";
         document.getElementById('ad-hot').checked = c.isHot || false;
-        document.getElementById('ad-desc').value = c.desc;
+        document.getElementById('ad-desc').value = c.desc || "";
+        
         document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
+        document.getElementById('ad-files').value = ""; // Clear file input
+        window.scrollTo(0, 0);
+    }
+
+    async function deleteCar(id) { 
+        if(confirm("Xác nhận XÓA vĩnh viễn xe này khỏi hệ thống?")) {
+            await db.collection("Cars").doc(id).delete(); 
+            alert("Đã xóa!");
+        }
+    }
+
+    function clearForm() { 
+        document.getElementById('edit-id').value = ""; 
+        document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = ""); 
+        document.getElementById('ad-hot').checked = false;
+        document.getElementById('ad-files').value = "";
+        document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
+    }
+
+    /* =========================================
+       6. ĐIỀU HƯỚNG VIEW & BẢO MẬT
+       ========================================= */
+    function switchView(v) {
+        if(v === 'admin' && !isLogged) { 
+            document.getElementById('auth-gate').style.display='flex'; 
+            return; 
+        }
+        
+        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
+        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
+        
+        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
+        
+        if(v === 'admin') renderAdmin();
         window.scrollTo(0,0);
     }
 
-    function closePage() { document.getElementById('detail-overlay').style.display = 'none'; }
-    async function deleteCar(id) { if(confirm("Xác nhận xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
-    function clearForm() { document.getElementById('edit-id').value = ""; document.querySelectorAll('input, textarea').forEach(i => i.value = ""); document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; }
+    function checkAuth() {
+        if(document.getElementById('pin-code').value === "1905") { // Mã PIN cứng của bạn
+            isLogged = true; 
+            document.getElementById('auth-gate').style.display='none'; 
+            document.getElementById('pin-code').value = '';
+            switchView('admin');
+        } else {
+            alert("Mã PIN không đúng. Vui lòng thử lại!");
+            document.getElementById('pin-code').value = '';
+        }
+    }
 
+    // Lắng nghe phím Enter khi nhập PIN
+    document.getElementById('pin-code').addEventListener("keyup", function(event) {
+        if (event.key === "Enter") { event.preventDefault(); checkAuth(); }
+    });
+
+    // Khởi chạy App
     window.onload = initData;
+
 </script>
 </body>
 </html>
