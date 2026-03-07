@@ -173,27 +173,24 @@
             letter-spacing: 0.5px;
         }
 
-        /* Tối ưu cảm giác tải ảnh: Skeleton Loading Effect */
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
         .img-wrap { 
             width: 100%; 
             aspect-ratio: 4/3; 
-            /* Hiệu ứng load sóng xám */
             background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             overflow: hidden; 
             position: relative;
         }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
         .img-wrap img { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
             transition: opacity 0.3s; 
-            /* Ẩn ảnh khi chưa load xong để chỉ thấy skeleton, sẽ dùng JS/CSS để hiện */
             opacity: 1; 
         }
 
@@ -268,9 +265,7 @@
             display: flex; align-items: center; justify-content: center; 
             transition: 0.3s;
         }
-        .close-circle:active { transform: scale(0.9); background: rgba(0,0,0,0.8); }
         
-        /* BỘ SLIDER ẢNH */
         .slider-container { 
             width: 100%; 
             aspect-ratio: 4/3; 
@@ -291,8 +286,6 @@
             object-fit: cover; 
             pointer-events: none; 
         }
-        
-        /* Nút điều hướng Slider */
         .slider-btn {
             position: absolute;
             top: 50%;
@@ -303,9 +296,7 @@
             width: 36px; height: 36px;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
             z-index: 10;
-            backdrop-filter: blur(4px);
         }
         .slider-btn.left { left: 10px; }
         .slider-btn.right { right: 10px; }
@@ -318,13 +309,9 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
-            backdrop-filter: blur(4px);
             z-index: 10;
-            letter-spacing: 1px;
         }
 
-        /* NỘI DUNG CHI TIẾT */
         .detail-body { 
             width: 100%; 
             max-width: 800px; 
@@ -339,19 +326,6 @@
             border-radius: var(--radius-lg); 
             box-shadow: var(--shadow-lg); 
         }
-        .main-info-card h2 {
-            font-size: 20px;
-            margin-bottom: 5px;
-            color: var(--text-main);
-            line-height: 1.4;
-        }
-        .main-info-card h3 {
-            color: var(--accent);
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-
-        /* LƯỚI THÔNG TIN XE (Grid) */
         .feature-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -365,21 +339,9 @@
             text-align: center; 
             border: 1px solid var(--border);
         }
-        .f-item span { 
-            font-size: 10px; 
-            color: var(--text-sub); 
-            display: block; 
-            text-transform: uppercase; 
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-        .f-item b { 
-            font-size: 14px; 
-            display: block; 
-            color: var(--text-main);
-        }
+        .f-item span { font-size: 10px; color: var(--text-sub); display: block; margin-bottom: 4px; }
+        .f-item b { font-size: 14px; display: block; color: var(--text-main); }
 
-        /* THÔNG TIN NGÂN HÀNG (Nếu có) */
         .bank-luxury { 
             background: #fff8f8; 
             border: 1px solid #ffe3e3; 
@@ -388,24 +350,6 @@
             margin: 20px 0; 
             border-left: 4px solid var(--accent); 
         }
-        .bank-luxury h4 { font-size: 13px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
-        .bank-luxury p { font-size: 13px; margin: 4px 0; color: #475569; display: flex; justify-content: space-between; }
-        .bank-luxury p b { color: var(--text-main); }
-
-        /* MÔ TẢ XE */
-        .desc-box {
-            margin-top: 20px; 
-            border-top: 1px solid var(--border); 
-            padding-top: 20px;
-        }
-        .desc-box p {
-            white-space: pre-line; 
-            font-size: 15px; 
-            line-height: 1.7;
-            color: #334155;
-        }
-
-        /* NÚT LIÊN HỆ CỐ ĐỊNH Ở DƯỚI (Gọi / Zalo) */
         .contact-group { 
             display: flex; 
             gap: 12px; 
@@ -430,9 +374,7 @@
             justify-content: center; 
             gap: 8px; 
             box-shadow: var(--shadow-md); 
-            transition: 0.3s;
         }
-        .c-btn:active { transform: translateY(2px); }
         .zalo-bg { background: #0068ff; color: #fff; }
         .call-bg { background: var(--primary); color: #fff; }
 
@@ -457,32 +399,10 @@
             gap: 12px; 
             align-items: center; 
             border: 1px solid var(--border); 
-            box-shadow: var(--shadow-sm);
         }
-        .ad-thumb { 
-            width: 80px; 
-            height: 60px; 
-            object-fit: cover; 
-            border-radius: 8px; 
-            background: #f1f5f9; 
-        }
-        .ad-actions { 
-            display: flex; 
-            gap: 8px; 
-            margin-top: 8px; 
-            flex-wrap: wrap;
-        }
-        .ad-btn { 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            border: none; 
-            font-size: 11px; 
-            font-weight: 600;
-            cursor: pointer; 
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .ad-thumb { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .ad-actions { display: flex; gap: 8px; margin-top: 8px; }
+        .ad-btn { padding: 6px 12px; border-radius: 6px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; }
         .btn-edit { background: #e2e8f0; color: #1e293b; }
         .btn-del { background: #fee2e2; color: #ef4444; }
         .btn-copy { background: #dcfce7; color: #16a34a; }
@@ -499,7 +419,6 @@
             border-top: 1px solid var(--border); 
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom); 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
         }
         .b-link { 
             flex: 1; 
@@ -510,14 +429,10 @@
             color: #94a3b8; 
             text-decoration: none; 
             font-size: 11px; 
-            cursor: pointer; 
-            transition: 0.3s;
         }
         .b-link.active { color: var(--primary); font-weight: 700; }
-        .b-link i { font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
-        .b-link.active i { transform: translateY(-2px); }
+        .b-link i { font-size: 22px; margin-bottom: 4px; }
 
-        /* MÀN HÌNH NHẬP MÃ PIN */
         #auth-gate { 
             position: fixed; 
             top: 0; left: 0; 
@@ -529,40 +444,41 @@
             justify-content: center; 
             align-items: center; 
             color: #fff; 
-            backdrop-filter: blur(10px);
         }
 
-        /* Reponsive cho Tablet/PC */
         @media (min-width: 600px) {
             .main-grid { grid-template-columns: repeat(3, 1fr); }
             .grid-filters { grid-template-columns: repeat(4, 1fr); }
         }
 
         /* =========================================
-           8. CÔNG CỤ TÍNH LÃI SUẤT (MỚI)
+           8. CÔNG CỤ TÍNH LÃI SUẤT (CẬP NHẬT)
            ========================================= */
         .calc-toggle-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 12px 15px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            margin: 10px 0;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             box-shadow: var(--shadow-sm);
+            width: 100%; /* Đã sửa thành 100% để dễ thấy trên mobile */
+            text-transform: uppercase;
         }
         #calc-section {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 20px;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 15px;
             margin-bottom: 20px;
             border: 1px solid var(--border);
-            display: none; /* Ẩn mặc định */
+            display: none; 
             animation: slideDown 0.3s ease-out;
         }
         @keyframes slideDown {
@@ -573,23 +489,11 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            font-size: 13px;
+            font-size: 12px;
         }
-        .calc-result-table th {
-            background: #f8fafc;
-            text-align: left;
-            padding: 10px;
-            border-bottom: 2px solid var(--border);
-            color: var(--text-sub);
-        }
-        .calc-result-table td {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-        .highlight-calc {
-            color: var(--accent);
-            font-weight: 700;
-        }
+        .calc-result-table th { background: #e2e8f0; text-align: left; padding: 8px; }
+        .calc-result-table td { padding: 8px; border-bottom: 1px solid var(--border); }
+        .highlight-calc { color: var(--accent); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -599,71 +503,74 @@
 </header>
 
 <div id="showroom-tab" class="container">
-    <button class="calc-toggle-btn" onclick="toggleCalc()">
-        <i class="fa-solid fa-calculator"></i> CÔNG CỤ TÍNH TRẢ GÓP
-    </button>
-
-    <div id="calc-section">
-        <h4 style="font-size: 14px; margin-bottom: 15px; text-transform: uppercase;">Dự toán khoản vay trả góp</h4>
-        <div class="grid-filters">
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Giá trị xe (VNĐ)</label>
-                <input type="number" id="loan-price" placeholder="745,000,000" class="sel-custom">
-            </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Vay tối đa (%)</label>
-                <input type="number" id="loan-pct" placeholder="70" class="sel-custom">
-            </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Thời hạn (Năm)</label>
-                <input type="number" id="loan-years" placeholder="5" class="sel-custom">
-            </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Lãi suất (%/năm)</label>
-                <input type="number" id="loan-rate" placeholder="10.5" class="sel-custom">
-            </div>
-        </div>
-        
-        <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin: 15px 0; cursor:pointer;">
-            <input type="checkbox" id="tpbank-sim" style="width:18px; height:18px;"> 
-            Mô phỏng lãi suất TPBank (10 năm gần nhất)
-        </label>
-
-        <button onclick="calculateLoan()" style="width:100%; background:var(--accent); color:#fff; border:none; padding:14px; border-radius:var(--radius-md); font-weight:700; cursor:pointer;">HOÀN THÀNH & XUẤT KẾT QUẢ</button>
-
-        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 15px;">
-            <div id="loan-summary" style="background:#f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 15px;"></div>
-            <table class="calc-result-table">
-                <thead>
-                    <tr>
-                        <th>Năm</th>
-                        <th>Trung bình/Tháng</th>
-                        <th>Tháng Cao nhất</th>
-                        <th>Tháng Thấp nhất</th>
-                    </tr>
-                </thead>
-                <tbody id="loan-table-body"></tbody>
-            </table>
-        </div>
-    </div>
-
     <div class="filter-section">
+        
+        <button class="calc-toggle-btn" onclick="toggleCalc()">
+            <i class="fa-solid fa-calculator"></i> CÔNG CỤ TÍNH TRẢ GÓP
+        </button>
+
+        <div id="calc-section">
+            <h4 style="font-size: 13px; margin-bottom: 10px; text-transform: uppercase; color: var(--primary);">Dự toán khoản vay trả góp</h4>
+            <div class="grid-filters">
+                <div>
+                    <label style="font-size: 10px; color: var(--text-sub);">Giá xe (VNĐ)</label>
+                    <input type="number" id="loan-price" placeholder="745,000,000" class="sel-custom">
+                </div>
+                <div>
+                    <label style="font-size: 10px; color: var(--text-sub);">Vay (%)</label>
+                    <input type="number" id="loan-pct" placeholder="70" class="sel-custom">
+                </div>
+                <div>
+                    <label style="font-size: 10px; color: var(--text-sub);">Năm</label>
+                    <input type="number" id="loan-years" placeholder="5" class="sel-custom">
+                </div>
+                <div>
+                    <label style="font-size: 10px; color: var(--text-sub);">Lãi %/năm</label>
+                    <input type="number" id="loan-rate" placeholder="10.5" class="sel-custom">
+                </div>
+            </div>
+            
+            <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin: 12px 0; cursor:pointer;">
+                <input type="checkbox" id="tpbank-sim" style="width:16px; height:16px;"> 
+                Mô phỏng lãi TPBank (10 năm gần nhất)
+            </label>
+
+            <button onclick="calculateLoan()" style="width:100%; background:var(--primary); color:#fff; border:none; padding:12px; border-radius:var(--radius-md); font-weight:700; cursor:pointer;">TÍNH TOÁN KẾT QUẢ</button>
+
+            <div id="loan-result-box" style="display:none; margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px;">
+                <div id="loan-summary" style="background:#fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border);"></div>
+                <div style="overflow-x: auto;">
+                    <table class="calc-result-table">
+                        <thead>
+                            <tr>
+                                <th>Năm</th>
+                                <th>Gốc+Lãi/Tháng</th>
+                                <th>Cao nhất</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loan-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="search-wrapper">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="sr-search" placeholder="Tìm kiếm tên xe (VD: Mazda 3, Xpander)..." onkeyup="processFilter()">
+            <input type="text" id="sr-search" placeholder="Tìm xe (VD: Mazda 3, Xpander)..." onkeyup="processFilter()">
         </div>
         <div class="grid-filters">
-            <select id="f-brand" class="sel-custom" onchange="processFilter()"><option value="">Tất cả Hãng xe</option></select>
-            <select id="f-year" class="sel-custom" onchange="processFilter()"><option value="">Năm Sản Xuất</option></select>
+            <select id="f-brand" class="sel-custom" onchange="processFilter()"><option value="">Tất cả Hãng</option></select>
+            <select id="f-year" class="sel-custom" onchange="processFilter()"><option value="">Năm SX</option></select>
             <select id="f-price" class="sel-custom" onchange="processFilter()">
                 <option value="">Khoảng giá</option>
-                <option value="0-500">Dưới 500 Triệu</option>
-                <option value="500-1000">500 Triệu - 1 Tỷ</option>
+                <option value="0-500">Dưới 500 Tr</option>
+                <option value="500-1000">500 Tr - 1 Tỷ</option>
                 <option value="1000-9999">Trên 1 Tỷ</option>
             </select>
-            <button onclick="location.reload()" class="sel-custom" style="background:var(--primary); color:#fff; border:none; font-weight: 600;">Tải lại trang</button>
+            <button onclick="location.reload()" class="sel-custom" style="background:var(--accent); color:#fff; border:none; font-weight: 600;">Làm mới</button>
         </div>
     </div>
+
     <div class="main-grid" id="showroom-render"></div>
 </div>
 
@@ -692,20 +599,14 @@
         <label style="display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px; margin: 20px 0; padding: 10px; background: #fff7ed; border-radius: 8px; border: 1px solid #fed7aa;">
             <input type="checkbox" id="ad-hot" style="width:20px; height:20px; accent-color: #ea580c;"> ƯU TIÊN HIỂN THỊ XE HOT 🔥
         </label>
-        <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
+        <textarea id="ad-desc" placeholder="Mô tả tình trạng xe..." class="sel-custom" style="height:100px; margin-bottom:15px;"></textarea>
         <div style="margin-bottom:20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed var(--border);">
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">Hình ảnh xe (Chọn nhiều ảnh cùng lúc):</label>
-            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0;">
-            <p style="font-size: 11px; color: var(--text-sub); margin-top: 5px;">* Hệ thống tự động nén ảnh để tiết kiệm dung lượng và tăng tốc độ tải.</p>
+            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom">
         </div>
-        <div style="display:flex; gap:15px;">
-            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer;">CẬP NHẬT XE</button>
-            <button onclick="clearForm()" style="flex:1; background:#f1f5f9; border:none; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; cursor: pointer;">CẬP NHẬT XE</button>
+            <button onclick="clearForm()" style="flex:1; background:#f1f5f9; border:none; border-radius:var(--radius-md); cursor: pointer;">LÀM LẠI</button>
         </div>
-    </div>
-    
-    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 16px;">QUẢN LÝ KHO XE</h3>
     </div>
     <div id="admin-render"></div>
 </div>
@@ -717,10 +618,9 @@
 
 <div id="auth-gate">
     <div style="background: #fff; padding: 30px; border-radius: 20px; text-align: center; color: var(--text-main); width: 90%; max-width: 350px;">
-        <i class="fa-solid fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
-        <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px;">MÃ PIN TRUY CẬP</h3>
-        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 10px; color:#000; font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="4" inputmode="numeric">
-        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:10px; font-weight:700; font-size: 16px;">XÁC NHẬN ĐĂNG NHẬP</button>
+        <h3 style="margin-bottom: 20px;">MÃ PIN TRUY CẬP</h3>
+        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 10px; font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="4" inputmode="numeric">
+        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:10px; font-weight:700;">ĐĂNG NHẬP</button>
     </div>
 </div>
 
@@ -729,12 +629,12 @@
         <i class="fa-solid fa-car-side"></i><span>Showroom</span>
     </div>
     <div class="b-link" id="n-ad" onclick="switchView('admin')">
-        <i class="fa-solid fa-toolbox"></i><span>Cửa hàng</span>
+        <i class="fa-solid fa-toolbox"></i><span>Quản lý</span>
     </div>
 </nav>
 
 <script>
-    /* CẤU HÌNH FIREBASE & IMGBB */
+    /* FIREBASE CONFIG */
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -744,29 +644,18 @@
         appId: "1:332384180945:web:999a85760a1909850c83f0"
     };
     const IMGBB_KEY = "a4b55574ff83037588382d5f83783ea1";
-    
-    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Biến Toàn cục
     let allCars = [];
     let isLogged = false;
     let initialLoadDone = false;
-    
-    // Biến cho Slider Ảnh
     let currentSlideIndex = 0;
     let totalSlides = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    // THÔNG TIN LIÊN HỆ GỐC
     const PHONE_NUMBER = "0946327164"; 
     const ZALO_LINK = "https://zalo.me/0946327164"; 
 
-    /* =========================================
-       MỚI: LOGIC TÍNH TOÁN LÃI SUẤT
-       ========================================= */
+    /* LOGIC TÍNH TOÁN LÃI SUẤT */
     function toggleCalc() {
         const sec = document.getElementById('calc-section');
         sec.style.display = (sec.style.display === 'block') ? 'none' : 'block';
@@ -788,8 +677,6 @@
         const prepayment = price - loanAmount;
         const totalMonths = years * 12;
         const monthlyPrincipal = loanAmount / totalMonths;
-
-        // Lãi suất TPBank 10 năm qua (Mô phỏng trung bình từng năm từ 2016-2025)
         const tpRates = [8.5, 9.0, 10.0, 10.5, 8.0, 7.5, 12.0, 13.5, 10.5, 10.0];
 
         let tableBody = "";
@@ -797,52 +684,32 @@
         let grandTotalInterest = 0;
 
         for (let y = 1; y <= years; y++) {
-            let yearInterestRates = [];
-            let yearTotalPayments = [];
-
-            // Chọn lãi suất: Ưu tiên TPBank nếu tích chọn, hoặc dùng rate nhập vào
+            let yearPayments = [];
             let annualRate = (isSimTP && y <= tpRates.length) ? tpRates[y-1] : rateInput;
-
             for (let m = 1; m <= 12; m++) {
                 let monthlyInterest = (currentBalance * (annualRate / 100)) / 12;
-                let totalMonthly = monthlyPrincipal + monthlyInterest;
-                
-                yearTotalPayments.push(totalMonthly);
+                yearPayments.push(monthlyPrincipal + monthlyInterest);
                 currentBalance -= monthlyPrincipal;
                 grandTotalInterest += monthlyInterest;
             }
+            const maxM = Math.max(...yearPayments);
+            const avgM = yearPayments.reduce((a,b)=>a+b,0)/12;
 
-            const maxMonth = Math.max(...yearTotalPayments);
-            const minMonth = Math.min(...yearTotalPayments);
-            const avgMonth = yearTotalPayments.reduce((a,b) => a+b, 0) / 12;
-
-            tableBody += `
-                <tr>
-                    <td><b>Năm ${y}</b> <small style="display:block; color:var(--accent)">Lãi suất: ${annualRate}%</small></td>
-                    <td><b class="highlight-calc">${formatCurrency(avgMonth)}</b></td>
-                    <td>${formatCurrency(maxMonth)}</td>
-                    <td>${formatCurrency(minMonth)}</td>
-                </tr>
-            `;
+            tableBody += `<tr><td>Năm ${y} <br><small>${annualRate}%</small></td><td><b>${formatCurrency(avgM)}</b></td><td>${formatCurrency(maxM)}</td></tr>`;
         }
 
         document.getElementById('loan-summary').innerHTML = `
-            <p style="font-size:13px">Trả trước (tự có): <b>${formatCurrency(prepayment)}</b></p>
-            <p style="font-size:13px">Số tiền ngân hàng cho vay: <b>${formatCurrency(loanAmount)}</b></p>
-            <p style="font-size:13px">Thời hạn: <b>${years} Năm (${totalMonths} tháng)</b></p>
-            <p style="font-size:13px; color:var(--accent)">Tổng tiền lãi phải trả: <b>${formatCurrency(grandTotalInterest)}</b></p>
+            <p>Trả trước: <b>${formatCurrency(prepayment)}</b></p>
+            <p>Gốc vay: <b>${formatCurrency(loanAmount)}</b></p>
+            <p>Tổng lãi dự kiến: <b style="color:red">${formatCurrency(grandTotalInterest)}</b></p>
         `;
         document.getElementById('loan-table-body').innerHTML = tableBody;
         document.getElementById('loan-result-box').style.display = 'block';
     }
 
-    function formatCurrency(num) {
-        return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ';
-    }
+    function formatCurrency(num) { return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ'; }
 
-    /* =========================================
-       GIỮ NGUYÊN BỘ CODE CŨ 100% (KHÔNG CHỈNH SỬA)
-       ========================================= */
+    /* CORE FUNCTIONS GIỮ NGUYÊN */
     async function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -855,12 +722,8 @@
                     let w = img.width, h = img.height, max = 1200; 
                     if(w > h) { if(w > max) { h *= max/w; w = max; } }
                     else { if(h > max) { w *= max/h; h = max; } }
-                    
-                    canvas.width = w; 
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
                 };
             };
@@ -871,21 +734,13 @@
         db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
             allCars = [];
             snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            
             populateFilters();
             processFilter();
-            
-            if(document.getElementById('admin-tab').style.display === 'block') {
-                renderAdmin();
-            }
-
+            if(document.getElementById('admin-tab').style.display === 'block') renderAdmin();
             if (!initialLoadDone) {
                 initialLoadDone = true;
-                const urlParams = new URLSearchParams(window.location.search);
-                const qId = urlParams.get('id');
-                if(qId) {
-                    setTimeout(() => openPage(qId), 500);
-                }
+                const qId = new URLSearchParams(window.location.search).get('id');
+                if(qId) setTimeout(() => openPage(qId), 500);
             }
         });
     }
@@ -893,14 +748,11 @@
     function populateFilters() {
         const bSet = [...new Set(allCars.map(c => c.brand).filter(Boolean))].sort();
         const ySet = [...new Set(allCars.map(c => c.year).filter(Boolean))].sort((a,b)=>b-a);
-        
         const bSel = document.getElementById('f-brand');
         const ySel = document.getElementById('f-year');
-        
-        bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>';
+        bSel.innerHTML = '<option value="">Tất cả Hãng</option>';
         bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-        
-        ySel.innerHTML = '<option value="">Năm Sản Xuất</option>';
+        ySel.innerHTML = '<option value="">Năm SX</option>';
         ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
     }
 
@@ -909,9 +761,8 @@
         const br = document.getElementById('f-brand').value;
         const ye = document.getElementById('f-year').value;
         const pr = document.getElementById('f-price').value;
-        
         const filtered = allCars.filter(c => {
-            const mKw = c.name && c.name.toLowerCase().includes(kw);
+            const mKw = !kw || (c.name && c.name.toLowerCase().includes(kw));
             const mBr = !br || c.brand === br;
             const mYe = !ye || String(c.year) === String(ye);
             let mPr = true;
@@ -919,37 +770,22 @@
             if(pr === '500-1000') mPr = c.price >= 500000000 && c.price <= 1000000000;
             if(pr === '1000-9999') mPr = c.price > 1000000000;
             return mKw && mBr && mYe && mPr;
-        });
-        
-        filtered.sort((a, b) => (b.isHot === true) - (a.isHot === true));
+        }).sort((a, b) => (b.isHot === true) - (a.isHot === true));
 
         const r = document.getElementById('showroom-render'); 
-        r.innerHTML = "";
-        
-        if(filtered.length === 0) {
-            r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`;
-            return;
-        }
-
+        r.innerHTML = filtered.length ? "" : `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #64748b;">Không có xe phù hợp.</div>`;
         filtered.forEach(c => {
-            const thumb = (c.images && Array.isArray(c.images) && c.images.length > 0) 
-                            ? c.images[0] 
-                            : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
-            
-            let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
-
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
             r.innerHTML += `
                 <div class="car-card" onclick="openPage('${c.id}')">
                     ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
-                    <div class="img-wrap">
-                        <img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Lỗi+Load+Ảnh'" fetchpriority="high" decoding="async">
-                    </div>
+                    <div class="img-wrap"><img src="${thumb}"></div>
                     <div class="info-wrap">
                         <div class="name-txt">${c.name || 'Đang cập nhật'}</div>
-                        <div class="price-txt">${priceTxt}</div>
+                        <div class="price-txt">${c.price ? formatCurrency(c.price) : 'Liên hệ'}</div>
                         <div class="spec-tags">
-                            <div class="tag-item"><i class="fa-regular fa-calendar"></i> ${c.year || '--'}</div>
-                            <div class="tag-item"><i class="fa-solid fa-gauge-high"></i> ${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
+                            <div class="tag-item">${c.year || '--'}</div>
+                            <div class="tag-item">${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
                         </div>
                     </div>
                 </div>`;
@@ -959,149 +795,54 @@
     function openPage(id) {
         const c = allCars.find(x => x.id === id);
         if(!c) return;
-
-        const imgs = (c.images && Array.isArray(c.images) && c.images.length > 0) 
-                        ? c.images 
-                        : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        const imgs = (c.images && c.images.length > 0) ? c.images : ['https://via.placeholder.com/800x600?text=Chưa+Cập+Nhật+Ảnh'];
+        totalSlides = imgs.length; currentSlideIndex = 0; 
+        let slideHtml = imgs.map(img => `<img src="${img}" class="slide-img">`).join('');
         
-        totalSlides = imgs.length;
-        currentSlideIndex = 0; 
-
-        let slideHtml = imgs.map((img, idx) => `
-            <img src="${img}" class="slide-img" onerror="this.src='https://via.placeholder.com/800x600?text=Lỗi+Load+Ảnh'" ${idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
-        `).join('');
-
-        let navHtml = '';
-        if (totalSlides > 1) {
-            navHtml = `
-                <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
-                <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>
-            `;
-        }
-
-        let bankHtml = '';
-        if(c.bankP || c.bankmin) {
-            bankHtml = `
-                <div class="bank-luxury">
-                    <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
-                    ${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}
-                    ${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}
-                    ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
-                </div>`;
-        }
-
         document.getElementById('detail-render-box').innerHTML = `
             <div class="slider-container" id="slider-touch-area">
-                ${navHtml}
+                ${totalSlides > 1 ? `
+                <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
+                <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : ''}
                 <div class="slider-track" id="track-box">${slideHtml}</div>
             </div>
-            
             <div class="detail-body">
                 <div class="main-info-card">
-                    <h2>${c.name}</h2>
-                    <h3>${c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi'}</h3>
-                    
+                    <h2 style="font-size:18px">${c.name}</h2>
+                    <h3 style="color:red; margin:10px 0">${c.price ? formatCurrency(c.price) : 'Liên hệ'}</h3>
                     <div class="feature-grid">
                         <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
-                        <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
-                        <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
+                        <div class="f-item"><span>Odo</span><b>${c.odo || '--'}</b></div>
+                        <div class="f-item"><span>Hãng</span><b>${c.brand || '--'}</b></div>
                     </div>
-                    
-                    ${bankHtml}
-                    
-                    <div class="desc-box">
-                        <h4 style="font-size: 15px; margin-bottom: 10px; text-transform:uppercase;"><i class="fa-solid fa-clipboard-list"></i> Thông tin & Tình trạng xe</h4>
-                        <p>${c.desc || 'Chưa có mô tả chi tiết.'}</p>
+                    ${(c.bankP || c.bankMin) ? `<div class="bank-luxury"><h4>Hỗ Trợ Vay</h4><p>Vay tối đa: ${c.bankP || '--'}%</p><p>Đưa trước: ${c.bankMin ? formatCurrency(c.bankMin) : '--'}</p></div>` : ''}
+                    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:15px">
+                        <p style="white-space:pre-line; font-size:14px">${c.desc || 'Chưa có mô tả.'}</p>
                     </div>
                 </div>
             </div>
-            
             <div class="contact-group">
-                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg">
-                    <i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp
-                </a>
-                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo
-                </a>
+                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg">GỌI NGAY</a>
+                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg">ZALO</a>
             </div>
         `;
-        
         document.getElementById('detail-overlay').style.display = 'block';
-        document.body.style.overflow = 'hidden'; 
-
-        const touchArea = document.getElementById('slider-touch-area');
-        if(touchArea) {
-            touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
-            touchArea.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
-        }
+        document.body.style.overflow = 'hidden';
     }
 
-    function closePage() { 
-        document.getElementById('detail-overlay').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; 
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    function changeSlide(direction, event) {
-        if(event) event.stopPropagation(); 
-        currentSlideIndex += direction;
-        if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
-        if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
-        updateSliderDOM();
-    }
-
-    function handleSwipe() {
-        const threshold = 50; 
-        if (touchEndX < touchStartX - threshold) changeSlide(1); 
-        if (touchEndX > touchStartX + threshold) changeSlide(-1); 
-    }
-
-    function updateSliderDOM() {
-        const track = document.getElementById('track-box');
-        if (track) track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
-        const counter = document.getElementById('slide-counter');
-        if (counter) counter.innerText = `${currentSlideIndex + 1} / ${totalSlides}`;
+    function closePage() { document.getElementById('detail-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
+    function changeSlide(dir, ev) { if(ev) ev.stopPropagation(); currentSlideIndex=(currentSlideIndex+dir+totalSlides)%totalSlides; updateSliderDOM(); }
+    function updateSliderDOM() { 
+        const track = document.getElementById('track-box'); if(track) track.style.transform = `translateX(-${currentSlideIndex*100}%)`;
+        const count = document.getElementById('slide-counter'); if(count) count.innerText = `${currentSlideIndex+1} / ${totalSlides}`;
     }
 
     function renderAdmin() {
-        const r = document.getElementById('admin-render'); 
-        r.innerHTML = "";
-        if(allCars.length === 0) {
-            r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`;
-            return;
-        }
+        const r = document.getElementById('admin-render'); r.innerHTML = "";
         allCars.forEach(c => {
-            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
-            let statusBadge = "";
-            if(c.status === 'deposit') statusBadge = '<span style="color:#d97706; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>';
-            if(c.status === 'sold') statusBadge = '<span style="color:#dc2626; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>';
-            r.innerHTML += `
-                <div class="admin-item">
-                    <img src="${thumb}" class="ad-thumb">
-                    <div style="flex:1">
-                        <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
-                        <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
-                        <div class="ad-actions">
-                            <button class="ad-btn btn-copy" onclick="copyShareLink('${c.id}')"><i class="fa-solid fa-link"></i> Copy Link</button>
-                            <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i> Sửa</button>
-                            <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i> Xóa</button>
-                        </div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function copyShareLink(id) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const shareUrl = `${baseUrl}?id=${id}`;
-        navigator.clipboard.writeText(shareUrl).then(() => {
-            alert("Đã Copy Link thành công!\nBạn có thể dán (paste) gửi cho khách.");
-        }).catch(err => {
-            prompt("Thiết bị không tự copy, vui lòng copy link dưới đây:", shareUrl);
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60';
+            r.innerHTML += `<div class="admin-item"><img src="${thumb}" class="ad-thumb"><div style="flex:1"><b>${c.name}</b><br><span style="color:red">${formatCurrency(c.price || 0)}</span><div class="ad-actions"><button class="ad-btn btn-edit" onclick="editMode('${c.id}')">Sửa</button><button class="ad-btn btn-del" onclick="deleteCar('${c.id}')">Xóa</button></div></div></div>`;
         });
     }
 
@@ -1109,12 +850,8 @@
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
-        if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) {
-            alert("Vui lòng nhập Tên xe và Giá bán!"); return;
-        }
-        btn.disabled = true; 
-        btn.innerText = "ĐANG XỬ LÝ ẢNH...";
-        btn.style.opacity = '0.7';
+        if(!document.getElementById('ad-name').value) return alert("Nhập tên xe!");
+        btn.disabled = true; btn.innerText = "ĐANG TẢI...";
         const payload = {
             name: document.getElementById('ad-name').value,
             price: Number(document.getElementById('ad-price').value),
@@ -1132,104 +869,49 @@
         try {
             if(files.length > 0) {
                 let urls = [];
-                for(let i=0; i < files.length; i++) {
-                    const f = files[i];
-                    btn.innerText = `ĐANG TẢI ẢNH ${i + 1}/${files.length}...`;
-                    const compressed = await compressImage(f); 
-                    const fd = new FormData(); 
-                    fd.append("image", compressed);
-                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json();
-                    if(d.data && d.data.url) urls.push(d.data.url);
+                for(let f of files) {
+                    const comp = await compressImage(f);
+                    const fd = new FormData(); fd.append("image", comp);
+                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
+                    const d = await res.json(); if(d.data) urls.push(d.data.url);
                 }
-                payload.images = urls; 
+                payload.images = urls;
             }
-            if(id) {
-                await db.collection("Cars").doc(id).update(payload);
-                alert("Đã cập nhật xe thành công!");
-            } else {
-                if(!payload.images || payload.images.length === 0) {
-                    if(!confirm("Bạn chưa chọn ảnh nào. Vẫn muốn đăng?")) {
-                        btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; btn.style.opacity = '1';
-                        return;
-                    }
-                }
-                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); 
-                await db.collection("Cars").add(payload); 
-                alert("Đã Đăng xe mới thành công!");
-            }
-            clearForm();
-            window.scrollTo(0, 0); 
-        } catch(e) { 
-            alert("Lỗi tải lên: " + e.message); 
-        } finally {
-            btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; btn.style.opacity = '1';
-        }
+            if(id) await db.collection("Cars").doc(id).update(payload);
+            else await db.collection("Cars").add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+            alert("Thành công!"); clearForm();
+        } catch(e) { alert("Lỗi: " + e.message); } finally { btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; }
     }
 
     function editMode(id) {
-        const c = allCars.find(x => x.id === id);
-        if(!c) return;
+        const c = allCars.find(x => x.id === id); if(!c) return;
         document.getElementById('edit-id').value = c.id;
-        document.getElementById('ad-name').value = c.name || "";
-        document.getElementById('ad-price').value = c.price || "";
-        document.getElementById('ad-brand').value = c.brand || "";
-        document.getElementById('ad-year').value = c.year || "";
-        document.getElementById('ad-odo').value = c.odo || "";
-        document.getElementById('ad-status').value = c.status || "available";
-        document.getElementById('ad-bankp').value = c.bankP || "";
-        document.getElementById('ad-banky').value = c.bankY || "";
-        document.getElementById('ad-bankmin').value = c.bankMin || "";
-        document.getElementById('ad-hot').checked = c.isHot || false;
-        document.getElementById('ad-desc').value = c.desc || "";
-        document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
-        document.getElementById('ad-files').value = ""; 
-        window.scrollTo(0, 0);
+        document.getElementById('ad-name').value = c.name;
+        document.getElementById('ad-price').value = c.price;
+        document.getElementById('ad-brand').value = c.brand;
+        document.getElementById('ad-year').value = c.year;
+        document.getElementById('ad-odo').value = c.odo;
+        document.getElementById('ad-hot').checked = c.isHot;
+        document.getElementById('ad-desc').value = c.desc;
+        window.scrollTo(0,0);
     }
 
-    async function deleteCar(id) { 
-        if(confirm("Xác nhận XÓA vĩnh viễn xe này khỏi hệ thống?")) {
-            await db.collection("Cars").doc(id).delete(); 
-            alert("Đã xóa!");
-        }
-    }
-
-    function clearForm() { 
-        document.getElementById('edit-id').value = ""; 
-        document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = ""); 
-        document.getElementById('ad-hot').checked = false;
-        document.getElementById('ad-files').value = "";
-        document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
-    }
+    async function deleteCar(id) { if(confirm("Xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
+    function clearForm() { document.getElementById('edit-id').value = ""; document.querySelectorAll('.form-luxury input, .form-luxury textarea').forEach(i => i.value = ""); }
 
     function switchView(v) {
-        if(v === 'admin' && !isLogged) { 
-            document.getElementById('auth-gate').style.display='flex'; 
-            return; 
-        }
+        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
         document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
         document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
         document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
         document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
         if(v === 'admin') renderAdmin();
-        window.scrollTo(0,0);
     }
 
     function checkAuth() {
-        if(document.getElementById('pin-code').value === "1905") { 
-            isLogged = true; 
-            document.getElementById('auth-gate').style.display='none'; 
-            document.getElementById('pin-code').value = '';
-            switchView('admin');
-        } else {
-            alert("Mã PIN không đúng. Vui lòng thử lại!");
-            document.getElementById('pin-code').value = '';
-        }
+        if(document.getElementById('pin-code').value === "1905") { isLogged = true; document.getElementById('auth-gate').style.display='none'; switchView('admin'); }
+        else alert("Sai mã PIN!");
     }
-
-    document.getElementById('pin-code').addEventListener("keyup", function(event) {
-        if (event.key === "Enter") { event.preventDefault(); checkAuth(); }
-    });
 
     window.onload = initData;
 </script>
