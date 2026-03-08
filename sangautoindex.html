@@ -18,18 +18,18 @@
            1. CSS VARIABLES & RESET (DARK MODE)
            ========================================= */
         :root {
-            --primary: #3b82f6; /* Xanh dương hiện đại cho các nút bấm */
-            --accent: #ef4444; /* Đỏ rực */
-            --bg: #0f172a; /* Nền xám cực tối theo yêu cầu */
-            --white: rgba(30, 41, 59, 0.7); /* Màu Slate-800 có độ trong suốt cho hiệu ứng Kính mờ */
-            --border: rgba(255, 255, 255, 0.1); /* Viền mờ */
-            --text-main: #f8fafc; /* Chữ trắng sáng */
-            --text-sub: #94a3b8; /* Chữ xám nhạt */
+            --primary: #3b82f6; 
+            --accent: #ef4444; 
+            --bg: #0f172a; 
+            --white: rgba(30, 41, 59, 0.7); 
+            --border: rgba(255, 255, 255, 0.1); 
+            --text-main: #f8fafc; 
+            --text-sub: #94a3b8; 
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.2);
             --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
-            --radius-md: 16px; /* Bo góc mềm hơn */
-            --radius-lg: 20px; /* Bo góc mềm hơn */
+            --radius-md: 16px; 
+            --radius-lg: 20px; 
         }
 
         * { 
@@ -43,7 +43,6 @@
             overflow-x: hidden; 
             width: 100%;
             font-family: 'Lexend', sans-serif; 
-            /* Gradient nền nhẹ nhàng để làm nổi bật hiệu ứng Glassmorphism */
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
             background-attachment: fixed;
             color: var(--text-main); 
@@ -52,7 +51,6 @@
             scroll-behavior: smooth;
         }
         
-        /* Class dùng chung cho hiệu ứng Glassmorphism */
         .glass-panel {
             background: var(--white);
             backdrop-filter: blur(16px);
@@ -104,7 +102,7 @@
         }
         .search-wrapper input { 
             width: 100%; 
-            padding: 14px 50px 14px 45px; /* Để khoảng trống cho nút reload bên phải */
+            padding: 14px 50px 14px 45px; 
             border-radius: var(--radius-md); 
             border: 1px solid var(--border); 
             background: rgba(15, 23, 42, 0.6);
@@ -207,30 +205,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Nút Theo dõi Xe */
-        .follow-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(15, 23, 42, 0.6);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            transition: all 0.3s;
-        }
-        .follow-btn:hover, .follow-btn:active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
-
-        /* Skeleton Dark Mode */
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
@@ -343,7 +317,7 @@
             min-width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            pointer-events: none; 
+            cursor: zoom-in;
         }
         
         .slider-btn {
@@ -375,6 +349,36 @@
             backdrop-filter: blur(4px);
             z-index: 10;
             letter-spacing: 1px;
+        }
+
+        /* ZOOM VIEW (PHÓNG TO TOÀN MÀN HÌNH) */
+        #zoom-view {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: #000;
+            z-index: 5000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: none;
+        }
+        #zoom-img {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+        .zoom-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            z-index: 5100;
         }
 
         .detail-body { 
@@ -759,6 +763,11 @@
     <div id="detail-render-box"></div>
 </div>
 
+<div id="zoom-view">
+    <div class="zoom-close" onclick="closeZoom()"><i class="fa-solid fa-xmark"></i></div>
+    <img id="zoom-img" src="" alt="Zoomed Image">
+</div>
+
 <div id="auth-gate">
     <div class="glass-panel" style="padding: 30px; border-radius: 24px; text-align: center; width: 90%; max-width: 350px;">
         <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
@@ -789,22 +798,18 @@
     };
     const IMGBB_KEY = "a4b55574ff83037588382d5f83783ea1";
     
-    // Khởi tạo Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Biến Toàn cục
     let allCars = [];
     let isLogged = false;
     let initialLoadDone = false;
     
-    // Biến cho Slider Ảnh
     let currentSlideIndex = 0;
     let totalSlides = 0;
     let touchStartX = 0;
     let touchEndX = 0;
 
-    // THÔNG TIN LIÊN HỆ GỐC
     const PHONE_NUMBER = "0946327164"; 
     const ZALO_LINK = "https://zalo.me/0946327164"; 
 
@@ -880,16 +885,79 @@
     }
 
     /* =========================================
-       THÊM LOGIC: THEO DÕI XE NHẬN THÔNG BÁO
+       LOGIC PHÓNG TO ẢNH & THU PHÓNG (ZOOM)
        ========================================= */
-    function followCar(event, carName) {
-        // Ngăn chặn việc click vào nút chuông làm mở thẻ chi tiết xe
-        event.stopPropagation();
-        alert(`🔔 Đã bật theo dõi!\nBạn sẽ nhận được thông báo ngay khi xe ${carName} có biến động giá hoặc cập nhật mới.`);
+    let zoomScale = 1;
+    let zoomStartDist = 0;
+    let isZooming = false;
+
+    function openZoom(src) {
+        const zv = document.getElementById('zoom-view');
+        const zi = document.getElementById('zoom-img');
+        zi.src = src;
+        zv.style.display = 'flex';
+        zoomScale = 1;
+        zi.style.transform = `scale(${zoomScale})`;
+        document.body.style.overflow = 'hidden';
     }
 
+    function closeZoom() {
+        document.getElementById('zoom-view').style.display = 'none';
+        if(document.getElementById('detail-overlay').style.display !== 'block') {
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Xử lý thu phóng bằng cảm ứng
+    const zoomImg = document.getElementById('zoom-img');
+    const zoomView = document.getElementById('zoom-view');
+
+    zoomView.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) {
+            isZooming = true;
+            zoomStartDist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+        }
+    });
+
+    zoomView.addEventListener('touchmove', e => {
+        if (isZooming && e.touches.length === 2) {
+            const dist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+            let delta = dist / zoomStartDist;
+            let newScale = zoomScale * delta;
+            if (newScale < 1) newScale = 1;
+            if (newScale > 4) newScale = 4;
+            zoomImg.style.transform = `scale(${newScale})`;
+        }
+    });
+
+    zoomView.addEventListener('touchend', e => {
+        if (isZooming) {
+            const lastDist = Math.hypot(
+                e.changedTouches[0].pageX - (e.touches[0] ? e.touches[0].pageX : 0),
+                e.changedTouches[0].pageY - (e.touches[0] ? e.touches[0].pageY : 0)
+            );
+            zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1;
+            isZooming = false;
+        }
+    });
+
+    // Zoom bằng cuộn chuột (cho PC)
+    zoomView.addEventListener('wheel', e => {
+        e.preventDefault();
+        zoomScale += e.deltaY * -0.001;
+        zoomScale = Math.min(Math.max(1, zoomScale), 4);
+        zoomImg.style.transform = `scale(${zoomScale})`;
+    }, { passive: false });
+
+
     /* =========================================
-       GIỮ NGUYÊN BỘ CODE CŨ 100% (KHÔNG CHỈNH SỬA LOGIC)
+       LOGIC FIREBASE & HIỂN THỊ
        ========================================= */
     async function compressImage(file) {
         return new Promise((resolve) => {
@@ -903,12 +971,9 @@
                     let w = img.width, h = img.height, max = 1200; 
                     if(w > h) { if(w > max) { h *= max/w; w = max; } }
                     else { if(h > max) { w *= max/h; h = max; } }
-                    
-                    canvas.width = w; 
-                    canvas.height = h;
+                    canvas.width = w; canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
-                    
                     canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
                 };
             };
@@ -919,21 +984,14 @@
         db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
             allCars = [];
             snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            
             populateFilters();
             processFilter();
-            
-            if(document.getElementById('admin-tab').style.display === 'block') {
-                renderAdmin();
-            }
-
+            if(document.getElementById('admin-tab').style.display === 'block') renderAdmin();
             if (!initialLoadDone) {
                 initialLoadDone = true;
                 const urlParams = new URLSearchParams(window.location.search);
                 const qId = urlParams.get('id');
-                if(qId) {
-                    setTimeout(() => openPage(qId), 500);
-                }
+                if(qId) setTimeout(() => openPage(qId), 500);
             }
         });
     }
@@ -941,13 +999,10 @@
     function populateFilters() {
         const bSet = [...new Set(allCars.map(c => c.brand).filter(Boolean))].sort();
         const ySet = [...new Set(allCars.map(c => c.year).filter(Boolean))].sort((a,b)=>b-a);
-        
         const bSel = document.getElementById('f-brand');
         const ySel = document.getElementById('f-year');
-        
         bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>';
         bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-        
         ySel.innerHTML = '<option value="">Năm Sản Xuất</option>';
         ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
     }
@@ -957,7 +1012,6 @@
         const br = document.getElementById('f-brand').value;
         const ye = document.getElementById('f-year').value;
         const pr = document.getElementById('f-price').value;
-        
         const filtered = allCars.filter(c => {
             const mKw = c.name && c.name.toLowerCase().includes(kw);
             const mBr = !br || c.brand === br;
@@ -968,31 +1022,22 @@
             if(pr === '1000-9999') mPr = c.price > 1000000000;
             return mKw && mBr && mYe && mPr;
         });
-        
         filtered.sort((a, b) => (b.isHot === true) - (a.isHot === true));
-
-        const r = document.getElementById('showroom-render'); 
-        r.innerHTML = "";
-        
+        const r = document.getElementById('showroom-render'); r.innerHTML = "";
         if(filtered.length === 0) {
             r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`;
             return;
         }
-
         filtered.forEach(c => {
-            const thumb = (c.images && Array.isArray(c.images) && c.images.length > 0) 
-                            ? c.images[0] 
-                            : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
-            
+            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
             let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
-
+            let statusOverlay = '';
+            if (c.status === 'deposit') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(245, 158, 11, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ NHẬN CỌC</div>';
+            else if (c.status === 'sold') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239, 68, 68, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ BÁN</div>';
             r.innerHTML += `
                 <div class="car-card glass-panel" onclick="openPage('${c.id}')">
-                    <button class="follow-btn" onclick="followCar(event, '${c.name}')" title="Nhận thông báo khi xe này giảm giá"><i class="fa-solid fa-bell"></i></button>
                     ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
-                    <div class="img-wrap">
-                        <img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Lỗi+Load+Ảnh'" fetchpriority="high" decoding="async">
-                    </div>
+                    <div class="img-wrap">${statusOverlay}<img src="${thumb}"></div>
                     <div class="info-wrap">
                         <div class="name-txt">${c.name || 'Đang cập nhật'}</div>
                         <div class="price-txt">${priceTxt}</div>
@@ -1008,92 +1053,55 @@
     function openPage(id) {
         const c = allCars.find(x => x.id === id);
         if(!c) return;
-
-        const imgs = (c.images && Array.isArray(c.images) && c.images.length > 0) 
-                        ? c.images 
-                        : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
-        
-        totalSlides = imgs.length;
-        currentSlideIndex = 0; 
-
+        const imgs = (c.images && c.images.length > 0) ? c.images : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        totalSlides = imgs.length; currentSlideIndex = 0; 
         let slideHtml = imgs.map((img, idx) => `
-            <img src="${img}" class="slide-img" onerror="this.src='https://via.placeholder.com/800x600?text=Lỗi+Load+Ảnh'" ${idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
+            <img src="${img}" class="slide-img" onclick="openZoom('${img}')">
         `).join('');
-
-        let navHtml = '';
-        if (totalSlides > 1) {
-            navHtml = `
-                <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
-                <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>
-            `;
-        }
-
-        let bankHtml = '';
-        if(c.bankP || c.bankmin) {
-            bankHtml = `
-                <div class="bank-luxury">
-                    <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
-                    ${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}
-                    ${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}
-                    ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
-                </div>`;
-        }
+        let navHtml = (totalSlides > 1) ? `
+            <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : '';
+        let bankHtml = (c.bankP || c.bankmin) ? `
+            <div class="bank-luxury">
+                <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
+                ${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}
+                ${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}
+                ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
+            </div>` : '';
 
         document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container" id="slider-touch-area">
-                ${navHtml}
-                <div class="slider-track" id="track-box">${slideHtml}</div>
-            </div>
-            
+            <div class="slider-container" id="slider-touch-area">${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
                 <div class="main-info-card glass-panel">
                     <h2>${c.name}</h2>
                     <h3>${c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi'}</h3>
-                    
                     <div class="feature-grid">
                         <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
                         <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
                         <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
                     </div>
-                    
                     ${bankHtml}
-                    
                     <div class="desc-box">
-                        <h4 style="font-size: 15px; margin-bottom: 10px; text-transform:uppercase;"><i class="fa-solid fa-clipboard-list"></i> Thông tin & Tình trạng xe</h4>
+                        <h4 style="font-size:15px; margin-bottom:10px; text-transform:uppercase;"><i class="fa-solid fa-clipboard-list"></i> Thông tin & Tình trạng xe</h4>
                         <p>${c.desc || 'Chưa có mô tả chi tiết.'}</p>
                     </div>
                 </div>
             </div>
-            
             <div class="contact-group">
-                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg">
-                    <i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp
-                </a>
-                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo
-                </a>
-            </div>
-        `;
-        
+                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg"><i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp</a>
+                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo</a>
+            </div>`;
         document.getElementById('detail-overlay').style.display = 'block';
         document.body.style.overflow = 'hidden'; 
-
         const touchArea = document.getElementById('slider-touch-area');
         if(touchArea) {
             touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
-            touchArea.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
+            touchArea.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
         }
     }
 
-    function closePage() { 
-        document.getElementById('detail-overlay').style.display = 'none'; 
-        document.body.style.overflow = 'auto'; 
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    function closePage() { document.getElementById('detail-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
 
     function changeSlide(direction, event) {
         if(event) event.stopPropagation(); 
@@ -1117,17 +1125,11 @@
     }
 
     function renderAdmin() {
-        const r = document.getElementById('admin-render'); 
-        r.innerHTML = "";
-        if(allCars.length === 0) {
-            r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`;
-            return;
-        }
+        const r = document.getElementById('admin-render'); r.innerHTML = "";
+        if(allCars.length === 0) { r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`; return; }
         allCars.forEach(c => {
             const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
-            let statusBadge = "";
-            if(c.status === 'deposit') statusBadge = '<span style="color:#fbbf24; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>';
-            if(c.status === 'sold') statusBadge = '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>';
+            let statusBadge = (c.status === 'deposit') ? '<span style="color:#fbbf24; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
             r.innerHTML += `
                 <div class="admin-item glass-panel">
                     <img src="${thumb}" class="ad-thumb">
@@ -1135,7 +1137,7 @@
                         <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
                         <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
                         <div class="ad-actions">
-                            <button class="ad-btn btn-copy" onclick="copyShareLink('${c.id}')"><i class="fa-solid fa-link"></i> Copy Link</button>
+                            <button class="ad-btn btn-copy" onclick="copyShareLink('${c.id}')"><i class="fa-solid fa-link"></i> Link</button>
                             <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i> Sửa</button>
                             <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i> Xóa</button>
                         </div>
@@ -1145,80 +1147,43 @@
     }
 
     function copyShareLink(id) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const shareUrl = `${baseUrl}?id=${id}`;
-        navigator.clipboard.writeText(shareUrl).then(() => {
-            alert("Đã Copy Link thành công!\nBạn có thể dán (paste) gửi cho khách.");
-        }).catch(err => {
-            prompt("Thiết bị không tự copy, vui lòng copy link dưới đây:", shareUrl);
-        });
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+        navigator.clipboard.writeText(shareUrl).then(() => alert("Đã Copy Link!")).catch(() => prompt("Copy link:", shareUrl));
     }
 
     async function saveCar() {
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
-        if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) {
-            alert("Vui lòng nhập Tên xe và Giá bán!"); return;
-        }
-        btn.disabled = true; 
-        btn.innerText = "ĐANG XỬ LÝ ẢNH...";
-        btn.style.opacity = '0.7';
+        if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
+        btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
         const payload = {
-            name: document.getElementById('ad-name').value,
-            price: Number(document.getElementById('ad-price').value),
-            brand: document.getElementById('ad-brand').value,
-            year: document.getElementById('ad-year').value,
-            odo: document.getElementById('ad-odo').value,
-            status: document.getElementById('ad-status').value,
-            bankP: document.getElementById('ad-bankp').value,
-            bankY: document.getElementById('ad-banky').value,
-            bankMin: document.getElementById('ad-bankmin').value,
-            isHot: document.getElementById('ad-hot').checked,
-            desc: document.getElementById('ad-desc').value,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
+            brand: document.getElementById('ad-brand').value, year: document.getElementById('ad-year').value,
+            odo: document.getElementById('ad-odo').value, status: document.getElementById('ad-status').value,
+            bankP: document.getElementById('ad-bankp').value, bankY: document.getElementById('ad-banky').value,
+            bankMin: document.getElementById('ad-bankmin').value, isHot: document.getElementById('ad-hot').checked,
+            desc: document.getElementById('ad-desc').value, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         try {
             if(files.length > 0) {
                 let urls = [];
                 for(let i=0; i < files.length; i++) {
-                    const f = files[i];
-                    btn.innerText = `ĐANG TẢI ẢNH ${i + 1}/${files.length}...`;
-                    const compressed = await compressImage(f); 
-                    const fd = new FormData(); 
-                    fd.append("image", compressed);
+                    const compressed = await compressImage(files[i]);
+                    const fd = new FormData(); fd.append("image", compressed);
                     const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json();
-                    if(d.data && d.data.url) urls.push(d.data.url);
+                    const d = await r.json(); if(d.data?.url) urls.push(d.data.url);
                 }
-                payload.images = urls; 
+                payload.images = urls;
             }
-            if(id) {
-                await db.collection("Cars").doc(id).update(payload);
-                alert("Đã cập nhật xe thành công!");
-            } else {
-                if(!payload.images || payload.images.length === 0) {
-                    if(!confirm("Bạn chưa chọn ảnh nào. Vẫn muốn đăng?")) {
-                        btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; btn.style.opacity = '1';
-                        return;
-                    }
-                }
-                payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); 
-                await db.collection("Cars").add(payload); 
-                alert("Đã Đăng xe mới thành công!");
-            }
-            clearForm();
-            window.scrollTo(0, 0); 
-        } catch(e) { 
-            alert("Lỗi tải lên: " + e.message); 
-        } finally {
-            btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; btn.style.opacity = '1';
-        }
+            if(id) await db.collection("Cars").doc(id).update(payload);
+            else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
+            alert("Thành công!"); clearForm(); window.scrollTo(0, 0);
+        } catch(e) { alert("Lỗi: " + e.message); } finally { btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; }
     }
 
     function editMode(id) {
-        const c = allCars.find(x => x.id === id);
-        if(!c) return;
+        const c = allCars.find(x => x.id === id); if(!c) return;
         document.getElementById('edit-id').value = c.id;
         document.getElementById('ad-name').value = c.name || "";
         document.getElementById('ad-price').value = c.price || "";
@@ -1232,30 +1197,20 @@
         document.getElementById('ad-hot').checked = c.isHot || false;
         document.getElementById('ad-desc').value = c.desc || "";
         document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
-        document.getElementById('ad-files').value = ""; 
         window.scrollTo(0, 0);
     }
 
-    async function deleteCar(id) { 
-        if(confirm("Xác nhận XÓA vĩnh viễn xe này khỏi hệ thống?")) {
-            await db.collection("Cars").doc(id).delete(); 
-            alert("Đã xóa!");
-        }
-    }
+    async function deleteCar(id) { if(confirm("Xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
 
     function clearForm() { 
         document.getElementById('edit-id').value = ""; 
-        document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = ""); 
+        document.querySelectorAll('.admin-view input, .admin-view textarea').forEach(i => i.value = ""); 
         document.getElementById('ad-hot').checked = false;
-        document.getElementById('ad-files').value = "";
         document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
     }
 
     function switchView(v) {
-        if(v === 'admin' && !isLogged) { 
-            document.getElementById('auth-gate').style.display='flex'; 
-            return; 
-        }
+        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
         document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
         document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
         document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
@@ -1266,19 +1221,11 @@
 
     function checkAuth() {
         if(document.getElementById('pin-code').value === "190525") { 
-            isLogged = true; 
-            document.getElementById('auth-gate').style.display='none'; 
-            document.getElementById('pin-code').value = '';
+            isLogged = true; document.getElementById('auth-gate').style.display='none'; 
             switchView('admin');
-        } else {
-            alert("Mã PIN không đúng. Vui lòng thử lại!");
-            document.getElementById('pin-code').value = '';
-        }
+        } else alert("Sai PIN!");
+        document.getElementById('pin-code').value = '';
     }
-
-    document.getElementById('pin-code').addEventListener("keyup", function(event) {
-        if (event.key === "Enter") { event.preventDefault(); checkAuth(); }
-    });
 
     window.onload = initData;
 </script>
