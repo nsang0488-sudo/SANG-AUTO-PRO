@@ -18,18 +18,18 @@
            1. CSS VARIABLES & RESET (DARK MODE)
            ========================================= */
         :root {
-            --primary: #3b82f6; /* Xanh dương hiện đại cho các nút bấm */
-            --accent: #ef4444; /* Đỏ rực */
-            --bg: #0f172a; /* Nền xám cực tối theo yêu cầu */
-            --white: rgba(30, 41, 59, 0.7); /* Màu Slate-800 có độ trong suốt cho hiệu ứng Kính mờ */
-            --border: rgba(255, 255, 255, 0.1); /* Viền mờ */
-            --text-main: #f8fafc; /* Chữ trắng sáng */
-            --text-sub: #94a3b8; /* Chữ xám nhạt */
+            --primary: #3b82f6; 
+            --accent: #ef4444; 
+            --bg: #0f172a; 
+            --white: rgba(30, 41, 59, 0.7); 
+            --border: rgba(255, 255, 255, 0.1); 
+            --text-main: #f8fafc; 
+            --text-sub: #94a3b8; 
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.2);
             --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
-            --radius-md: 16px; /* Bo góc mềm hơn */
-            --radius-lg: 20px; /* Bo góc mềm hơn */
+            --radius-md: 16px; 
+            --radius-lg: 20px; 
         }
 
         * { 
@@ -43,7 +43,6 @@
             overflow-x: hidden; 
             width: 100%;
             font-family: 'Lexend', sans-serif; 
-            /* Gradient nền nhẹ nhàng để làm nổi bật hiệu ứng Glassmorphism */
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
             background-attachment: fixed;
             color: var(--text-main); 
@@ -52,7 +51,6 @@
             scroll-behavior: smooth;
         }
         
-        /* Class dùng chung cho hiệu ứng Glassmorphism */
         .glass-panel {
             background: var(--white);
             backdrop-filter: blur(16px);
@@ -104,7 +102,7 @@
         }
         .search-wrapper input { 
             width: 100%; 
-            padding: 14px 50px 14px 45px; /* Để khoảng trống cho nút reload bên phải */
+            padding: 14px 50px 14px 45px; 
             border-radius: var(--radius-md); 
             border: 1px solid var(--border); 
             background: rgba(15, 23, 42, 0.6);
@@ -207,30 +205,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Nút Theo dõi Xe */
-        .follow-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(15, 23, 42, 0.6);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            transition: all 0.3s;
-        }
-        .follow-btn:hover, .follow-btn:active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
-
-        /* Skeleton Dark Mode */
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
@@ -880,16 +854,30 @@
     }
 
     /* =========================================
-       THÊM LOGIC: THEO DÕI XE NHẬN THÔNG BÁO
+       THÊM LOGIC: THEO DÕI XE NHẬN THÔNG BÁO (BẬT NOTIFICATION)
        ========================================= */
-    function followCar(event, carName) {
-        // Ngăn chặn việc click vào nút chuông làm mở thẻ chi tiết xe
-        event.stopPropagation();
-        alert(`🔔 Đã bật theo dõi!\nBạn sẽ nhận được thông báo ngay khi xe ${carName} có biến động giá hoặc cập nhật mới.`);
+    function subscribePush(carId, carName, event) {
+        if(event) event.stopPropagation();
+        if (!("Notification" in window)) {
+            alert("Trình duyệt của bạn không hỗ trợ nhận thông báo.");
+            return;
+        }
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                localStorage.setItem('follow_' + carId, true);
+                alert(`🔔 Đã bật theo dõi!\nThiết bị sẽ nhận được thông báo khi xe ${carName} có cập nhật.`);
+                new Notification("SANG PRO AUTO", {
+                    body: `Bạn đã bật theo dõi xe ${carName}. Hệ thống sẽ thông báo khi có cập nhật!`,
+                    icon: "https://i.ibb.co/Z6f1Nb9H/image.png"
+                });
+            } else {
+                alert("Bạn đã từ chối nhận thông báo. Vui lòng cấp quyền trong cài đặt trình duyệt để sử dụng tính năng này.");
+            }
+        });
     }
 
     /* =========================================
-       GIỮ NGUYÊN BỘ CODE CŨ 100% (KHÔNG CHỈNH SỬA LOGIC)
+       GIỮ NGUYÊN BỘ CODE CŨ (ĐÃ THÊM LOGIC LẮNG NGHE LENS FIREBASE)
        ========================================= */
     async function compressImage(file) {
         return new Promise((resolve) => {
@@ -917,6 +905,24 @@
 
     function initData() {
         db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
+            
+            // BẮT SỰ KIỆN KHI BẠN CẬP NHẬT XE (ĐỂ PUSH THÔNG BÁO CHO KHÁCH)
+            snap.docChanges().forEach(change => {
+                if (change.type === "modified") {
+                    const carData = change.doc.data();
+                    const carId = change.doc.id;
+                    // Kiểm tra khách có đang theo dõi xe này không
+                    if (localStorage.getItem('follow_' + carId)) {
+                        if (Notification.permission === "granted") {
+                            new Notification("🔔 CẬP NHẬT XE ĐANG THEO DÕI", {
+                                body: `Xe ${carData.name} vừa được cập nhật giá trị hoặc trạng thái. Vào xem ngay!`,
+                                icon: (carData.images && carData.images.length > 0) ? carData.images[0] : "https://i.ibb.co/Z6f1Nb9H/image.png"
+                            });
+                        }
+                    }
+                }
+            });
+
             allCars = [];
             snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
             
@@ -985,12 +991,20 @@
                             : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
             
             let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
+            
+            // XỬ LÝ NHÃN NHẬN CỌC / ĐÃ BÁN
+            let statusOverlay = '';
+            if (c.status === 'deposit') {
+                statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(245, 158, 11, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ NHẬN CỌC</div>';
+            } else if (c.status === 'sold') {
+                statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239, 68, 68, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ BÁN</div>';
+            }
 
             r.innerHTML += `
                 <div class="car-card glass-panel" onclick="openPage('${c.id}')">
-                    <button class="follow-btn" onclick="followCar(event, '${c.name}')" title="Nhận thông báo khi xe này giảm giá"><i class="fa-solid fa-bell"></i></button>
                     ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
                     <div class="img-wrap">
+                        ${statusOverlay}
                         <img src="${thumb}" onerror="this.src='https://via.placeholder.com/400x300?text=Lỗi+Load+Ảnh'" fetchpriority="high" decoding="async">
                     </div>
                     <div class="info-wrap">
@@ -1040,6 +1054,18 @@
                 </div>`;
         }
 
+        // HỘP THEO DÕI XE MỚI Ở TRONG CHI TIẾT
+        const safeName = (c.name || "xe này").replace(/'/g, "\\'");
+        const followBoxHtml = `
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 15px; border-radius: var(--radius-md); margin: 20px 0; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <b style="font-size: 14px; color: var(--text-main);"><i class="fa-solid fa-bell" style="color: var(--primary);"></i> Theo dõi xe này</b>
+                    <p style="font-size: 11px; color: var(--text-sub); margin-top: 4px;">Nhận thông báo khi xe cập nhật trạng thái.</p>
+                </div>
+                <button onclick="subscribePush('${c.id}', '${safeName}', event)" style="background: var(--primary); color: #fff; border: none; padding: 10px 15px; border-radius: var(--radius-md); font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: var(--shadow-sm);">BẬT THÔNG BÁO</button>
+            </div>
+        `;
+
         document.getElementById('detail-render-box').innerHTML = `
             <div class="slider-container" id="slider-touch-area">
                 ${navHtml}
@@ -1057,6 +1083,7 @@
                         <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
                     </div>
                     
+                    ${followBoxHtml}
                     ${bankHtml}
                     
                     <div class="desc-box">
