@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#ffffff">
     <title>SANG PRO AUTO - LUXURY SHOWROOM</title>
     <link rel="apple-touch-icon" href="https://i.ibb.co/Z6f1Nb9H/image.png">
 
@@ -15,19 +15,19 @@
 
     <style>
         /* =========================================
-           1. CSS VARIABLES & RESET (DARK MODE)
+           1. CSS VARIABLES & RESET (PREMIUM LIGHT MODE)
            ========================================= */
         :root {
-            --primary: #3b82f6; 
-            --accent: #ef4444; 
-            --bg: #0f172a; 
-            --white: rgba(30, 41, 59, 0.7); 
-            --border: rgba(255, 255, 255, 0.1); 
-            --text-main: #f8fafc; 
-            --text-sub: #94a3b8; 
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.2);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
+            --primary: #1d4ed8; /* Xanh dương đậm: Tạo sự uy tín, tin cậy */
+            --accent: #ea580c; /* Cam hoàng hôn: Kích thích chốt sale, hành động */
+            --bg: #f8fafc; /* Nền xám bạc cực nhạt, sang trọng */
+            --white: #ffffff; 
+            --border: rgba(0, 0, 0, 0.08); 
+            --text-main: #0f172a; /* Chữ tối màu, độ tương phản cao */
+            --text-sub: #64748b; /* Chữ phụ xám nhạt */
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.1);
             --radius-md: 16px; 
             --radius-lg: 20px; 
         }
@@ -43,7 +43,7 @@
             overflow-x: hidden; 
             width: 100%;
             font-family: 'Lexend', sans-serif; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
             background-attachment: fixed;
             color: var(--text-main); 
             padding-bottom: 90px; 
@@ -52,9 +52,9 @@
         }
         
         .glass-panel {
-            background: var(--white);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             box-shadow: var(--shadow-md);
         }
@@ -63,20 +63,21 @@
            2. HEADER & LAYOUT
            ========================================= */
         header { 
-            background: rgba(15, 23, 42, 0.85); 
+            background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            color: var(--text-main); 
+            color: var(--primary); 
             padding: 16px 0; 
             position: sticky; 
             top: 0; 
             z-index: 1000; 
             border-bottom: 1px solid var(--border);
             width: 100%; 
+            box-shadow: var(--shadow-sm);
         }
         .logo-text { 
             font-size: 20px; 
-            font-weight: 700; 
+            font-weight: 800; 
             letter-spacing: 2px; 
             text-align: center; 
             text-transform: uppercase; 
@@ -104,8 +105,8 @@
             width: 100%; 
             padding: 14px 50px 14px 45px; 
             border-radius: var(--radius-md); 
-            border: 1px solid var(--border); 
-            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #cbd5e1; 
+            background: #f1f5f9;
             color: var(--text-main);
             font-size: 15px; 
             outline: none; 
@@ -115,7 +116,8 @@
         .search-wrapper input::placeholder { color: var(--text-sub); }
         .search-wrapper input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
         }
         .search-wrapper .search-icon { 
             position: absolute; 
@@ -143,8 +145,8 @@
             transition: 0.3s;
         }
         .search-wrapper .reload-btn:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-main);
+            background: rgba(0,0,0,0.05);
+            color: var(--primary);
         }
 
         .grid-filters { 
@@ -155,17 +157,18 @@
         .sel-custom { 
             padding: 12px; 
             border-radius: var(--radius-md); 
-            border: 1px solid var(--border); 
-            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid #cbd5e1; 
+            background: #f1f5f9; 
             color: var(--text-main);
             font-size: 14px; 
             cursor: pointer; 
             width: 100%; 
             font-family: inherit;
             outline: none;
+            transition: 0.3s;
         }
-        .sel-custom option { background: #1e293b; color: #f8fafc; }
-        .sel-custom:focus { border-color: var(--primary); }
+        .sel-custom option { background: #ffffff; color: var(--text-main); }
+        .sel-custom:focus { border-color: var(--primary); background: #ffffff; }
 
         /* =========================================
            4. DANH SÁCH XE (GRID SHOWROOM)
@@ -186,8 +189,10 @@
             position: relative; 
             display: flex; 
             flex-direction: column; 
+            background: #ffffff;
         }
         .car-card:active { transform: scale(0.98); }
+        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
         
         .hot-label { 
             position: absolute; 
@@ -212,7 +217,7 @@
         .img-wrap { 
             width: 100%; 
             aspect-ratio: 4/3; 
-            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             overflow: hidden; 
@@ -234,7 +239,7 @@
         }
         .name-txt { 
             font-size: 14px; 
-            font-weight: 600; 
+            font-weight: 700; 
             color: var(--text-main); 
             margin-bottom: 6px; 
             height: 40px; 
@@ -246,7 +251,7 @@
         }
         .price-txt { 
             font-size: 16px; 
-            font-weight: 700; 
+            font-weight: 800; 
             color: var(--accent); 
             margin-bottom: 10px; 
         }
@@ -254,18 +259,18 @@
             display: flex; 
             flex-wrap: wrap; 
             gap: 6px; 
-            border-top: 1px solid rgba(255,255,255,0.05); 
+            border-top: 1px solid var(--border); 
             padding-top: 10px; 
             margin-top: auto; 
         }
         .tag-item { 
-            background: rgba(15, 23, 42, 0.6); 
+            background: #f1f5f9; 
             padding: 4px 8px; 
             border-radius: 8px; 
             font-size: 11px; 
-            color: var(--text-sub); 
-            font-weight: 500;
-            border: 1px solid var(--border);
+            color: var(--text-main); 
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
         }
 
         /* =========================================
@@ -286,23 +291,24 @@
             position: fixed; 
             top: 15px; right: 15px; 
             z-index: 2100; 
-            background: rgba(0,0,0,0.6); 
-            color: #fff; 
+            background: rgba(255,255,255,0.8); 
+            color: var(--text-main); 
             width: 40px; height: 40px; 
             border-radius: 50%; 
-            border: 1px solid rgba(255,255,255,0.2); 
+            box-shadow: var(--shadow-md);
             font-size: 20px; 
             cursor: pointer; 
             backdrop-filter: blur(5px); 
             display: flex; align-items: center; justify-content: center; 
             transition: 0.3s;
+            border: none;
         }
-        .close-circle:active { transform: scale(0.9); background: rgba(0,0,0,0.8); }
+        .close-circle:active { transform: scale(0.9); background: #fff; }
         
         .slider-container { 
             width: 100%; 
             aspect-ratio: 4/3; 
-            background: #000; 
+            background: #e2e8f0; 
             position: relative; 
             overflow: hidden; 
             touch-action: pan-y; 
@@ -324,15 +330,16 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0,0,0,0.4);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.6);
+            color: var(--text-main);
+            border: none;
             width: 36px; height: 36px;
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer;
             z-index: 10;
             backdrop-filter: blur(4px);
+            box-shadow: var(--shadow-sm);
         }
         .slider-btn.left { left: 10px; }
         .slider-btn.right { right: 10px; }
@@ -351,11 +358,11 @@
             letter-spacing: 1px;
         }
 
-        /* ZOOM VIEW (PHÓNG TO TOÀN MÀN HÌNH) */
+        /* ZOOM VIEW (PHÓNG TO & LƯỚT ẢNH) */
         #zoom-view {
             position: fixed;
             top:0; left:0; width:100%; height:100%;
-            background: #000;
+            background: rgba(0, 0, 0, 0.95);
             z-index: 5000;
             display: none;
             justify-content: center;
@@ -379,6 +386,26 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 24px;
             z-index: 5100;
+            cursor: pointer;
+        }
+        .zoom-nav-btn {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer; z-index: 5100;
+        }
+        .zoom-nav-btn.left { left: 15px; }
+        .zoom-nav-btn.right { right: 15px; }
+        .zoom-counter {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: white; background: rgba(255,255,255,0.2);
+            padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
+            z-index: 5100; letter-spacing: 1px;
         }
 
         .detail-body { 
@@ -403,20 +430,22 @@
             color: var(--accent);
             font-size: 22px;
             margin-bottom: 15px;
+            font-weight: 800;
         }
 
         .feature-grid { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
+            /* Đã chuyển thành 4 cột để chứa thêm Nhiên Liệu */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 10px; 
             margin: 20px 0; 
         }
         .f-item { 
-            background: rgba(15, 23, 42, 0.4); 
-            padding: 12px 6px; 
+            background: #f1f5f9; 
+            padding: 12px 4px; 
             border-radius: var(--radius-md); 
             text-align: center; 
-            border: 1px solid var(--border);
+            border: 1px solid #e2e8f0;
         }
         .f-item span { 
             font-size: 10px; 
@@ -427,20 +456,20 @@
             letter-spacing: 0.5px;
         }
         .f-item b { 
-            font-size: 14px; 
+            font-size: 13px; 
             display: block; 
             color: var(--text-main);
         }
 
         .bank-luxury { 
-            background: rgba(227, 27, 35, 0.05); 
-            border: 1px solid rgba(227, 27, 35, 0.2); 
+            background: rgba(234, 88, 12, 0.05); 
+            border: 1px solid rgba(234, 88, 12, 0.2); 
             padding: 15px; 
             border-radius: var(--radius-md); 
             margin: 20px 0; 
             border-left: 4px solid var(--accent); 
         }
-        .bank-luxury h4 { font-size: 13px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
+        .bank-luxury h4 { font-size: 13px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;}
         .bank-luxury p { font-size: 13px; margin: 4px 0; color: var(--text-sub); display: flex; justify-content: space-between; }
         .bank-luxury p b { color: var(--text-main); }
 
@@ -453,7 +482,7 @@
             white-space: pre-line; 
             font-size: 15px; 
             line-height: 1.7;
-            color: var(--text-sub);
+            color: var(--text-main);
         }
 
         .contact-group { 
@@ -479,14 +508,13 @@
             align-items: center; 
             justify-content: center; 
             gap: 8px; 
-            box-shadow: var(--shadow-md); 
+            box-shadow: var(--shadow-lg); 
             transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
+            border: none;
         }
         .c-btn:active { transform: translateY(2px); }
         .zalo-bg { background: #0068ff; color: #fff; }
-        .call-bg { background: var(--primary); color: #fff; }
+        .call-bg { background: var(--accent); color: #fff; } /* Nút gọi dùng màu cam kích thích */
 
         /* =========================================
            6. CỬA HÀNG / QUẢN LÝ (ADMIN VIEW)
@@ -510,7 +538,7 @@
             height: 60px; 
             object-fit: cover; 
             border-radius: 12px; 
-            background: #1e293b; 
+            background: #e2e8f0; 
         }
         .ad-actions { 
             display: flex; 
@@ -530,9 +558,9 @@
             gap: 4px;
             border: 1px solid transparent;
         }
-        .btn-edit { background: rgba(255,255,255,0.1); color: var(--text-main); border-color: var(--border); }
-        .btn-del { background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
-        .btn-copy { background: rgba(34, 197, 94, 0.2); color: #4ade80; border-color: rgba(34, 197, 94, 0.3); }
+        .btn-edit { background: #f1f5f9; color: var(--text-main); border-color: #cbd5e1; }
+        .btn-del { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-copy { background: rgba(34, 197, 94, 0.1); color: #16a34a; border-color: rgba(34, 197, 94, 0.3); }
 
         /* =========================================
            7. BOTTOM NAVIGATION
@@ -541,13 +569,14 @@
             position: fixed; 
             bottom: 0; left: 0; 
             width: 100%; height: 70px; 
-            background: rgba(15, 23, 42, 0.85); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex; 
             border-top: 1px solid var(--border); 
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom); 
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
         }
         .b-link { 
             flex: 1; 
@@ -570,13 +599,13 @@
             position: fixed; 
             top: 0; left: 0; 
             width: 100%; height: 100%; 
-            background: rgba(15, 23, 42, 0.95); 
+            background: rgba(248, 250, 252, 0.95); 
             z-index: 3000; 
             display: none; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
-            color: #fff; 
+            color: var(--text-main); 
             backdrop-filter: blur(10px);
         }
 
@@ -589,13 +618,13 @@
            8. CÔNG CỤ TÍNH LÃI SUẤT
            ========================================= */
         .calc-toggle-btn {
-            background: var(--primary);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: #ffffff;
+            color: var(--primary);
+            border: 1px solid rgba(29, 78, 216, 0.3);
             padding: 10px 15px;
             border-radius: 30px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             margin: 10px 0;
             display: flex;
@@ -621,15 +650,15 @@
             font-size: 13px;
         }
         .calc-result-table th {
-            background: rgba(15, 23, 42, 0.6);
+            background: #f1f5f9;
             text-align: left;
             padding: 10px;
-            border-bottom: 2px solid var(--border);
-            color: var(--text-sub);
+            border-bottom: 2px solid #cbd5e1;
+            color: var(--text-main);
         }
         .calc-result-table td {
             padding: 10px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #e2e8f0;
             color: var(--text-main);
         }
         .highlight-calc {
@@ -675,10 +704,10 @@
             Mô phỏng lãi suất TPBank (10 năm gần nhất)
         </label>
 
-        <button onclick="calculateLoan()" style="width:100%; background:var(--primary); color:#fff; border:none; padding:14px; border-radius:var(--radius-md); font-weight:700; cursor:pointer;">HOÀN THÀNH & XUẤT KẾT QUẢ</button>
+        <button onclick="calculateLoan()" style="width:100%; background:var(--primary); color:#fff; border:none; padding:14px; border-radius:var(--radius-md); font-weight:700; cursor:pointer; box-shadow: var(--shadow-md);">HOÀN THÀNH & XUẤT KẾT QUẢ</button>
 
-        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 15px;">
-            <div id="loan-summary" style="background:rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 10px; margin-bottom: 15px;"></div>
+        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+            <div id="loan-summary" style="background:#f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0;"></div>
             <table class="calc-result-table">
                 <thead>
                     <tr>
@@ -725,7 +754,8 @@
             <input type="text" id="ad-brand" placeholder="Hãng xe" class="sel-custom">
             <input type="number" id="ad-year" placeholder="Năm sản xuất" class="sel-custom">
             <input type="number" id="ad-odo" placeholder="Số Km đã đi" class="sel-custom">
-            <select id="ad-status" class="sel-custom" style="grid-column: span 2;">
+            <input type="text" id="ad-fuel" placeholder="Tiêu hao (VD: 6.5L)" class="sel-custom">
+            <select id="ad-status" class="sel-custom">
                 <option value="available">Tình trạng: Đang bán</option>
                 <option value="deposit">Tình trạng: Đã nhận cọc</option>
                 <option value="sold">Tình trạng: Đã bán</option>
@@ -737,18 +767,18 @@
             <input type="number" id="ad-banky" placeholder="Thời hạn vay (Năm)" class="sel-custom">
             <input type="number" id="ad-bankmin" placeholder="Trả trước tối thiểu (VNĐ)" class="sel-custom" style="grid-column: span 2;">
         </div>
-        <label style="display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px; margin: 20px 0; padding: 10px; background: rgba(234, 88, 12, 0.1); border-radius: 8px; border: 1px solid rgba(234, 88, 12, 0.3); color: #fed7aa;">
+        <label style="display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px; margin: 20px 0; padding: 10px; background: rgba(234, 88, 12, 0.05); border-radius: 8px; border: 1px solid rgba(234, 88, 12, 0.2); color: var(--accent);">
             <input type="checkbox" id="ad-hot" style="width:20px; height:20px; accent-color: #ea580c;"> ƯU TIÊN HIỂN THỊ XE HOT 🔥
         </label>
         <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
-        <div style="margin-bottom:20px; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 8px; border: 1px dashed var(--border);">
+        <div style="margin-bottom:20px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
             <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">Hình ảnh xe (Chọn nhiều ảnh cùng lúc):</label>
-            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0;">
+            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
             <p style="font-size: 11px; color: var(--text-sub); margin-top: 5px;">* Hệ thống tự động nén ảnh để tiết kiệm dung lượng và tăng tốc độ tải.</p>
         </div>
         <div style="display:flex; gap:15px;">
-            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer;">CẬP NHẬT XE</button>
-            <button onclick="clearForm()" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid var(--border); border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
+            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer; box-shadow: var(--shadow-md);">CẬP NHẬT XE</button>
+            <button onclick="clearForm()" style="flex:1; background:#f8fafc; border:1px solid #cbd5e1; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
         </div>
     </div>
     
@@ -765,6 +795,9 @@
 
 <div id="zoom-view">
     <div class="zoom-close" onclick="closeZoom()"><i class="fa-solid fa-xmark"></i></div>
+    <button class="zoom-nav-btn left" onclick="changeZoomSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="zoom-nav-btn right" onclick="changeZoomSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="zoom-counter" id="zoom-counter-text">1 / 1</div>
     <img id="zoom-img" src="" alt="Zoomed Image">
 </div>
 
@@ -772,8 +805,8 @@
     <div class="glass-panel" style="padding: 30px; border-radius: 24px; text-align: center; width: 90%; max-width: 350px;">
         <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
         <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px; color: var(--text-main);">MÃ PIN TRUY CẬP</h3>
-        <input type="password" id="pin-code" style="background:rgba(15, 23, 42, 0.6); border:1px solid var(--border); border-radius: 12px; color:var(--text-main); font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="6" inputmode="numeric">
-        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:12px; font-weight:700; font-size: 16px;">XÁC NHẬN ĐĂNG NHẬP</button>
+        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 12px; color:var(--text-main); font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="6" inputmode="numeric">
+        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:12px; font-weight:700; font-size: 16px; box-shadow: var(--shadow-md);">XÁC NHẬN ĐĂNG NHẬP</button>
     </div>
 </div>
 
@@ -787,7 +820,7 @@
 </nav>
 
 <script>
-    /* CẤU HÌNH FIREBASE & IMGBB */
+    /* CẤU HÌNH FIREBASE & IMGBB (GIỮ NGUYÊN) */
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -814,7 +847,7 @@
     const ZALO_LINK = "https://zalo.me/0946327164"; 
 
     /* =========================================
-       LOGIC TÍNH TOÁN LÃI SUẤT
+       LOGIC TÍNH TOÁN LÃI SUẤT (GIỮ NGUYÊN)
        ========================================= */
     function toggleCalc() {
         const sec = document.getElementById('calc-section');
@@ -885,20 +918,40 @@
     }
 
     /* =========================================
-       LOGIC PHÓNG TO ẢNH & THU PHÓNG (ZOOM)
+       NÂNG CẤP LOGIC PHÓNG TO ẢNH & LƯỚT
        ========================================= */
     let zoomScale = 1;
     let zoomStartDist = 0;
     let isZooming = false;
+    
+    let activeZoomImgs = [];
+    let currentZoomIndex = 0;
 
-    function openZoom(src) {
+    function openZoom(index) {
+        currentZoomIndex = index;
         const zv = document.getElementById('zoom-view');
         const zi = document.getElementById('zoom-img');
-        zi.src = src;
+        
+        zi.src = activeZoomImgs[currentZoomIndex];
+        document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`;
+        
         zv.style.display = 'flex';
         zoomScale = 1;
         zi.style.transform = `scale(${zoomScale})`;
         document.body.style.overflow = 'hidden';
+    }
+
+    function changeZoomSlide(direction, event) {
+        if(event) event.stopPropagation();
+        currentZoomIndex += direction;
+        if(currentZoomIndex >= activeZoomImgs.length) currentZoomIndex = 0;
+        if(currentZoomIndex < 0) currentZoomIndex = activeZoomImgs.length - 1;
+        
+        const zi = document.getElementById('zoom-img');
+        zi.src = activeZoomImgs[currentZoomIndex];
+        zoomScale = 1;
+        zi.style.transform = `scale(${zoomScale})`;
+        document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`;
     }
 
     function closeZoom() {
@@ -906,13 +959,19 @@
         if(document.getElementById('detail-overlay').style.display !== 'block') {
             document.body.style.overflow = 'auto';
         }
+        // Đồng bộ lại ảnh ở nền bên dưới khi thoát Zoom
+        currentSlideIndex = currentZoomIndex;
+        updateSliderDOM();
     }
 
-    // Xử lý thu phóng bằng cảm ứng
     const zoomImg = document.getElementById('zoom-img');
     const zoomView = document.getElementById('zoom-view');
+    let zoomTouchStartX = 0;
 
     zoomView.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) {
+            zoomTouchStartX = e.touches[0].screenX;
+        }
         if (e.touches.length === 2) {
             isZooming = true;
             zoomStartDist = Math.hypot(
@@ -938,16 +997,16 @@
 
     zoomView.addEventListener('touchend', e => {
         if (isZooming) {
-            const lastDist = Math.hypot(
-                e.changedTouches[0].pageX - (e.touches[0] ? e.touches[0].pageX : 0),
-                e.changedTouches[0].pageY - (e.touches[0] ? e.touches[0].pageY : 0)
-            );
             zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1;
             isZooming = false;
+        } else if (e.changedTouches.length === 1 && zoomScale <= 1.1) {
+            // Cho phép lướt ảnh khi chưa phóng to quá mức
+            let zoomTouchEndX = e.changedTouches[0].screenX;
+            if (zoomTouchEndX < zoomTouchStartX - 50) changeZoomSlide(1, null);
+            if (zoomTouchEndX > zoomTouchStartX + 50) changeZoomSlide(-1, null);
         }
     });
 
-    // Zoom bằng cuộn chuột (cho PC)
     zoomView.addEventListener('wheel', e => {
         e.preventDefault();
         zoomScale += e.deltaY * -0.001;
@@ -1034,6 +1093,8 @@
             let statusOverlay = '';
             if (c.status === 'deposit') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(245, 158, 11, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ NHẬN CỌC</div>';
             else if (c.status === 'sold') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239, 68, 68, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ BÁN</div>';
+            
+            // Cập nhật thẻ Fuel vào Showroom List
             r.innerHTML += `
                 <div class="car-card glass-panel" onclick="openPage('${c.id}')">
                     ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
@@ -1044,6 +1105,7 @@
                         <div class="spec-tags">
                             <div class="tag-item"><i class="fa-regular fa-calendar"></i> ${c.year || '--'}</div>
                             <div class="tag-item"><i class="fa-solid fa-gauge-high"></i> ${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
+                            <div class="tag-item"><i class="fa-solid fa-gas-pump"></i> ${c.fuel || '--'}</div>
                         </div>
                     </div>
                 </div>`;
@@ -1054,14 +1116,21 @@
         const c = allCars.find(x => x.id === id);
         if(!c) return;
         const imgs = (c.images && c.images.length > 0) ? c.images : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        
+        // Truyền mảng ảnh vào trình lướt ảnh Zoom
+        activeZoomImgs = imgs;
         totalSlides = imgs.length; currentSlideIndex = 0; 
+
+        // Gắn sự kiện openZoom theo index thay vì url cố định
         let slideHtml = imgs.map((img, idx) => `
-            <img src="${img}" class="slide-img" onclick="openZoom('${img}')">
+            <img src="${img}" class="slide-img" onclick="openZoom(${idx})">
         `).join('');
+        
         let navHtml = (totalSlides > 1) ? `
             <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
             <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
             <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : '';
+            
         let bankHtml = (c.bankP || c.bankmin) ? `
             <div class="bank-luxury">
                 <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
@@ -1070,6 +1139,7 @@
                 ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
             </div>` : '';
 
+        // Cập nhật lưới Grid Feature thành 4 cột để chứa Tiêu hao Nhiên Liệu
         document.getElementById('detail-render-box').innerHTML = `
             <div class="slider-container" id="slider-touch-area">${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
@@ -1079,6 +1149,7 @@
                     <div class="feature-grid">
                         <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
                         <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
+                        <div class="f-item"><span>Nhiên Liệu</span><b>${c.fuel || '--'}</b></div>
                         <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
                     </div>
                     ${bankHtml}
@@ -1129,7 +1200,7 @@
         if(allCars.length === 0) { r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`; return; }
         allCars.forEach(c => {
             const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
-            let statusBadge = (c.status === 'deposit') ? '<span style="color:#fbbf24; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
+            let statusBadge = (c.status === 'deposit') ? '<span style="color:#f59e0b; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
             r.innerHTML += `
                 <div class="admin-item glass-panel">
                     <img src="${thumb}" class="ad-thumb">
@@ -1157,10 +1228,13 @@
         const files = document.getElementById('ad-files').files;
         if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
         btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
+        
+        // Bổ sung lấy giá trị ad-fuel
         const payload = {
             name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
             brand: document.getElementById('ad-brand').value, year: document.getElementById('ad-year').value,
-            odo: document.getElementById('ad-odo').value, status: document.getElementById('ad-status').value,
+            odo: document.getElementById('ad-odo').value, fuel: document.getElementById('ad-fuel').value, 
+            status: document.getElementById('ad-status').value,
             bankP: document.getElementById('ad-bankp').value, bankY: document.getElementById('ad-banky').value,
             bankMin: document.getElementById('ad-bankmin').value, isHot: document.getElementById('ad-hot').checked,
             desc: document.getElementById('ad-desc').value, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1190,6 +1264,7 @@
         document.getElementById('ad-brand').value = c.brand || "";
         document.getElementById('ad-year').value = c.year || "";
         document.getElementById('ad-odo').value = c.odo || "";
+        document.getElementById('ad-fuel').value = c.fuel || ""; // Gắn lại giá trị nhiên liệu
         document.getElementById('ad-status').value = c.status || "available";
         document.getElementById('ad-bankp').value = c.bankP || "";
         document.getElementById('ad-banky').value = c.bankY || "";
