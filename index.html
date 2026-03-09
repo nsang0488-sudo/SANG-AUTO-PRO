@@ -559,7 +559,6 @@
         }
         .btn-edit { background: #f1f5f9; color: var(--text-main); border-color: #cbd5e1; }
         .btn-del { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
-        .btn-copy { background: rgba(34, 197, 94, 0.1); color: #16a34a; border-color: rgba(34, 197, 94, 0.3); }
 
         /* =========================================
            7. BOTTOM NAVIGATION
@@ -770,11 +769,18 @@
             <input type="checkbox" id="ad-hot" style="width:20px; height:20px; accent-color: #ea580c;"> ƯU TIÊN HIỂN THỊ XE HOT 🔥
         </label>
         <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
-        <div style="margin-bottom:20px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">Hình ảnh xe (Chọn nhiều ảnh cùng lúc):</label>
+        
+        <div style="margin-bottom:15px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">1. Ảnh hiển thị Công Khai (Tất cả mọi người đều thấy):</label>
             <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
-            <p style="font-size: 11px; color: var(--text-sub); margin-top: 5px;">* Hệ thống tự động nén ảnh để tiết kiệm dung lượng và tăng tốc độ tải.</p>
         </div>
+
+        <div style="margin-bottom:20px; background: rgba(234, 88, 12, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent);">
+            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px; color: var(--accent);"><i class="fa-solid fa-lock"></i> 2. Ảnh Bảo Mật (Chỉ khách gửi link định danh riêng mới thấy):</label>
+            <p style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;">Dùng up Sổ đăng kiểm, Giấy tờ, Góc lỗi... Khách vào bằng Link Đăng Bài/Showroom sẽ KHÔNG THẤY.</p>
+            <input type="file" id="ad-private-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+        </div>
+
         <div style="display:flex; gap:15px;">
             <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer; box-shadow: var(--shadow-md);">CẬP NHẬT XE</button>
             <button onclick="clearForm()" style="flex:1; background:#f8fafc; border:1px solid #cbd5e1; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
@@ -785,10 +791,24 @@
         <h3 style="font-size: 16px;">QUẢN LÝ KHO XE</h3>
     </div>
     <div id="admin-render"></div>
+
+    <div style="margin-top: 30px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 16px;"><i class="fa-solid fa-chart-line"></i> NHẬT KÝ KHÁCH XEM XE</h3>
+        <button onclick="loadTracking()" style="background:transparent; border:none; color:var(--primary); font-weight:bold; cursor:pointer; font-size: 13px;"><i class="fa-solid fa-rotate"></i> Cập nhật ngay</button>
+    </div>
+    <div id="tracking-render" style="max-height: 300px; overflow-y: auto; background: #fff; border-radius: 12px; padding: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 30px;">
+        <div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>
+    </div>
+
 </div>
 
 <div id="detail-overlay" class="full-page">
     <button class="close-circle" onclick="closePage()"><i class="fa-solid fa-xmark"></i></button>
+    
+    <div id="private-badge" style="display: none; background: #ea580c; color: white; text-align: center; padding: 6px; font-size: 11px; font-weight: bold; position: fixed; top: 0; width: 100%; z-index: 2050;">
+        <i class="fa-solid fa-shield-check"></i> ĐANG HIỂN THỊ CHẾ ĐỘ ẢNH CHI TIẾT DÀNH RIÊNG CHO BẠN
+    </div>
+
     <div id="detail-render-box"></div>
 </div>
 
@@ -822,40 +842,13 @@
     /* =========================================
        [LỚP BẢO VỆ CHỐNG XEM CODE - ĐƯỢC THÊM MỚI]
        ========================================= */
-    // 1. Chặn click chuột phải
     document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // 2. Chặn các phím tắt phổ biến để xem code (F12, Ctrl+U, Ctrl+Shift+I, v.v...)
     document.onkeydown = function(e) {
-        if (e.keyCode === 123 || // F12
-            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
-            (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
-            e.preventDefault();
-            return false;
-        }
+        if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) { e.preventDefault(); return false; }
     };
-
-    // 3. Vòng lặp tự vệ: Nếu họ vượt qua phím tắt, trình duyệt sẽ bị "đơ" liên tục
-    (function(){
-        (function a(){
-            try {
-                (function b(i){
-                    if((''+(i/i)).length !== 1 || i % 20 === 0) {
-                        (function(){}).constructor('debugger')();
-                    } else {
-                        debugger;
-                    }
-                    b(++i);
-                })(0);
-            } catch(e) {
-                setTimeout(a, 5000);
-            }
-        })();
-    })();
+    (function(){ (function a(){ try { (function b(i){ if((''+(i/i)).length !== 1 || i % 20 === 0) { (function(){}).constructor('debugger')(); } else { debugger; } b(++i); })(0); } catch(e) { setTimeout(a, 5000); } })(); })();
     /* ========================================= */
 
-
-    /* CẤU HÌNH FIREBASE & IMGBB (GIỮ NGUYÊN) */
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -881,191 +874,52 @@
     const PHONE_NUMBER = "0946327164"; 
     const ZALO_LINK = "https://zalo.me/0946327164"; 
 
-    /* =========================================
-       LOGIC TÍNH TOÁN LÃI SUẤT (GIỮ NGUYÊN)
-       ========================================= */
-    function toggleCalc() {
-        const sec = document.getElementById('calc-section');
-        sec.style.display = (sec.style.display === 'block') ? 'none' : 'block';
-    }
-
+    /* Tính lãi suất */
+    function toggleCalc() { const sec = document.getElementById('calc-section'); sec.style.display = (sec.style.display === 'block') ? 'none' : 'block'; }
     function calculateLoan() {
         const price = Number(document.getElementById('loan-price').value) || 0;
         const pct = Number(document.getElementById('loan-pct').value) || 0;
         const years = Number(document.getElementById('loan-years').value) || 0;
         let rateInput = Number(document.getElementById('loan-rate').value) || 0;
         const isSimTP = document.getElementById('tpbank-sim').checked;
-
-        if (price === 0 || pct === 0 || years === 0) {
-            alert("Vui lòng nhập đầy đủ Giá xe, % Vay và Thời hạn!");
-            return;
-        }
-
-        const loanAmount = price * (pct / 100);
-        const prepayment = price - loanAmount;
-        const totalMonths = years * 12;
-        const monthlyPrincipal = loanAmount / totalMonths;
-
+        if (price === 0 || pct === 0 || years === 0) { alert("Vui lòng nhập đầy đủ Giá xe, % Vay và Thời hạn!"); return; }
+        const loanAmount = price * (pct / 100); const prepayment = price - loanAmount; const totalMonths = years * 12; const monthlyPrincipal = loanAmount / totalMonths;
         const tpRates = [8.5, 9.0, 10.0, 10.5, 8.0, 7.5, 12.0, 13.5, 10.5, 10.0];
-
-        let tableBody = "";
-        let currentBalance = loanAmount;
-        let grandTotalInterest = 0;
-
+        let tableBody = ""; let currentBalance = loanAmount; let grandTotalInterest = 0;
         for (let y = 1; y <= years; y++) {
-            let yearTotalPayments = [];
-            let annualRate = (isSimTP && y <= tpRates.length) ? tpRates[y-1] : rateInput;
-
+            let yearTotalPayments = []; let annualRate = (isSimTP && y <= tpRates.length) ? tpRates[y-1] : rateInput;
             for (let m = 1; m <= 12; m++) {
-                let monthlyInterest = (currentBalance * (annualRate / 100)) / 12;
-                let totalMonthly = monthlyPrincipal + monthlyInterest;
-                yearTotalPayments.push(totalMonthly);
-                currentBalance -= monthlyPrincipal;
-                grandTotalInterest += monthlyInterest;
+                let monthlyInterest = (currentBalance * (annualRate / 100)) / 12; let totalMonthly = monthlyPrincipal + monthlyInterest;
+                yearTotalPayments.push(totalMonthly); currentBalance -= monthlyPrincipal; grandTotalInterest += monthlyInterest;
             }
-
-            const maxMonth = Math.max(...yearTotalPayments);
-            const minMonth = Math.min(...yearTotalPayments);
-            const avgMonth = yearTotalPayments.reduce((a,b) => a+b, 0) / 12;
-
-            tableBody += `
-                <tr>
-                    <td><b>Năm ${y}</b> <small style="display:block; color:var(--accent)">Lãi suất: ${annualRate}%</small></td>
-                    <td><b class="highlight-calc">${formatCurrency(avgMonth)}</b></td>
-                    <td>${formatCurrency(maxMonth)}</td>
-                    <td>${formatCurrency(minMonth)}</td>
-                </tr>
-            `;
+            tableBody += `<tr><td><b>Năm ${y}</b> <small style="display:block; color:var(--accent)">Lãi suất: ${annualRate}%</small></td><td><b class="highlight-calc">${formatCurrency(yearTotalPayments.reduce((a,b) => a+b, 0) / 12)}</b></td><td>${formatCurrency(Math.max(...yearTotalPayments))}</td><td>${formatCurrency(Math.min(...yearTotalPayments))}</td></tr>`;
         }
-
-        document.getElementById('loan-summary').innerHTML = `
-            <p style="font-size:13px; color: var(--text-main);">Trả trước (tự có): <b>${formatCurrency(prepayment)}</b></p>
-            <p style="font-size:13px; color: var(--text-main);">Số tiền ngân hàng cho vay: <b>${formatCurrency(loanAmount)}</b></p>
-            <p style="font-size:13px; color: var(--text-main);">Thời hạn: <b>${years} Năm (${totalMonths} tháng)</b></p>
-            <p style="font-size:13px; color:var(--accent)">Tổng tiền lãi phải trả: <b>${formatCurrency(grandTotalInterest)}</b></p>
-        `;
-        document.getElementById('loan-table-body').innerHTML = tableBody;
-        document.getElementById('loan-result-box').style.display = 'block';
+        document.getElementById('loan-summary').innerHTML = `<p style="font-size:13px; color: var(--text-main);">Trả trước (tự có): <b>${formatCurrency(prepayment)}</b></p><p style="font-size:13px; color: var(--text-main);">Số tiền ngân hàng cho vay: <b>${formatCurrency(loanAmount)}</b></p><p style="font-size:13px; color: var(--text-main);">Thời hạn: <b>${years} Năm (${totalMonths} tháng)</b></p><p style="font-size:13px; color:var(--accent)">Tổng tiền lãi phải trả: <b>${formatCurrency(grandTotalInterest)}</b></p>`;
+        document.getElementById('loan-table-body').innerHTML = tableBody; document.getElementById('loan-result-box').style.display = 'block';
     }
+    function formatCurrency(num) { return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ'; }
 
-    function formatCurrency(num) {
-        return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ';
-    }
-
-    /* =========================================
-       NÂNG CẤP LOGIC PHÓNG TO ẢNH & LƯỚT
-       ========================================= */
-    let zoomScale = 1;
-    let zoomStartDist = 0;
-    let isZooming = false;
-    
-    let activeZoomImgs = [];
-    let currentZoomIndex = 0;
-
-    function openZoom(index) {
-        currentZoomIndex = index;
-        const zv = document.getElementById('zoom-view');
-        const zi = document.getElementById('zoom-img');
-        
-        zi.src = activeZoomImgs[currentZoomIndex];
-        document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`;
-        
-        zv.style.display = 'flex';
-        zoomScale = 1;
-        zi.style.transform = `scale(${zoomScale})`;
-        document.body.style.overflow = 'hidden';
-    }
-
-    function changeZoomSlide(direction, event) {
-        if(event) event.stopPropagation();
-        currentZoomIndex += direction;
-        if(currentZoomIndex >= activeZoomImgs.length) currentZoomIndex = 0;
-        if(currentZoomIndex < 0) currentZoomIndex = activeZoomImgs.length - 1;
-        
-        const zi = document.getElementById('zoom-img');
-        zi.src = activeZoomImgs[currentZoomIndex];
-        zoomScale = 1;
-        zi.style.transform = `scale(${zoomScale})`;
-        document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`;
-    }
-
-    function closeZoom() {
-        document.getElementById('zoom-view').style.display = 'none';
-        if(document.getElementById('detail-overlay').style.display !== 'block') {
-            document.body.style.overflow = 'auto';
-        }
-        currentSlideIndex = currentZoomIndex;
-        updateSliderDOM();
-    }
-
-    const zoomImg = document.getElementById('zoom-img');
-    const zoomView = document.getElementById('zoom-view');
-    let zoomTouchStartX = 0;
-
-    zoomView.addEventListener('touchstart', e => {
-        if (e.touches.length === 1) {
-            zoomTouchStartX = e.touches[0].screenX;
-        }
-        if (e.touches.length === 2) {
-            isZooming = true;
-            zoomStartDist = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-        }
-    });
-
-    zoomView.addEventListener('touchmove', e => {
-        if (isZooming && e.touches.length === 2) {
-            const dist = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-            let delta = dist / zoomStartDist;
-            let newScale = zoomScale * delta;
-            if (newScale < 1) newScale = 1;
-            if (newScale > 4) newScale = 4;
-            zoomImg.style.transform = `scale(${newScale})`;
-        }
-    });
-
-    zoomView.addEventListener('touchend', e => {
-        if (isZooming) {
-            zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1;
-            isZooming = false;
-        } else if (e.changedTouches.length === 1 && zoomScale <= 1.1) {
-            let zoomTouchEndX = e.changedTouches[0].screenX;
-            if (zoomTouchEndX < zoomTouchStartX - 50) changeZoomSlide(1, null);
-            if (zoomTouchEndX > zoomTouchStartX + 50) changeZoomSlide(-1, null);
-        }
-    });
-
-    zoomView.addEventListener('wheel', e => {
-        e.preventDefault();
-        zoomScale += e.deltaY * -0.001;
-        zoomScale = Math.min(Math.max(1, zoomScale), 4);
-        zoomImg.style.transform = `scale(${zoomScale})`;
-    }, { passive: false });
+    /* Zoom ảnh */
+    let zoomScale = 1; let zoomStartDist = 0; let isZooming = false; let activeZoomImgs = []; let currentZoomIndex = 0;
+    function openZoom(index) { currentZoomIndex = index; const zv = document.getElementById('zoom-view'); const zi = document.getElementById('zoom-img'); zi.src = activeZoomImgs[currentZoomIndex]; document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`; zv.style.display = 'flex'; zoomScale = 1; zi.style.transform = `scale(${zoomScale})`; document.body.style.overflow = 'hidden'; }
+    function changeZoomSlide(direction, event) { if(event) event.stopPropagation(); currentZoomIndex += direction; if(currentZoomIndex >= activeZoomImgs.length) currentZoomIndex = 0; if(currentZoomIndex < 0) currentZoomIndex = activeZoomImgs.length - 1; const zi = document.getElementById('zoom-img'); zi.src = activeZoomImgs[currentZoomIndex]; zoomScale = 1; zi.style.transform = `scale(${zoomScale})`; document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`; }
+    function closeZoom() { document.getElementById('zoom-view').style.display = 'none'; if(document.getElementById('detail-overlay').style.display !== 'block') { document.body.style.overflow = 'auto'; } currentSlideIndex = currentZoomIndex; updateSliderDOM(); }
+    const zoomImg = document.getElementById('zoom-img'); const zoomView = document.getElementById('zoom-view'); let zoomTouchStartX = 0;
+    zoomView.addEventListener('touchstart', e => { if (e.touches.length === 1) { zoomTouchStartX = e.touches[0].screenX; } if (e.touches.length === 2) { isZooming = true; zoomStartDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); } });
+    zoomView.addEventListener('touchmove', e => { if (isZooming && e.touches.length === 2) { const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); let delta = dist / zoomStartDist; let newScale = zoomScale * delta; if (newScale < 1) newScale = 1; if (newScale > 4) newScale = 4; zoomImg.style.transform = `scale(${newScale})`; } });
+    zoomView.addEventListener('touchend', e => { if (isZooming) { zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1; isZooming = false; } else if (e.changedTouches.length === 1 && zoomScale <= 1.1) { let zoomTouchEndX = e.changedTouches[0].screenX; if (zoomTouchEndX < zoomTouchStartX - 50) changeZoomSlide(1, null); if (zoomTouchEndX > zoomTouchStartX + 50) changeZoomSlide(-1, null); } });
+    zoomView.addEventListener('wheel', e => { e.preventDefault(); zoomScale += e.deltaY * -0.001; zoomScale = Math.min(Math.max(1, zoomScale), 4); zoomImg.style.transform = `scale(${zoomScale})`; }, { passive: false });
 
 
-    /* =========================================
-       LOGIC FIREBASE & HIỂN THỊ
-       ========================================= */
     async function compressImage(file) {
         return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+            const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
+                const img = new Image(); img.src = e.target.result;
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height, max = 1200; 
-                    if(w > h) { if(w > max) { h *= max/w; w = max; } }
-                    else { if(h > max) { w *= max/h; h = max; } }
-                    canvas.width = w; canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
+                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height, max = 1200; 
+                    if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } }
+                    canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
                     canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
                 };
             };
@@ -1074,15 +928,28 @@
 
     function initData() {
         db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
-            allCars = [];
-            snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            populateFilters();
-            processFilter();
-            if(document.getElementById('admin-tab').style.display === 'block') renderAdmin();
+            allCars = []; snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
+            populateFilters(); processFilter();
+            if(document.getElementById('admin-tab').style.display === 'block') { renderAdmin(); loadTracking(); }
+            
             if (!initialLoadDone) {
                 initialLoadDone = true;
                 const urlParams = new URLSearchParams(window.location.search);
                 const qId = urlParams.get('id');
+                const khach = urlParams.get('khach');
+                
+                // --- LOGIC TRACKING (Ghi nhận lượt xem) ---
+                if (qId && khach) {
+                    const trackingRef = db.collection("Tracking").doc(`${khach}_${qId}`);
+                    trackingRef.set({
+                        carID: qId,
+                        customerName: khach,
+                        views: firebase.firestore.FieldValue.increment(1),
+                        lastView: firebase.firestore.FieldValue.serverTimestamp(),
+                        type: khach === "Link_Dang_Bai" ? "Public" : "Private"
+                    }, { merge: true });
+                }
+
                 if(qId) setTimeout(() => openPage(qId), 500);
             }
         });
@@ -1091,35 +958,21 @@
     function populateFilters() {
         const bSet = [...new Set(allCars.map(c => c.brand).filter(Boolean))].sort();
         const ySet = [...new Set(allCars.map(c => c.year).filter(Boolean))].sort((a,b)=>b-a);
-        const bSel = document.getElementById('f-brand');
-        const ySel = document.getElementById('f-year');
-        bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>';
-        bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-        ySel.innerHTML = '<option value="">Năm Sản Xuất</option>';
-        ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
+        const bSel = document.getElementById('f-brand'); const ySel = document.getElementById('f-year');
+        bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>'; bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
+        ySel.innerHTML = '<option value="">Năm Sản Xuất</option>'; ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
     }
 
     function processFilter() {
-        const kw = document.getElementById('sr-search').value.toLowerCase();
-        const br = document.getElementById('f-brand').value;
-        const ye = document.getElementById('f-year').value;
-        const pr = document.getElementById('f-price').value;
+        const kw = document.getElementById('sr-search').value.toLowerCase(); const br = document.getElementById('f-brand').value; const ye = document.getElementById('f-year').value; const pr = document.getElementById('f-price').value;
         const filtered = allCars.filter(c => {
-            const mKw = c.name && c.name.toLowerCase().includes(kw);
-            const mBr = !br || c.brand === br;
-            const mYe = !ye || String(c.year) === String(ye);
-            let mPr = true;
-            if(pr === '0-500') mPr = c.price < 500000000;
-            if(pr === '500-1000') mPr = c.price >= 500000000 && c.price <= 1000000000;
-            if(pr === '1000-9999') mPr = c.price > 1000000000;
+            const mKw = c.name && c.name.toLowerCase().includes(kw); const mBr = !br || c.brand === br; const mYe = !ye || String(c.year) === String(ye);
+            let mPr = true; if(pr === '0-500') mPr = c.price < 500000000; if(pr === '500-1000') mPr = c.price >= 500000000 && c.price <= 1000000000; if(pr === '1000-9999') mPr = c.price > 1000000000;
             return mKw && mBr && mYe && mPr;
         });
         filtered.sort((a, b) => (b.isHot === true) - (a.isHot === true));
         const r = document.getElementById('showroom-render'); r.innerHTML = "";
-        if(filtered.length === 0) {
-            r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`;
-            return;
-        }
+        if(filtered.length === 0) { r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`; return; }
         filtered.forEach(c => {
             const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
             let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
@@ -1145,32 +998,32 @@
     }
 
     function openPage(id) {
-        const c = allCars.find(x => x.id === id);
-        if(!c) return;
-        const imgs = (c.images && c.images.length > 0) ? c.images : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        const c = allCars.find(x => x.id === id); if(!c) return;
         
-        activeZoomImgs = imgs;
-        totalSlides = imgs.length; currentSlideIndex = 0; 
+        const urlParams = new URLSearchParams(window.location.search);
+        const khach = urlParams.get('khach');
+        
+        // --- LOGIC GỘP ẢNH DÀNH RIÊNG CHO KHÁCH ---
+        let imgs = (c.images && c.images.length > 0) ? [...c.images] : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
+        
+        // Nếu có tham số khach VÀ không phải là Link Đăng Bài -> Gộp thêm ảnh Private
+        if (khach && khach !== "Link_Dang_Bai") {
+            if (c.privateImages && c.privateImages.length > 0) {
+                imgs = imgs.concat(c.privateImages);
+                document.getElementById('private-badge').style.display = 'block'; // Hiện thông báo cho khách thấy mình VIP
+            }
+        } else {
+            document.getElementById('private-badge').style.display = 'none';
+        }
+        
+        activeZoomImgs = imgs; totalSlides = imgs.length; currentSlideIndex = 0; 
 
-        let slideHtml = imgs.map((img, idx) => `
-            <img src="${img}" class="slide-img" onclick="openZoom(${idx})">
-        `).join('');
-        
-        let navHtml = (totalSlides > 1) ? `
-            <button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
-            <div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : '';
-            
-        let bankHtml = (c.bankP || c.bankmin) ? `
-            <div class="bank-luxury">
-                <h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>
-                ${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}
-                ${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}
-                ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
-            </div>` : '';
+        let slideHtml = imgs.map((img, idx) => `<img src="${img}" class="slide-img" onclick="openZoom(${idx})">`).join('');
+        let navHtml = (totalSlides > 1) ? `<button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button><button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button><div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : '';
+        let bankHtml = (c.bankP || c.bankmin) ? `<div class="bank-luxury"><h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}</div>` : '';
 
         document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container" id="slider-touch-area">${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
+            <div class="slider-container" id="slider-touch-area" ${khach && khach !== "Link_Dang_Bai" ? 'style="margin-top: 25px;"' : ''}>${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
                 <div class="main-info-card glass-panel">
                     <h2>${c.name}</h2>
@@ -1192,37 +1045,15 @@
                 <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg"><i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp</a>
                 <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo</a>
             </div>`;
-        document.getElementById('detail-overlay').style.display = 'block';
-        document.body.style.overflow = 'hidden'; 
+        document.getElementById('detail-overlay').style.display = 'block'; document.body.style.overflow = 'hidden'; 
         const touchArea = document.getElementById('slider-touch-area');
-        if(touchArea) {
-            touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
-            touchArea.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
-        }
+        if(touchArea) { touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }); touchArea.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); }); }
     }
 
     function closePage() { document.getElementById('detail-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
-
-    function changeSlide(direction, event) {
-        if(event) event.stopPropagation(); 
-        currentSlideIndex += direction;
-        if (currentSlideIndex >= totalSlides) currentSlideIndex = 0;
-        if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1;
-        updateSliderDOM();
-    }
-
-    function handleSwipe() {
-        const threshold = 50; 
-        if (touchEndX < touchStartX - threshold) changeSlide(1); 
-        if (touchEndX > touchStartX + threshold) changeSlide(-1); 
-    }
-
-    function updateSliderDOM() {
-        const track = document.getElementById('track-box');
-        if (track) track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
-        const counter = document.getElementById('slide-counter');
-        if (counter) counter.innerText = `${currentSlideIndex + 1} / ${totalSlides}`;
-    }
+    function changeSlide(direction, event) { if(event) event.stopPropagation(); currentSlideIndex += direction; if (currentSlideIndex >= totalSlides) currentSlideIndex = 0; if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1; updateSliderDOM(); }
+    function handleSwipe() { const threshold = 50; if (touchEndX < touchStartX - threshold) changeSlide(1); if (touchEndX > touchStartX + threshold) changeSlide(-1); }
+    function updateSliderDOM() { const track = document.getElementById('track-box'); if (track) track.style.transform = `translateX(-${currentSlideIndex * 100}%)`; const counter = document.getElementById('slide-counter'); if (counter) counter.innerText = `${currentSlideIndex + 1} / ${totalSlides}`; }
 
     function renderAdmin() {
         const r = document.getElementById('admin-render'); r.innerHTML = "";
@@ -1230,6 +1061,8 @@
         allCars.forEach(c => {
             const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
             let statusBadge = (c.status === 'deposit') ? '<span style="color:#f59e0b; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
+            
+            // --- NÚT CHIA 2 LOẠI LINK ĐƯỢC CẬP NHẬT ---
             r.innerHTML += `
                 <div class="admin-item glass-panel">
                     <img src="${thumb}" class="ad-thumb">
@@ -1237,26 +1070,71 @@
                         <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
                         <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
                         <div class="ad-actions">
-                            <button class="ad-btn btn-copy" onclick="copyShareLink('${c.id}')"><i class="fa-solid fa-link"></i> Link</button>
-                            <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i> Sửa</button>
-                            <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i> Xóa</button>
+                            <button class="ad-btn" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd" onclick="copyPublicLink('${c.id}')"><i class="fa-solid fa-earth-asia"></i> Link Đăng Bài</button>
+                            <button class="ad-btn" style="background:#fce7f3; color:#db2777; border-color:#fbcfe8" onclick="copyPrivateLink('${c.id}')"><i class="fa-solid fa-user-lock"></i> Link Gửi Khách</button>
+                            <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 </div>`;
         });
     }
 
-    function copyShareLink(id) {
-        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
-        navigator.clipboard.writeText(shareUrl).then(() => alert("Đã Copy Link!")).catch(() => prompt("Copy link:", shareUrl));
+    // --- CÁC HÀM TẠO LINK MỚI ---
+    function copyPublicLink(id) {
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=Link_Dang_Bai`;
+        navigator.clipboard.writeText(shareUrl).then(() => alert("Đã copy [Link Đăng Bài]!\nHệ thống sẽ đếm lượt xem như Khách Vãng Lai và ẩn ảnh bảo mật.")).catch(() => prompt("Copy link:", shareUrl));
+    }
+
+    function copyPrivateLink(id) {
+        let tenKhach = prompt("Nhập Tên Khách hoặc SĐT (Ví dụ: Anh_Tuan_Zalo):");
+        if (!tenKhach) return; // Hủy
+        let safeName = tenKhach.trim().replace(/\s+/g, '_'); // Tránh lỗi khoảng trắng trên link
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=${safeName}`;
+        navigator.clipboard.writeText(shareUrl).then(() => alert(`Đã copy Link Cá Nhân cho [${tenKhach}]!\nKhách sẽ xem được CẢ ảnh bảo mật.`)).catch(() => prompt("Copy link:", shareUrl));
+    }
+
+    // --- HÀM TẢI NHẬT KÝ THEO DÕI ---
+    function loadTracking() {
+        document.getElementById('tracking-render').innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>';
+        db.collection("Tracking").orderBy("lastView", "desc").limit(30).get().then(snap => {
+            let html = "";
+            snap.forEach(doc => {
+                let d = doc.data();
+                let timeStr = d.lastView ? d.lastView.toDate().toLocaleString('vi-VN') : '';
+                let carObj = allCars.find(c => c.id === d.carID);
+                let carName = carObj ? carObj.name : "Xe đã xóa/ẩn";
+                
+                let isPrivate = d.type === 'Private';
+                let icon = isPrivate ? '<i class="fa-solid fa-user-check" style="color:#db2777"></i>' : '<i class="fa-solid fa-earth-asia" style="color:#0284c7"></i>';
+                let name = isPrivate ? `<b style="color:#db2777">${d.customerName.replace(/_/g, ' ')}</b>` : `<b style="color:#0284c7">Khách Vãng Lai (Từ bài đăng)</b>`;
+                
+                html += `
+                    <div style="padding: 12px 5px; border-bottom: 1px solid #f1f5f9; font-size: 13px;">
+                        ${icon} ${name} đang xem:<br>
+                        <span style="color:var(--text-main); font-weight:600;">${carName}</span><br>
+                        <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                            <span style="color:var(--accent); font-weight:bold;">Đã xem: ${d.views} lần</span>
+                            <span style="color:var(--text-sub); font-size:11px;">${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('tracking-render').innerHTML = html || "<div style='text-align:center; padding: 10px; color: var(--text-sub); font-size:13px;'>Chưa có ai xem xe.</div>";
+        }).catch(err => {
+            console.error("Lỗi lấy tracking: ", err);
+            document.getElementById('tracking-render').innerHTML = "<div style='text-align:center; padding: 10px; color: red; font-size:13px;'>Lỗi tải dữ liệu. Hãy thử lại.</div>";
+        });
     }
 
     async function saveCar() {
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
+        const privateFiles = document.getElementById('ad-private-files').files; // Lấy file ảnh bảo mật
+
         if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
-        btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
+        btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ (Có thể mất lúc nếu up nhiều ảnh)...";
         
         const payload = {
             name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
@@ -1268,6 +1146,7 @@
             desc: document.getElementById('ad-desc').value, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         try {
+            // 1. Upload ảnh Public
             if(files.length > 0) {
                 let urls = [];
                 for(let i=0; i < files.length; i++) {
@@ -1278,9 +1157,22 @@
                 }
                 payload.images = urls;
             }
+
+            // 2. Upload ảnh Private
+            if(privateFiles.length > 0) {
+                let pUrls = [];
+                for(let i=0; i < privateFiles.length; i++) {
+                    const compressed = await compressImage(privateFiles[i]);
+                    const fd = new FormData(); fd.append("image", compressed);
+                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
+                    const d = await r.json(); if(d.data?.url) pUrls.push(d.data.url);
+                }
+                payload.privateImages = pUrls;
+            }
+
             if(id) await db.collection("Cars").doc(id).update(payload);
             else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
-            alert("Thành công!"); clearForm(); window.scrollTo(0, 0);
+            alert("Cập nhật thành công!"); clearForm(); window.scrollTo(0, 0);
         } catch(e) { alert("Lỗi: " + e.message); } finally { btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; }
     }
 
@@ -1300,6 +1192,9 @@
         document.getElementById('ad-hot').checked = c.isHot || false;
         document.getElementById('ad-desc').value = c.desc || "";
         document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
+        // Xóa files đã chọn để tránh lộn xộn khi sửa
+        document.getElementById('ad-files').value = "";
+        document.getElementById('ad-private-files').value = "";
         window.scrollTo(0, 0);
     }
 
@@ -1307,8 +1202,10 @@
 
     function clearForm() { 
         document.getElementById('edit-id').value = ""; 
-        document.querySelectorAll('.admin-view input, .admin-view textarea').forEach(i => i.value = ""); 
+        document.querySelectorAll('.admin-view input:not([type="checkbox"]):not([type="file"]), .admin-view textarea').forEach(i => i.value = ""); 
         document.getElementById('ad-hot').checked = false;
+        document.getElementById('ad-files').value = "";
+        document.getElementById('ad-private-files').value = "";
         document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
     }
 
@@ -1318,7 +1215,7 @@
         document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
         document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
         document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
-        if(v === 'admin') renderAdmin();
+        if(v === 'admin') { renderAdmin(); loadTracking(); }
         window.scrollTo(0,0);
     }
 
