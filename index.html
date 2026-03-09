@@ -18,13 +18,13 @@
            1. CSS VARIABLES & RESET (PREMIUM LIGHT MODE)
            ========================================= */
         :root {
-            --primary: #1d4ed8; /* Xanh dương đậm: Tạo sự uy tín, tin cậy */
-            --accent: #ea580c; /* Cam hoàng hôn: Kích thích chốt sale, hành động */
-            --bg: #f8fafc; /* Nền xám bạc cực nhạt, sang trọng */
+            --primary: #1d4ed8; 
+            --accent: #ea580c; 
+            --bg: #f8fafc; 
             --white: #ffffff; 
             --border: rgba(0, 0, 0, 0.08); 
-            --text-main: #0f172a; /* Chữ tối màu, độ tương phản cao */
-            --text-sub: #64748b; /* Chữ phụ xám nhạt */
+            --text-main: #0f172a; 
+            --text-sub: #64748b; 
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
             --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
             --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.1);
@@ -435,7 +435,6 @@
 
         .feature-grid { 
             display: grid; 
-            /* Đã chuyển thành 4 cột để chứa thêm Nhiên Liệu */
             grid-template-columns: repeat(4, 1fr); 
             gap: 10px; 
             margin: 20px 0; 
@@ -514,7 +513,7 @@
         }
         .c-btn:active { transform: translateY(2px); }
         .zalo-bg { background: #0068ff; color: #fff; }
-        .call-bg { background: var(--accent); color: #fff; } /* Nút gọi dùng màu cam kích thích */
+        .call-bg { background: var(--accent); color: #fff; } 
 
         /* =========================================
            6. CỬA HÀNG / QUẢN LÝ (ADMIN VIEW)
@@ -820,6 +819,42 @@
 </nav>
 
 <script>
+    /* =========================================
+       [LỚP BẢO VỆ CHỐNG XEM CODE - ĐƯỢC THÊM MỚI]
+       ========================================= */
+    // 1. Chặn click chuột phải
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // 2. Chặn các phím tắt phổ biến để xem code (F12, Ctrl+U, Ctrl+Shift+I, v.v...)
+    document.onkeydown = function(e) {
+        if (e.keyCode === 123 || // F12
+            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
+            (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
+            e.preventDefault();
+            return false;
+        }
+    };
+
+    // 3. Vòng lặp tự vệ: Nếu họ vượt qua phím tắt, trình duyệt sẽ bị "đơ" liên tục
+    (function(){
+        (function a(){
+            try {
+                (function b(i){
+                    if((''+(i/i)).length !== 1 || i % 20 === 0) {
+                        (function(){}).constructor('debugger')();
+                    } else {
+                        debugger;
+                    }
+                    b(++i);
+                })(0);
+            } catch(e) {
+                setTimeout(a, 5000);
+            }
+        })();
+    })();
+    /* ========================================= */
+
+
     /* CẤU HÌNH FIREBASE & IMGBB (GIỮ NGUYÊN) */
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
@@ -959,7 +994,6 @@
         if(document.getElementById('detail-overlay').style.display !== 'block') {
             document.body.style.overflow = 'auto';
         }
-        // Đồng bộ lại ảnh ở nền bên dưới khi thoát Zoom
         currentSlideIndex = currentZoomIndex;
         updateSliderDOM();
     }
@@ -1000,7 +1034,6 @@
             zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1;
             isZooming = false;
         } else if (e.changedTouches.length === 1 && zoomScale <= 1.1) {
-            // Cho phép lướt ảnh khi chưa phóng to quá mức
             let zoomTouchEndX = e.changedTouches[0].screenX;
             if (zoomTouchEndX < zoomTouchStartX - 50) changeZoomSlide(1, null);
             if (zoomTouchEndX > zoomTouchStartX + 50) changeZoomSlide(-1, null);
@@ -1094,7 +1127,6 @@
             if (c.status === 'deposit') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(245, 158, 11, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ NHẬN CỌC</div>';
             else if (c.status === 'sold') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239, 68, 68, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ BÁN</div>';
             
-            // Cập nhật thẻ Fuel vào Showroom List
             r.innerHTML += `
                 <div class="car-card glass-panel" onclick="openPage('${c.id}')">
                     ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
@@ -1117,11 +1149,9 @@
         if(!c) return;
         const imgs = (c.images && c.images.length > 0) ? c.images : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
         
-        // Truyền mảng ảnh vào trình lướt ảnh Zoom
         activeZoomImgs = imgs;
         totalSlides = imgs.length; currentSlideIndex = 0; 
 
-        // Gắn sự kiện openZoom theo index thay vì url cố định
         let slideHtml = imgs.map((img, idx) => `
             <img src="${img}" class="slide-img" onclick="openZoom(${idx})">
         `).join('');
@@ -1139,7 +1169,6 @@
                 ${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}
             </div>` : '';
 
-        // Cập nhật lưới Grid Feature thành 4 cột để chứa Tiêu hao Nhiên Liệu
         document.getElementById('detail-render-box').innerHTML = `
             <div class="slider-container" id="slider-touch-area">${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
@@ -1229,7 +1258,6 @@
         if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
         btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ...";
         
-        // Bổ sung lấy giá trị ad-fuel
         const payload = {
             name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
             brand: document.getElementById('ad-brand').value, year: document.getElementById('ad-year').value,
@@ -1264,7 +1292,7 @@
         document.getElementById('ad-brand').value = c.brand || "";
         document.getElementById('ad-year').value = c.year || "";
         document.getElementById('ad-odo').value = c.odo || "";
-        document.getElementById('ad-fuel').value = c.fuel || ""; // Gắn lại giá trị nhiên liệu
+        document.getElementById('ad-fuel').value = c.fuel || ""; 
         document.getElementById('ad-status').value = c.status || "available";
         document.getElementById('ad-bankp').value = c.bankP || "";
         document.getElementById('ad-banky').value = c.bankY || "";
