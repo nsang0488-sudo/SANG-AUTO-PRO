@@ -7,6 +7,12 @@
     <title>SANG PRO AUTO - LUXURY SHOWROOM</title>
     <link rel="apple-touch-icon" href="https://i.ibb.co/Z6f1Nb9H/image.png">
 
+    <meta property="og:title" content="SANG PRO AUTO - LUXURY SHOWROOM" id="og-title">
+    <meta property="og:description" content="Chuyên mua bán các dòng xe ô tô lướt, xe ô tô cũ chất lượng cao." id="og-desc">
+    <meta property="og:image" content="https://i.ibb.co/Z6f1Nb9H/image.png" id="og-image">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
     
@@ -940,14 +946,19 @@
                 
                 // --- LOGIC TRACKING (Ghi nhận lượt xem) ---
                 if (qId && khach) {
-                    const trackingRef = db.collection("Tracking").doc(`${khach}_${qId}`);
-                    trackingRef.set({
-                        carID: qId,
-                        customerName: khach,
-                        views: firebase.firestore.FieldValue.increment(1),
-                        lastView: firebase.firestore.FieldValue.serverTimestamp(),
-                        type: khach === "Link_Dang_Bai" ? "Public" : "Private"
-                    }, { merge: true });
+                    const targetCar = allCars.find(c => c.id === qId);
+                    
+                    // NÂNG CẤP: Chỉ ghi nhận nếu xe tồn tại và KHÔNG ở trạng thái 'sold' (Đã bán)
+                    if (targetCar && targetCar.status !== 'sold') {
+                        const trackingRef = db.collection("Tracking").doc(`${khach}_${qId}`);
+                        trackingRef.set({
+                            carID: qId,
+                            customerName: khach,
+                            views: firebase.firestore.FieldValue.increment(1),
+                            lastView: firebase.firestore.FieldValue.serverTimestamp(),
+                            type: khach === "Link_Dang_Bai" ? "Public" : "Private"
+                        }, { merge: true });
+                    }
                 }
 
                 if(qId) setTimeout(() => openPage(qId), 500);
@@ -1006,6 +1017,14 @@
         // --- LOGIC GỘP ẢNH DÀNH RIÊNG CHO KHÁCH ---
         let imgs = (c.images && c.images.length > 0) ? [...c.images] : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
         
+        // Cập nhật Meta Tags động (Hiển thị ảnh/tên xe nếu app hỗ trợ lấy dữ liệu sau khi chạy JS)
+        const ogTitle = document.getElementById('og-title');
+        const ogImage = document.getElementById('og-image');
+        const ogDesc = document.getElementById('og-desc');
+        if (ogTitle) ogTitle.content = "SANG PRO AUTO | " + c.name;
+        if (ogImage) ogImage.content = imgs[0];
+        if (ogDesc) ogDesc.content = "Giá bán: " + (c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi');
+
         // Nếu có tham số khach VÀ không phải là Link Đăng Bài -> Gộp thêm ảnh Private
         if (khach && khach !== "Link_Dang_Bai") {
             if (c.privateImages && c.privateImages.length > 0) {
@@ -1198,7 +1217,26 @@
         window.scrollTo(0, 0);
     }
 
-    async function deleteCar(id) { if(confirm("Xóa xe này?")) await db.collection("Cars").doc(id).delete(); }
+    // NÂNG CẤP: Xoá xe đồng thời xoá lịch sử lượt xem
+    async function deleteCar(id) { 
+        if(confirm("Xóa xe này và toàn bộ dữ liệu lượt xem liên quan?")) {
+            try {
+                // Xoá xe trong Firestore
+                await db.collection("Cars").doc(id).delete();
+                
+                // Xoá log tracking liên quan đến xe này
+                const trackingSnaps = await db.collection("Tracking").where("carID", "==", id).get();
+                const batch = db.batch();
+                trackingSnaps.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                
+                alert("Đã xoá xe và nhật ký truy cập thành công!");
+            } catch (err) {
+                console.error("Lỗi khi xoá: ", err);
+                alert("Có lỗi xảy ra khi xoá!");
+            }
+        } 
+    }
 
     function clearForm() { 
         document.getElementById('edit-id').value = ""; 
