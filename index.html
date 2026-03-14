@@ -196,6 +196,7 @@
             display: flex; 
             flex-direction: column; 
             background: #ffffff;
+            height: 100%;
         }
         .car-card:active { transform: scale(0.98); }
         .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
@@ -267,7 +268,8 @@
             gap: 6px; 
             border-top: 1px solid var(--border); 
             padding-top: 10px; 
-            margin-top: auto; 
+            margin-top: auto;
+            margin-bottom: 10px;
         }
         .tag-item { 
             background: #f1f5f9; 
@@ -277,6 +279,23 @@
             color: var(--text-main); 
             font-weight: 600;
             border: 1px solid #e2e8f0;
+        }
+
+        .btn-view-car {
+            background: #f8fafc;
+            color: var(--primary);
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-top: 1px solid var(--border);
+            transition: 0.3s;
+            letter-spacing: 0.5px;
+        }
+        .car-card:hover .btn-view-car {
+            background: var(--primary);
+            color: #fff;
         }
 
         /* =========================================
@@ -441,7 +460,7 @@
 
         .feature-grid { 
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); 
             gap: 10px; 
             margin: 20px 0; 
         }
@@ -759,7 +778,12 @@
             <input type="number" id="ad-year" placeholder="Năm sản xuất" class="sel-custom">
             <input type="number" id="ad-odo" placeholder="Số Km đã đi" class="sel-custom">
             <input type="text" id="ad-fuel" placeholder="Tiêu hao (VD: 6.5L)" class="sel-custom">
-            <select id="ad-status" class="sel-custom">
+            <select id="ad-transmission" class="sel-custom">
+                <option value="">Chọn Hộp Số</option>
+                <option value="Số Tự Động (AT)">Số Tự Động (AT)</option>
+                <option value="Số Sàn (MT)">Số Sàn (MT)</option>
+            </select>
+            <select id="ad-status" class="sel-custom" style="grid-column: span 2;">
                 <option value="available">Tình trạng: Đang bán</option>
                 <option value="deposit">Tình trạng: Đã nhận cọc</option>
                 <option value="sold">Tình trạng: Đã bán</option>
@@ -948,7 +972,6 @@
                 if (qId && khach) {
                     const targetCar = allCars.find(c => c.id === qId);
                     
-                    // NÂNG CẤP: Chỉ ghi nhận nếu xe tồn tại và KHÔNG ở trạng thái 'sold' (Đã bán)
                     if (targetCar && targetCar.status !== 'sold') {
                         const trackingRef = db.collection("Tracking").doc(`${khach}_${qId}`);
                         trackingRef.set({
@@ -1002,8 +1025,10 @@
                             <div class="tag-item"><i class="fa-regular fa-calendar"></i> ${c.year || '--'}</div>
                             <div class="tag-item"><i class="fa-solid fa-gauge-high"></i> ${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
                             <div class="tag-item"><i class="fa-solid fa-gas-pump"></i> ${c.fuel || '--'}</div>
+                            ${c.transmission ? `<div class="tag-item"><i class="fa-solid fa-gears"></i> ${c.transmission}</div>` : ''}
                         </div>
                     </div>
+                    <div class="btn-view-car">Xem xe</div>
                 </div>`;
         });
     }
@@ -1014,10 +1039,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const khach = urlParams.get('khach');
         
-        // --- LOGIC GỘP ẢNH DÀNH RIÊNG CHO KHÁCH ---
         let imgs = (c.images && c.images.length > 0) ? [...c.images] : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
         
-        // Cập nhật Meta Tags động (Hiển thị ảnh/tên xe nếu app hỗ trợ lấy dữ liệu sau khi chạy JS)
         const ogTitle = document.getElementById('og-title');
         const ogImage = document.getElementById('og-image');
         const ogDesc = document.getElementById('og-desc');
@@ -1025,11 +1048,10 @@
         if (ogImage) ogImage.content = imgs[0];
         if (ogDesc) ogDesc.content = "Giá bán: " + (c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi');
 
-        // Nếu có tham số khach VÀ không phải là Link Đăng Bài -> Gộp thêm ảnh Private
         if (khach && khach !== "Link_Dang_Bai") {
             if (c.privateImages && c.privateImages.length > 0) {
                 imgs = imgs.concat(c.privateImages);
-                document.getElementById('private-badge').style.display = 'block'; // Hiện thông báo cho khách thấy mình VIP
+                document.getElementById('private-badge').style.display = 'block';
             }
         } else {
             document.getElementById('private-badge').style.display = 'none';
@@ -1050,6 +1072,7 @@
                     <div class="feature-grid">
                         <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
                         <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
+                        <div class="f-item"><span>Hộp Số</span><b>${c.transmission || '--'}</b></div>
                         <div class="f-item"><span>Nhiên Liệu</span><b>${c.fuel || '--'}</b></div>
                         <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
                     </div>
@@ -1081,7 +1104,6 @@
             const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
             let statusBadge = (c.status === 'deposit') ? '<span style="color:#f59e0b; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
             
-            // --- NÚT CHIA 2 LOẠI LINK ĐƯỢC CẬP NHẬT ---
             r.innerHTML += `
                 <div class="admin-item glass-panel">
                     <img src="${thumb}" class="ad-thumb">
@@ -1099,7 +1121,6 @@
         });
     }
 
-    // --- CÁC HÀM TẠO LINK MỚI ---
     function copyPublicLink(id) {
         const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=Link_Dang_Bai`;
         navigator.clipboard.writeText(shareUrl).then(() => alert("Đã copy [Link Đăng Bài]!\nHệ thống sẽ đếm lượt xem như Khách Vãng Lai và ẩn ảnh bảo mật.")).catch(() => prompt("Copy link:", shareUrl));
@@ -1107,13 +1128,12 @@
 
     function copyPrivateLink(id) {
         let tenKhach = prompt("Nhập Tên Khách hoặc SĐT (Ví dụ: Anh_Tuan_Zalo):");
-        if (!tenKhach) return; // Hủy
-        let safeName = tenKhach.trim().replace(/\s+/g, '_'); // Tránh lỗi khoảng trắng trên link
+        if (!tenKhach) return; 
+        let safeName = tenKhach.trim().replace(/\s+/g, '_'); 
         const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=${safeName}`;
         navigator.clipboard.writeText(shareUrl).then(() => alert(`Đã copy Link Cá Nhân cho [${tenKhach}]!\nKhách sẽ xem được CẢ ảnh bảo mật.`)).catch(() => prompt("Copy link:", shareUrl));
     }
 
-    // --- HÀM TẢI NHẬT KÝ THEO DÕI ---
     function loadTracking() {
         document.getElementById('tracking-render').innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>';
         db.collection("Tracking").orderBy("lastView", "desc").limit(30).get().then(snap => {
@@ -1150,7 +1170,7 @@
         const id = document.getElementById('edit-id').value;
         const btn = document.getElementById('btn-submit');
         const files = document.getElementById('ad-files').files;
-        const privateFiles = document.getElementById('ad-private-files').files; // Lấy file ảnh bảo mật
+        const privateFiles = document.getElementById('ad-private-files').files; 
 
         if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
         btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ (Có thể mất lúc nếu up nhiều ảnh)...";
@@ -1159,13 +1179,13 @@
             name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
             brand: document.getElementById('ad-brand').value, year: document.getElementById('ad-year').value,
             odo: document.getElementById('ad-odo').value, fuel: document.getElementById('ad-fuel').value, 
+            transmission: document.getElementById('ad-transmission').value,
             status: document.getElementById('ad-status').value,
             bankP: document.getElementById('ad-bankp').value, bankY: document.getElementById('ad-banky').value,
             bankMin: document.getElementById('ad-bankmin').value, isHot: document.getElementById('ad-hot').checked,
             desc: document.getElementById('ad-desc').value, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         try {
-            // 1. Upload ảnh Public
             if(files.length > 0) {
                 let urls = [];
                 for(let i=0; i < files.length; i++) {
@@ -1177,7 +1197,6 @@
                 payload.images = urls;
             }
 
-            // 2. Upload ảnh Private
             if(privateFiles.length > 0) {
                 let pUrls = [];
                 for(let i=0; i < privateFiles.length; i++) {
@@ -1204,6 +1223,7 @@
         document.getElementById('ad-year').value = c.year || "";
         document.getElementById('ad-odo').value = c.odo || "";
         document.getElementById('ad-fuel').value = c.fuel || ""; 
+        document.getElementById('ad-transmission').value = c.transmission || "";
         document.getElementById('ad-status').value = c.status || "available";
         document.getElementById('ad-bankp').value = c.bankP || "";
         document.getElementById('ad-banky').value = c.bankY || "";
@@ -1211,20 +1231,16 @@
         document.getElementById('ad-hot').checked = c.isHot || false;
         document.getElementById('ad-desc').value = c.desc || "";
         document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
-        // Xóa files đã chọn để tránh lộn xộn khi sửa
         document.getElementById('ad-files').value = "";
         document.getElementById('ad-private-files').value = "";
         window.scrollTo(0, 0);
     }
 
-    // NÂNG CẤP: Xoá xe đồng thời xoá lịch sử lượt xem
     async function deleteCar(id) { 
         if(confirm("Xóa xe này và toàn bộ dữ liệu lượt xem liên quan?")) {
             try {
-                // Xoá xe trong Firestore
                 await db.collection("Cars").doc(id).delete();
                 
-                // Xoá log tracking liên quan đến xe này
                 const trackingSnaps = await db.collection("Tracking").where("carID", "==", id).get();
                 const batch = db.batch();
                 trackingSnaps.forEach(doc => batch.delete(doc.ref));
@@ -1241,6 +1257,7 @@
     function clearForm() { 
         document.getElementById('edit-id').value = ""; 
         document.querySelectorAll('.admin-view input:not([type="checkbox"]):not([type="file"]), .admin-view textarea').forEach(i => i.value = ""); 
+        document.getElementById('ad-transmission').value = "";
         document.getElementById('ad-hot').checked = false;
         document.getElementById('ad-files').value = "";
         document.getElementById('ad-private-files').value = "";
