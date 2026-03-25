@@ -21,34 +21,9 @@
 
     <style>
         /* =========================================
-           1. CSS VARIABLES & THEMES (DARK CHO SHOWROOM, LIGHT CHO ADMIN)
+           1. CSS VARIABLES & RESET (PREMIUM LIGHT MODE)
            ========================================= */
         :root {
-            /* BIẾN MẶC ĐỊNH LÀ GIAO DIỆN DARK LUXURY (CHO SHOWROOM) */
-            --primary: #ea580c; 
-            --accent: #ea580c; 
-            --bg: #121212; 
-            --white: #ffffff; 
-            --border: rgba(255, 255, 255, 0.15); 
-            --text-main: #ffffff; 
-            --text-sub: #a1a1aa; 
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.5);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
-            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.8);
-            --radius-md: 16px; 
-            --radius-lg: 20px; 
-            
-            --panel-bg: rgba(24, 24, 27, 0.6);
-            --header-bg: rgba(10, 10, 10, 0.85);
-            --header-text: #ffffff;
-            --input-bg: rgba(0, 0, 0, 0.4);
-            --card-bg: rgba(24, 24, 27, 0.85);
-            --tag-bg: rgba(255, 255, 255, 0.1);
-            --nav-bg: rgba(15, 15, 15, 0.95);
-        }
-
-        /* GIAO DIỆN SÁNG CHO PHẦN CỬA HÀNG (ADMIN MODE) */
-        body.admin-mode {
             --primary: #1d4ed8; 
             --accent: #ea580c; 
             --bg: #f8fafc; 
@@ -59,14 +34,8 @@
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
             --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
             --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.1);
-            
-            --panel-bg: rgba(255, 255, 255, 0.9);
-            --header-bg: rgba(255, 255, 255, 0.95);
-            --header-text: #1d4ed8;
-            --input-bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --tag-bg: #f1f5f9;
-            --nav-bg: rgba(255, 255, 255, 0.95);
+            --radius-md: 16px; 
+            --radius-lg: 20px; 
         }
 
         * { 
@@ -80,30 +49,16 @@
             overflow-x: hidden; 
             width: 100%;
             font-family: 'Lexend', sans-serif; 
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
+            background-attachment: fixed;
             color: var(--text-main); 
             padding-bottom: 90px; 
             line-height: 1.6; 
             scroll-behavior: smooth;
         }
-
-        /* NỀN MẶC ĐỊNH (SHOWROOM) CÓ HÌNH ẢNH DARK VIỀN ĐEN */
-        body {
-            background-color: #0f172a;
-            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1614165936126-25923010b985?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background 0.4s ease;
-        }
-
-        /* NỀN CHO CỬA HÀNG (SÁNG MÀU NHƯ CŨ) */
-        body.admin-mode {
-            background-image: none;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
-        }
         
         .glass-panel {
-            background: var(--panel-bg);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
@@ -114,33 +69,20 @@
            2. HEADER & LAYOUT
            ========================================= */
         header { 
-            background: var(--header-bg); 
+            background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            color: var(--header-text); 
-            padding: 16px 20px; 
+            color: var(--primary); 
+            padding: 16px 0; 
             position: sticky; 
             top: 0; 
             z-index: 1000; 
             border-bottom: 1px solid var(--border);
             width: 100%; 
             box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header-btn {
-            font-size: 22px;
-            cursor: pointer;
-            color: var(--header-text);
-            background: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .logo-text { 
-            font-size: 18px; 
+            font-size: 20px; 
             font-weight: 800; 
             letter-spacing: 2px; 
             text-align: center; 
@@ -169,8 +111,8 @@
             width: 100%; 
             padding: 14px 50px 14px 45px; 
             border-radius: var(--radius-md); 
-            border: 1px solid var(--border); 
-            background: var(--input-bg);
+            border: 1px solid #cbd5e1; 
+            background: #f1f5f9;
             color: var(--text-main);
             font-size: 15px; 
             outline: none; 
@@ -180,9 +122,7 @@
         .search-wrapper input::placeholder { color: var(--text-sub); }
         .search-wrapper input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
-        }
-        body.admin-mode .search-wrapper input:focus {
+            background: #ffffff;
             box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
         }
         .search-wrapper .search-icon { 
@@ -211,10 +151,9 @@
             transition: 0.3s;
         }
         .search-wrapper .reload-btn:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.05);
             color: var(--primary);
         }
-        body.admin-mode .search-wrapper .reload-btn:hover { background: rgba(0,0,0,0.05); }
 
         .grid-filters { 
             display: grid; 
@@ -224,8 +163,8 @@
         .sel-custom { 
             padding: 12px; 
             border-radius: var(--radius-md); 
-            border: 1px solid var(--border); 
-            background: var(--input-bg); 
+            border: 1px solid #cbd5e1; 
+            background: #f1f5f9; 
             color: var(--text-main);
             font-size: 14px; 
             cursor: pointer; 
@@ -234,8 +173,8 @@
             outline: none;
             transition: 0.3s;
         }
-        .sel-custom option { background: var(--bg); color: var(--text-main); }
-        .sel-custom:focus { border-color: var(--primary); }
+        .sel-custom option { background: #ffffff; color: var(--text-main); }
+        .sel-custom:focus { border-color: var(--primary); background: #ffffff; }
 
         /* =========================================
            4. DANH SÁCH XE (GRID SHOWROOM)
@@ -256,12 +195,11 @@
             position: relative; 
             display: flex; 
             flex-direction: column; 
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            background: #ffffff;
             height: 100%;
         }
         .car-card:active { transform: scale(0.98); }
-        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
         
         .hot-label { 
             position: absolute; 
@@ -286,7 +224,7 @@
         .img-wrap { 
             width: 100%; 
             aspect-ratio: 4/3; 
-            background: linear-gradient(90deg, var(--card-bg) 25%, var(--input-bg) 50%, var(--card-bg) 75%);
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             overflow: hidden; 
@@ -334,17 +272,17 @@
             margin-bottom: 10px;
         }
         .tag-item { 
-            background: var(--tag-bg); 
+            background: #f1f5f9; 
             padding: 4px 8px; 
             border-radius: 8px; 
             font-size: 11px; 
             color: var(--text-main); 
             font-weight: 600;
-            border: 1px solid var(--border);
+            border: 1px solid #e2e8f0;
         }
 
         .btn-view-car {
-            background: transparent;
+            background: #f8fafc;
             color: var(--primary);
             text-align: center;
             padding: 12px;
@@ -373,25 +311,29 @@
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
         }
-        /* Header 3 gạch bên trong màn hình chi tiết */
-        .detail-header {
-            position: sticky;
-            top: 0;
-            z-index: 2100;
-            background: var(--header-bg);
-            backdrop-filter: blur(16px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            color: var(--header-text);
-            border-bottom: 1px solid var(--border);
+        
+        .close-circle { 
+            position: fixed; 
+            top: 15px; right: 15px; 
+            z-index: 2100; 
+            background: rgba(255,255,255,0.8); 
+            color: var(--text-main); 
+            width: 40px; height: 40px; 
+            border-radius: 50%; 
+            box-shadow: var(--shadow-md);
+            font-size: 20px; 
+            cursor: pointer; 
+            backdrop-filter: blur(5px); 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 0.3s;
+            border: none;
         }
+        .close-circle:active { transform: scale(0.9); background: #fff; }
         
         .slider-container { 
             width: 100%; 
             aspect-ratio: 4/3; 
-            background: #000; 
+            background: #e2e8f0; 
             position: relative; 
             overflow: hidden; 
             touch-action: pan-y; 
@@ -414,7 +356,7 @@
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255,255,255,0.6);
-            color: #0f172a;
+            color: var(--text-main);
             border: none;
             width: 36px; height: 36px;
             border-radius: 50%;
@@ -502,7 +444,6 @@
         .main-info-card { 
             padding: 20px; 
             border-radius: var(--radius-lg); 
-            background: var(--card-bg);
         }
         .main-info-card h2 {
             font-size: 20px;
@@ -524,11 +465,11 @@
             margin: 20px 0; 
         }
         .f-item { 
-            background: var(--tag-bg); 
+            background: #f1f5f9; 
             padding: 12px 4px; 
             border-radius: var(--radius-md); 
             text-align: center; 
-            border: 1px solid var(--border);
+            border: 1px solid #e2e8f0;
         }
         .f-item span { 
             font-size: 10px; 
@@ -651,16 +592,13 @@
             position: fixed; 
             bottom: 0; left: 0; 
             width: 100%; height: 70px; 
-            background: var(--nav-bg); 
+            background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex; 
             border-top: 1px solid var(--border); 
             z-index: 1000; 
             padding-bottom: env(safe-area-inset-bottom); 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-        }
-        body.admin-mode .b-nav {
             box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
         }
         .b-link { 
@@ -684,16 +622,15 @@
             position: fixed; 
             top: 0; left: 0; 
             width: 100%; height: 100%; 
-            background: rgba(15, 23, 42, 0.95); 
+            background: rgba(248, 250, 252, 0.95); 
             z-index: 3000; 
             display: none; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
-            color: #ffffff; 
+            color: var(--text-main); 
             backdrop-filter: blur(10px);
         }
-        #auth-gate input { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 
         @media (min-width: 600px) {
             .main-grid { grid-template-columns: repeat(3, 1fr); }
@@ -704,9 +641,9 @@
            8. CÔNG CỤ TÍNH LÃI SUẤT
            ========================================= */
         .calc-toggle-btn {
-            background: var(--card-bg);
+            background: #ffffff;
             color: var(--primary);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(29, 78, 216, 0.3);
             padding: 10px 15px;
             border-radius: 30px;
             font-size: 12px;
@@ -736,15 +673,15 @@
             font-size: 13px;
         }
         .calc-result-table th {
-            background: var(--tag-bg);
+            background: #f1f5f9;
             text-align: left;
             padding: 10px;
-            border-bottom: 2px solid var(--border);
+            border-bottom: 2px solid #cbd5e1;
             color: var(--text-main);
         }
         .calc-result-table td {
             padding: 10px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #e2e8f0;
             color: var(--text-main);
         }
         .highlight-calc {
@@ -756,9 +693,7 @@
 <body>
 
 <header>
-    <button class="header-btn" onclick="goHome()"><i class="fa-solid fa-bars"></i></button>
     <div class="logo-text">SANG PRO AUTO</div>
-    <div style="width: 24px;"></div>
 </header>
 
 <div id="showroom-tab" class="container">
@@ -794,8 +729,8 @@
 
         <button onclick="calculateLoan()" style="width:100%; background:var(--primary); color:#fff; border:none; padding:14px; border-radius:var(--radius-md); font-weight:700; cursor:pointer; box-shadow: var(--shadow-md);">HOÀN THÀNH & XUẤT KẾT QUẢ</button>
 
-        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 15px;">
-            <div id="loan-summary" style="background:var(--tag-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border);"></div>
+        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+            <div id="loan-summary" style="background:#f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0;"></div>
             <table class="calc-result-table">
                 <thead>
                     <tr>
@@ -865,7 +800,7 @@
         </label>
         <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
         
-        <div style="margin-bottom:15px; background: var(--tag-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border);">
+        <div style="margin-bottom:15px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
             <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">1. Ảnh hiển thị Công Khai (Tất cả mọi người đều thấy):</label>
             <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
         </div>
@@ -878,7 +813,7 @@
 
         <div style="display:flex; gap:15px;">
             <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer; box-shadow: var(--shadow-md);">CẬP NHẬT XE</button>
-            <button onclick="clearForm()" style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
+            <button onclick="clearForm()" style="flex:1; background:#f8fafc; border:1px solid #cbd5e1; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
         </div>
     </div>
     
@@ -891,20 +826,16 @@
         <h3 style="font-size: 16px;"><i class="fa-solid fa-chart-line"></i> NHẬT KÝ KHÁCH XEM XE</h3>
         <button onclick="loadTracking()" style="background:transparent; border:none; color:var(--primary); font-weight:bold; cursor:pointer; font-size: 13px;"><i class="fa-solid fa-rotate"></i> Cập nhật ngay</button>
     </div>
-    <div id="tracking-render" style="max-height: 300px; overflow-y: auto; background: var(--card-bg); border-radius: 12px; padding: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 30px;">
+    <div id="tracking-render" style="max-height: 300px; overflow-y: auto; background: #fff; border-radius: 12px; padding: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 30px;">
         <div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>
     </div>
 
 </div>
 
 <div id="detail-overlay" class="full-page">
-    <div class="detail-header">
-        <button class="header-btn" onclick="goHome()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo-text" style="font-size: 16px;">CHI TIẾT XE</div>
-        <div style="width: 24px;"></div>
-    </div>
+    <button class="close-circle" onclick="closePage()"><i class="fa-solid fa-xmark"></i></button>
     
-    <div id="private-badge" style="display: none; background: #ea580c; color: white; text-align: center; padding: 6px; font-size: 11px; font-weight: bold; position: relative; width: 100%; z-index: 2050;">
+    <div id="private-badge" style="display: none; background: #ea580c; color: white; text-align: center; padding: 6px; font-size: 11px; font-weight: bold; position: fixed; top: 0; width: 100%; z-index: 2050;">
         <i class="fa-solid fa-shield-check"></i> ĐANG HIỂN THỊ CHẾ ĐỘ ẢNH CHI TIẾT DÀNH RIÊNG CHO BẠN
     </div>
 
@@ -922,8 +853,8 @@
 <div id="auth-gate">
     <div class="glass-panel" style="padding: 30px; border-radius: 24px; text-align: center; width: 90%; max-width: 350px;">
         <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
-        <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px; color: #ffffff;">MÃ PIN TRUY CẬP</h3>
-        <input type="password" id="pin-code" style="border-radius: 12px; font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="6" inputmode="numeric">
+        <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px; color: var(--text-main);">MÃ PIN TRUY CẬP</h3>
+        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 12px; color:var(--text-main); font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="6" inputmode="numeric">
         <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:12px; font-weight:700; font-size: 16px; box-shadow: var(--shadow-md);">XÁC NHẬN ĐĂNG NHẬP</button>
     </div>
 </div>
@@ -939,7 +870,7 @@
 
 <script>
     /* =========================================
-       [LỚP BẢO VỆ CHỐNG XEM CODE]
+       [LỚP BẢO VỆ CHỐNG XEM CODE - ĐƯỢC THÊM MỚI]
        ========================================= */
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
@@ -972,13 +903,6 @@
 
     const PHONE_NUMBER = "0946327164"; 
     const ZALO_LINK = "https://zalo.me/0946327164"; 
-
-    /* Hàm điều hướng về Showroom (Trang chủ) */
-    function goHome() {
-        closePage(); // Tắt trang chi tiết (nếu đang mở)
-        switchView('showroom'); // Chuyển sang tab Showroom
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
 
     /* Tính lãi suất */
     function toggleCalc() { const sec = document.getElementById('calc-section'); sec.style.display = (sec.style.display === 'block') ? 'none' : 'block'; }
@@ -1140,7 +1064,7 @@
         let bankHtml = (c.bankP || c.bankmin) ? `<div class="bank-luxury"><h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}</div>` : '';
 
         document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container" id="slider-touch-area">${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
+            <div class="slider-container" id="slider-touch-area" ${khach && khach !== "Link_Dang_Bai" ? 'style="margin-top: 25px;"' : ''}>${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
             <div class="detail-body">
                 <div class="main-info-card glass-panel">
                     <h2>${c.name}</h2>
@@ -1184,7 +1108,7 @@
                 <div class="admin-item glass-panel">
                     <img src="${thumb}" class="ad-thumb">
                     <div style="flex:1">
-                        <b style="font-size: 14px; color: var(--text-main);">${c.name} ${statusBadge}</b><br>
+                        <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
                         <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
                         <div class="ad-actions">
                             <button class="ad-btn" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd" onclick="copyPublicLink('${c.id}')"><i class="fa-solid fa-earth-asia"></i> Link Đăng Bài</button>
@@ -1225,7 +1149,7 @@
                 let name = isPrivate ? `<b style="color:#db2777">${d.customerName.replace(/_/g, ' ')}</b>` : `<b style="color:#0284c7">Khách Vãng Lai (Từ bài đăng)</b>`;
                 
                 html += `
-                    <div style="padding: 12px 5px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-main);">
+                    <div style="padding: 12px 5px; border-bottom: 1px solid #f1f5f9; font-size: 13px;">
                         ${icon} ${name} đang xem:<br>
                         <span style="color:var(--text-main); font-weight:600;">${carName}</span><br>
                         <div style="display:flex; justify-content:space-between; margin-top:4px;">
@@ -1276,4 +1200,89 @@
             if(privateFiles.length > 0) {
                 let pUrls = [];
                 for(let i=0; i < privateFiles.length; i++) {
-                    const compressed = await
+                    const compressed = await compressImage(privateFiles[i]);
+                    const fd = new FormData(); fd.append("image", compressed);
+                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
+                    const d = await r.json(); if(d.data?.url) pUrls.push(d.data.url);
+                }
+                payload.privateImages = pUrls;
+            }
+
+            if(id) await db.collection("Cars").doc(id).update(payload);
+            else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
+            alert("Cập nhật thành công!"); clearForm(); window.scrollTo(0, 0);
+        } catch(e) { alert("Lỗi: " + e.message); } finally { btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; }
+    }
+
+    function editMode(id) {
+        const c = allCars.find(x => x.id === id); if(!c) return;
+        document.getElementById('edit-id').value = c.id;
+        document.getElementById('ad-name').value = c.name || "";
+        document.getElementById('ad-price').value = c.price || "";
+        document.getElementById('ad-brand').value = c.brand || "";
+        document.getElementById('ad-year').value = c.year || "";
+        document.getElementById('ad-odo').value = c.odo || "";
+        document.getElementById('ad-fuel').value = c.fuel || ""; 
+        document.getElementById('ad-transmission').value = c.transmission || "";
+        document.getElementById('ad-status').value = c.status || "available";
+        document.getElementById('ad-bankp').value = c.bankP || "";
+        document.getElementById('ad-banky').value = c.bankY || "";
+        document.getElementById('ad-bankmin').value = c.bankMin || "";
+        document.getElementById('ad-hot').checked = c.isHot || false;
+        document.getElementById('ad-desc').value = c.desc || "";
+        document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
+        document.getElementById('ad-files').value = "";
+        document.getElementById('ad-private-files').value = "";
+        window.scrollTo(0, 0);
+    }
+
+    async function deleteCar(id) { 
+        if(confirm("Xóa xe này và toàn bộ dữ liệu lượt xem liên quan?")) {
+            try {
+                await db.collection("Cars").doc(id).delete();
+                
+                const trackingSnaps = await db.collection("Tracking").where("carID", "==", id).get();
+                const batch = db.batch();
+                trackingSnaps.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                
+                alert("Đã xoá xe và nhật ký truy cập thành công!");
+            } catch (err) {
+                console.error("Lỗi khi xoá: ", err);
+                alert("Có lỗi xảy ra khi xoá!");
+            }
+        } 
+    }
+
+    function clearForm() { 
+        document.getElementById('edit-id').value = ""; 
+        document.querySelectorAll('.admin-view input:not([type="checkbox"]):not([type="file"]), .admin-view textarea').forEach(i => i.value = ""); 
+        document.getElementById('ad-transmission').value = "";
+        document.getElementById('ad-hot').checked = false;
+        document.getElementById('ad-files').value = "";
+        document.getElementById('ad-private-files').value = "";
+        document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
+    }
+
+    function switchView(v) {
+        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
+        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
+        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
+        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
+        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
+        if(v === 'admin') { renderAdmin(); loadTracking(); }
+        window.scrollTo(0,0);
+    }
+
+    function checkAuth() {
+        if(document.getElementById('pin-code').value === "190525") { 
+            isLogged = true; document.getElementById('auth-gate').style.display='none'; 
+            switchView('admin');
+        } else alert("Sai PIN!");
+        document.getElementById('pin-code').value = '';
+    }
+
+    window.onload = initData;
+</script>
+</body>
+</html>
