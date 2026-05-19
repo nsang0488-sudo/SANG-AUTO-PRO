@@ -310,6 +310,23 @@
 
         <div class="card">
             <div class="card-title">Lịch sử đóng sổ kế toán</div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; background: var(--primary-light); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                <div style="flex: 1; min-width: 130px;">
+                    <label style="display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600;">Từ ngày:</label>
+                    <input type="date" id="filter-start-date" class="form-control" style="padding: 6px 10px; font-size: 13px;" onchange="filterFinanceHistory()">
+                </div>
+                <div style="flex: 1; min-width: 130px;">
+                    <label style="display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600;">Đến ngày:</label>
+                    <input type="date" id="filter-end-date" class="form-control" style="padding: 6px 10px; font-size: 13px;" onchange="filterFinanceHistory()">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn-sm btn-danger" style="padding: 8px 12px; display: flex; align-items: center; gap: 4px;" onclick="clearFinanceFilter()">
+                        <i class="fa-solid fa-filter-circle-xmark"></i> Xóa lọc
+                    </button>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
@@ -395,6 +412,7 @@
     let costToday = 0;
     let localInventory = {}; 
     let isEditSessionActive = false; 
+    let allFinanceRecords = []; // Lưu trữ toàn bộ dữ liệu kế toán phục vụ bộ lọc
 
     function getTodayString() {
         const d = new Date();
@@ -438,7 +456,7 @@
             localInventory = {};
 
             let categories = { "tươi": [], "khô": [], "dụng cụ": [] };
-            let totalWarehouseValue = 0; // Biến tích lũy tổng giá trị toàn kho
+            let totalWarehouseValue = 0; 
 
             snapshot.forEach(doc => {
                 const data = doc.data();
@@ -469,7 +487,6 @@
                     
                     let totalValue = stock * price;
                     
-                    // Logic ẩn giá trị tồn nếu giá gốc bằng 0
                     let totalValueDisplay = price === 0 ? "-" : formatVND(totalValue);
                     if (price > 0) {
                         totalWarehouseValue += totalValue;
@@ -497,7 +514,6 @@
                 });
             }
             
-            // THÊM DÒNG TỔNG GIÁ TRỊ KHO HÀNG NẰM DƯỚI CÙNG BẢNG
             let totalTr = document.createElement('tr');
             totalTr.style.fontWeight = "700";
             totalTr.style.background = "var(--primary-light)";
@@ -681,13 +697,23 @@
         try {
             await db.collection("NewPurchaseHistory").add(purchaseData);
 
-            // Cập nhật số lượng đồng thời ghi đè giá mới nhất từ phiếu vào kho hàng
-            await db.collection("NewInventory").doc(id).update({
-                quantity: firebase.firestore.FieldValue.increment(qty),
-                price: inputPrice 
-            });
+            // LOGIC CẬP NHẬT KHO: Nếu giá trong kho ban đầu là 0, thì khi nhập hàng sẽ KHÔNG cộng giá vào kho mà giữ nguyên là 0 đ
+            let updateData = {
+                quantity: firebase.firestore.FieldValue.increment(qty)
+            };
+            
+            if (item.price > 0) {
+                updateData.price = inputPrice;
+            }
 
-            alert(`Đã thanh toán và cộng vào kho: +${qty} ${item.unit} ${item.itemName} (Giá kho cập nhật: ${formatVND(inputPrice)})`);
+            await db.collection("NewInventory").doc(id).update(updateData);
+
+            if (item.price > 0) {
+                alert(`Đã thanh toán và cộng vào kho: +${qty} ${item.unit} ${item.itemName} (Giá kho cập nhật: ${formatVND(inputPrice)})`);
+            } else {
+                alert(`Đã thanh toán và cộng vào kho: +${qty} ${item.unit} ${item.itemName} (Cấu hình giá kho giữ nguyên là 0 đ)`);
+            }
+            
             document.getElementById('inp-qty').value = "";
             document.getElementById('inp-price-base').value = "";
             document.getElementById('inp-total-computed').value = "0 đ";
@@ -699,7 +725,6 @@
     // --- LOGIC TAB 3: KẾ TOÁN & CHI PHÍ CỐ ĐỊNH ---
 
     function loadSavedFixedCosts() {
-        // Tải các giá trị chi phí mặc định đã lưu từ bộ nhớ trình duyệt lên ô nhập
         document.getElementById('fin-cost-staff').value = localStorage.getItem('fc_staff') || "";
         document.getElementById('fin-cost-rent').value = localStorage.getItem('fc_rent') || "";
         document.getElementById('fin-cost-elec').value = localStorage.getItem('fc_elec') || "";
@@ -743,21 +768,73 @@
             recalcFinance();
         });
 
-        db.collection("NewDailyFinance").orderBy("closedAt", "desc").limit(15).onSnapshot(snapshot => {
-            let tbody = document.getElementById('finance-history-body');
-            tbody.innerHTML = "";
+        // Đọc toàn bộ báo cáo để phục vụ bộ lọc thời gian tùy chỉnh linh hoạt hơn
+        db.collection("NewDailyFinance").orderBy("closedAt", "desc").onSnapshot(snapshot => {
+            allFinanceRecords = [];
             snapshot.forEach(doc => {
                 let f = doc.data();
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><b>${f.dateStr}</b></td>
-                    <td style="color:var(--success); font-weight:600;">${formatVND(f.revenue)}</td>
-                    <td style="color:var(--danger);">${formatVND(f.costs)}</td>
-                    <td style="font-weight:700; color:${f.profit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(f.profit)}</td>
-                `;
-                tbody.appendChild(tr);
+                allFinanceRecords.push({ id: doc.id, ...f });
             });
+            filterFinanceHistory(); 
         });
+    }
+
+    // LOGIC LỌC THỜI GIAN VÀ HIỂN THỊ TỔNG CỘNG MỚI THÊM
+    function filterFinanceHistory() {
+        let start = document.getElementById('filter-start-date').value; // Định dạng YYYY-MM-DD
+        let end = document.getElementById('filter-end-date').value;     // Định dạng YYYY-MM-DD
+        
+        let filtered = allFinanceRecords;
+        if (start) {
+            filtered = filtered.filter(r => r.id >= start);
+        }
+        if (end) {
+            filtered = filtered.filter(r => r.id <= end);
+        }
+        
+        renderFinanceTable(filtered);
+    }
+
+    function renderFinanceTable(records) {
+        let tbody = document.getElementById('finance-history-body');
+        tbody.innerHTML = "";
+        
+        let totalRev = 0;
+        let totalCost = 0;
+        let totalProfit = 0;
+        
+        records.forEach(f => {
+            totalRev += f.revenue || 0;
+            totalCost += f.costs || 0;
+            totalProfit += f.profit || 0;
+            
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${f.dateStr}</b></td>
+                <td style="color:var(--success); font-weight:600;">${formatVND(f.revenue)}</td>
+                <td style="color:var(--danger);">${formatVND(f.costs)}</td>
+                <td style="font-weight:700; color:${f.profit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(f.profit)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        // Thêm dòng tổng cộng dưới cùng bảng
+        let totalTr = document.createElement('tr');
+        totalTr.style.fontWeight = "700";
+        totalTr.style.background = "var(--primary-light)";
+        totalTr.innerHTML = `
+            <td><b style="color: var(--primary);">TỔNG CỘNG</b></td>
+            <td style="color:var(--success); font-weight:700;">${formatVND(totalRev)}</td>
+            <td style="color:var(--danger); font-weight:700;">${formatVND(totalCost)}</td>
+            <td style="font-weight:800; color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(totalProfit)}</td>
+        `;
+        tbody.appendChild(totalTr);
+    }
+
+    function clearFinanceFilter() {
+        document.getElementById('filter-start-date').value = "";
+        document.getElementById('filter-end-date').value = "";
+        filterFinanceHistory();
     }
 
     async function deleteHistoryItem(docId, itemId, qty) {
@@ -777,12 +854,10 @@
     function recalcFinance() {
         let rev = Number(document.getElementById('fin-revenue').value) || 0;
         
-        // Lấy dữ liệu 3 ô chi phí cố định mới
         let staffCost = Number(document.getElementById('fin-cost-staff').value) || 0;
         let rentCost = Number(document.getElementById('fin-cost-rent').value) || 0;
         let elecCost = Number(document.getElementById('fin-cost-elec').value) || 0;
         
-        // Lưu trữ lại trình duyệt làm giá trị mặc định cho những ngày tiếp theo
         localStorage.setItem('fc_staff', document.getElementById('fin-cost-staff').value);
         localStorage.setItem('fc_rent', document.getElementById('fin-cost-rent').value);
         localStorage.setItem('fc_elec', document.getElementById('fin-cost-elec').value);
@@ -790,7 +865,6 @@
         let totalFixedCosts = staffCost + rentCost + elecCost;
         let profitBox = document.getElementById('fin-profit');
         
-        // Tính toán lãi thuần thực tế sau khi trừ đi cả tiền nhập hàng và chi phí cố định
         let netProfit = rev - costToday - totalFixedCosts;
 
         profitBox.innerText = formatVND(netProfit);
@@ -833,7 +907,7 @@
         document.getElementById('inp-date').value = getTodayString();
         watchSyncStatus();
         startListeningInventory();
-        loadSavedFixedCosts(); // Gọi hàm tải chi phí cố định đã lưu trước đó
+        loadSavedFixedCosts(); 
         startListeningHistoryAndFinance();
     };
 </script>
