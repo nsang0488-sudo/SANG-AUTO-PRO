@@ -3,882 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
-    <title>SANG PRO AUTO - LUXURY SHOWROOM</title>
-    <link rel="apple-touch-icon" href="https://i.ibb.co/Z6f1Nb9H/image.png">
-
-    <meta property="og:title" content="SANG PRO AUTO - LUXURY SHOWROOM" id="og-title">
-    <meta property="og:description" content="Chuyên mua bán các dòng xe ô tô lướt, xe ô tô cũ chất lượng cao." id="og-desc">
-    <meta property="og:image" content="https://i.ibb.co/Z6f1Nb9H/image.png" id="og-image">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-
+    <title>QUẢN LÝ KHO & TÀI CHÍNH QUÁN CAFE</title>
+    
+    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
     
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* =========================================
-           1. CSS VARIABLES & RESET (PREMIUM LIGHT MODE)
-           ========================================= */
         :root {
-            --primary: #1d4ed8; 
-            --accent: #ea580c; 
-            --bg: #f8fafc; 
+            --primary: #4b3621; /* Màu nâu cafe ấm áp */
+            --primary-light: #f5f2eb;
+            --accent: #d97706; 
+            --success: #16a34a;
+            --bg: #fafaf9; 
             --white: #ffffff; 
             --border: rgba(0, 0, 0, 0.08); 
-            --text-main: #0f172a; 
-            --text-sub: #64748b; 
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
-            --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
-            --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.1);
-            --radius-md: 16px; 
-            --radius-lg: 20px; 
+            --text-main: #1c1917; 
+            --text-sub: #78716c; 
+            --radius-md: 12px; 
+            --radius-lg: 18px; 
+            --shadow: 0 4px 16px rgba(0,0,0,0.04);
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; 
-            padding: 0; 
-        }
-
-        html, body { 
-            overflow-x: hidden; 
-            width: 100%;
-            font-family: 'Lexend', sans-serif; 
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
-            background-attachment: fixed;
-            color: var(--text-main); 
-            padding-bottom: 90px; 
-            line-height: 1.6; 
-            scroll-behavior: smooth;
-        }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* =========================================
-           2. HEADER & LAYOUT
-           ========================================= */
-        header { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            color: var(--primary); 
-            padding: 16px 0; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            border-bottom: 1px solid var(--border);
-            width: 100%; 
-            box-shadow: var(--shadow-sm);
-        }
-        .logo-text { 
-            font-size: 20px; 
-            font-weight: 800; 
-            letter-spacing: 2px; 
-            text-align: center; 
-            text-transform: uppercase; 
-        }
-        .container { 
-            width: 100%; 
-            max-width: 1000px; 
-            margin: auto; 
-            padding: 0 12px; 
-        }
-
-        /* =========================================
-           3. BỘ LỌC SHOWROOM (FILTER)
-           ========================================= */
-        .filter-section { 
-            padding: 15px; 
-            border-radius: var(--radius-lg); 
-            margin: 20px 0; 
-        }
-        .search-wrapper { 
-            position: relative; 
-            margin-bottom: 12px; 
-        }
-        .search-wrapper input { 
-            width: 100%; 
-            padding: 14px 50px 14px 45px; 
-            border-radius: var(--radius-md); 
-            border: 1px solid #cbd5e1; 
-            background: #f1f5f9;
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--bg);
             color: var(--text-main);
-            font-size: 15px; 
-            outline: none; 
-            transition: all 0.3s; 
-            font-family: inherit;
-        }
-        .search-wrapper input::placeholder { color: var(--text-sub); }
-        .search-wrapper input:focus {
-            border-color: var(--primary);
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
-        }
-        .search-wrapper .search-icon { 
-            position: absolute; 
-            left: 16px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--text-sub); 
-            font-size: 16px;
-        }
-        .search-wrapper .reload-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .search-wrapper .reload-btn:hover {
-            background: rgba(0,0,0,0.05);
-            color: var(--primary);
+            padding-bottom: 80px;
+            line-height: 1.5;
         }
 
-        .grid-filters { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
-        }
-        .sel-custom { 
-            padding: 12px; 
-            border-radius: var(--radius-md); 
-            border: 1px solid #cbd5e1; 
-            background: #f1f5f9; 
-            color: var(--text-main);
-            font-size: 14px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-family: inherit;
-            outline: none;
-            transition: 0.3s;
-        }
-        .sel-custom option { background: #ffffff; color: var(--text-main); }
-        .sel-custom:focus { border-color: var(--primary); background: #ffffff; }
-
-        /* =========================================
-           4. DANH SÁCH XE (GRID SHOWROOM)
-           ========================================= */
-        .main-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
-            margin-top: 15px; 
-        }
-        @media (max-width: 350px) { .main-grid { grid-template-columns: 1fr; } }
-        
-        .car-card { 
-            border-radius: var(--radius-lg); 
-            overflow: hidden; 
-            transition: all 0.3s ease; 
-            cursor: pointer; 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            background: #ffffff;
-            height: 100%;
-        }
-        .car-card:active { transform: scale(0.98); }
-        .car-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-        
-        .hot-label { 
-            position: absolute; 
-            top: 10px; 
-            right: 10px; 
-            background: linear-gradient(45deg, #ff8a00, #e52e71); 
-            color: #fff; 
-            padding: 4px 10px; 
-            border-radius: 30px; 
-            font-size: 10px; 
-            font-weight: 700; 
-            z-index: 10; 
-            box-shadow: 0 4px 10px rgba(229, 46, 113, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .img-wrap { 
-            width: 100%; 
-            aspect-ratio: 4/3; 
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            overflow: hidden; 
-            position: relative;
-        }
-        .img-wrap img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: opacity 0.3s; 
-            opacity: 1; 
-        }
-
-        .info-wrap { 
-            padding: 12px; 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-        }
-        .name-txt { 
-            font-size: 14px; 
-            font-weight: 700; 
-            color: var(--text-main); 
-            margin-bottom: 6px; 
-            height: 40px; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-            line-height: 1.4; 
-        }
-        .price-txt { 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: var(--accent); 
-            margin-bottom: 10px; 
-        }
-        .spec-tags { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 6px; 
-            border-top: 1px solid var(--border); 
-            padding-top: 10px; 
-            margin-top: auto;
-            margin-bottom: 10px;
-        }
-        .tag-item { 
-            background: #f1f5f9; 
-            padding: 4px 8px; 
-            border-radius: 8px; 
-            font-size: 11px; 
-            color: var(--text-main); 
-            font-weight: 600;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-view-car {
-            background: #f8fafc;
-            color: var(--primary);
+        header {
+            background: var(--white);
+            padding: 15px;
             text-align: center;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-top: 1px solid var(--border);
-            transition: 0.3s;
-            letter-spacing: 0.5px;
-        }
-        .car-card:hover .btn-view-car {
-            background: var(--primary);
-            color: #fff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        /* =========================================
-           5. TRANG CHI TIẾT (DETAIL OVERLAY)
-           ========================================= */
-        .full-page { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: var(--bg); 
-            z-index: 2000; 
-            display: none; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-        }
+        .logo-text { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
         
-        .close-circle { 
-            position: fixed; 
-            top: 15px; right: 15px; 
-            z-index: 2100; 
-            background: rgba(255,255,255,0.8); 
-            color: var(--text-main); 
-            width: 40px; height: 40px; 
-            border-radius: 50%; 
-            box-shadow: var(--shadow-md);
-            font-size: 20px; 
-            cursor: pointer; 
-            backdrop-filter: blur(5px); 
-            display: flex; align-items: center; justify-content: center; 
-            transition: 0.3s;
-            border: none;
-        }
-        .close-circle:active { transform: scale(0.9); background: #fff; }
-        
-        .slider-container { 
-            width: 100%; 
-            aspect-ratio: 4/3; 
-            background: #e2e8f0; 
-            position: relative; 
-            overflow: hidden; 
-            touch-action: pan-y; 
-        }
-        .slider-track { 
-            display: flex; 
-            height: 100%; 
-            transition: transform 0.3s ease-out; 
-            will-change: transform; 
-        }
-        .slide-img { 
-            min-width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            cursor: zoom-in;
-        }
-        
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.6);
-            color: var(--text-main);
-            border: none;
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            box-shadow: var(--shadow-sm);
-        }
-        .slider-btn.left { left: 10px; }
-        .slider-btn.right { right: 10px; }
-        .slide-counter-badge {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 4px 12px;
+        /* Trạng thái đồng bộ mạng */
+        .sync-badge {
+            font-size: 12px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 12px;
             font-weight: 600;
-            backdrop-filter: blur(4px);
-            z-index: 10;
-            letter-spacing: 1px;
-        }
-
-        /* ZOOM VIEW (PHÓNG TO & LƯỚT ẢNH) */
-        #zoom-view {
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 5000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            touch-action: none;
-        }
-        #zoom-img {
-            max-width: 100%;
-            max-height: 100%;
-            transition: transform 0.1s ease-out;
-            will-change: transform;
-        }
-        .zoom-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            width: 44px; height: 44px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px;
-            z-index: 5100;
-            cursor: pointer;
-        }
-        .zoom-nav-btn {
-            position: absolute;
-            top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; cursor: pointer; z-index: 5100;
-        }
-        .zoom-nav-btn.left { left: 15px; }
-        .zoom-nav-btn.right { right: 15px; }
-        .zoom-counter {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            color: white; background: rgba(255,255,255,0.2);
-            padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
-            z-index: 5100; letter-spacing: 1px;
-        }
-
-        .detail-body { 
-            width: 100%; 
-            max-width: 800px; 
-            margin: -20px auto 0; 
-            position: relative; 
-            z-index: 5; 
-            padding: 0 12px 120px; 
-        }
-        .main-info-card { 
-            padding: 20px; 
-            border-radius: var(--radius-lg); 
-        }
-        .main-info-card h2 {
-            font-size: 20px;
-            margin-bottom: 5px;
-            color: var(--text-main);
-            line-height: 1.4;
-        }
-        .main-info-card h3 {
-            color: var(--accent);
-            font-size: 22px;
-            margin-bottom: 15px;
-            font-weight: 800;
-        }
-
-        .feature-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); 
-            gap: 10px; 
-            margin: 20px 0; 
-        }
-        .f-item { 
-            background: #f1f5f9; 
-            padding: 12px 4px; 
-            border-radius: var(--radius-md); 
-            text-align: center; 
-            border: 1px solid #e2e8f0;
-        }
-        .f-item span { 
-            font-size: 10px; 
-            color: var(--text-sub); 
-            display: block; 
-            text-transform: uppercase; 
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-        .f-item b { 
-            font-size: 13px; 
-            display: block; 
-            color: var(--text-main);
-        }
-
-        .bank-luxury { 
-            background: rgba(234, 88, 12, 0.05); 
-            border: 1px solid rgba(234, 88, 12, 0.2); 
-            padding: 15px; 
-            border-radius: var(--radius-md); 
-            margin: 20px 0; 
-            border-left: 4px solid var(--accent); 
-        }
-        .bank-luxury h4 { font-size: 13px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;}
-        .bank-luxury p { font-size: 13px; margin: 4px 0; color: var(--text-sub); display: flex; justify-content: space-between; }
-        .bank-luxury p b { color: var(--text-main); }
-
-        .desc-box {
-            margin-top: 20px; 
-            border-top: 1px solid var(--border); 
-            padding-top: 20px;
-        }
-        .desc-box p {
-            white-space: pre-line; 
-            font-size: 15px; 
-            line-height: 1.7;
-            color: var(--text-main);
-        }
-
-        .contact-group { 
-            display: flex; 
-            gap: 12px; 
-            position: fixed; 
-            bottom: 20px; 
-            left: 12px; 
-            right: 12px; 
-            z-index: 100; 
-            max-width: 776px;
-            margin: 0 auto;
-        }
-        .c-btn { 
-            flex: 1; 
-            padding: 14px; 
-            border-radius: var(--radius-lg); 
-            text-align: center; 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 15px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: var(--shadow-lg); 
-            transition: 0.3s;
-            border: none;
-        }
-        .c-btn:active { transform: translateY(2px); }
-        .zalo-bg { background: #0068ff; color: #fff; }
-        .call-bg { background: var(--accent); color: #fff; } 
-
-        /* =========================================
-           6. CỬA HÀNG / QUẢN LÝ (ADMIN VIEW)
-           ========================================= */
-        .admin-view { display: none; padding-top: 20px; width: 100%; }
-        .form-luxury { 
-            padding: 20px; 
-            border-radius: var(--radius-lg); 
-            margin-bottom: 30px; 
-        }
-        .admin-item { 
-            padding: 12px; 
-            border-radius: var(--radius-lg); 
-            margin-bottom: 12px; 
-            display: flex; 
-            gap: 12px; 
-            align-items: center; 
-        }
-        .ad-thumb { 
-            width: 80px; 
-            height: 60px; 
-            object-fit: cover; 
-            border-radius: 12px; 
-            background: #e2e8f0; 
-        }
-        .ad-actions { 
-            display: flex; 
-            gap: 8px; 
-            margin-top: 8px; 
-            flex-wrap: wrap;
-        }
-        .ad-btn { 
-            padding: 6px 12px; 
-            border-radius: 8px; 
-            border: none; 
-            font-size: 11px; 
-            font-weight: 600;
-            cursor: pointer; 
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            border: 1px solid transparent;
-        }
-        .btn-edit { background: #f1f5f9; color: var(--text-main); border-color: #cbd5e1; }
-        .btn-del { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
-
-        /* =========================================
-           7. BOTTOM NAVIGATION
-           ========================================= */
-        .b-nav { 
-            position: fixed; 
-            bottom: 0; left: 0; 
-            width: 100%; height: 70px; 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex; 
-            border-top: 1px solid var(--border); 
-            z-index: 1000; 
-            padding-bottom: env(safe-area-inset-bottom); 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
-        }
-        .b-link { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--text-sub); 
-            text-decoration: none; 
-            font-size: 11px; 
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        .b-link.active { color: var(--primary); font-weight: 700; }
-        .b-link i { font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
-        .b-link.active i { transform: translateY(-2px); }
-
-        /* MÀN HÌNH NHẬP MÃ PIN */
-        #auth-gate { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: rgba(248, 250, 252, 0.95); 
-            z-index: 3000; 
-            display: none; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            color: var(--text-main); 
-            backdrop-filter: blur(10px);
-        }
-
-        @media (min-width: 600px) {
-            .main-grid { grid-template-columns: repeat(3, 1fr); }
-            .grid-filters { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        /* =========================================
-           8. CÔNG CỤ TÍNH LÃI SUẤT
-           ========================================= */
-        .calc-toggle-btn {
-            background: #ffffff;
-            color: var(--primary);
-            border: 1px solid rgba(29, 78, 216, 0.3);
-            padding: 10px 15px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            margin: 10px 0;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-sm);
+            gap: 6px;
         }
-        #calc-section {
+        .sync-online { background: #dcfce7; color: #15803d; }
+        .sync-offline { background: #fee2e2; color: #b91c1c; }
+        .sync-pending { background: #fef3c7; color: #b45309; }
+
+        .container { width: 100%; max-width: 600px; margin: auto; padding: 15px; }
+
+        /* Khung các Tab nội dung */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.25s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--white);
             border-radius: var(--radius-lg);
             padding: 20px;
-            margin-bottom: 20px;
-            display: none; 
-            animation: slideDown 0.3s ease-out;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
         }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .calc-result-table {
+
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 15px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
+
+        /* Form Nhập Liệu */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 4px; font-weight: 500; }
+        .form-control {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 13px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
         }
-        .calc-result-table th {
-            background: #f1f5f9;
-            text-align: left;
-            padding: 10px;
-            border-bottom: 2px solid #cbd5e1;
-            color: var(--text-main);
-        }
-        .calc-result-table td {
-            padding: 10px;
-            border-bottom: 1px solid #e2e8f0;
-            color: var(--text-main);
-        }
-        .highlight-calc {
-            color: var(--accent);
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(75, 54, 33, 0.1); }
+        .form-control:disabled { background: #f1f5f9; color: var(--text-sub); }
+
+        .btn-block {
+            width: 100%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-md);
             font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(75, 54, 33, 0.15);
         }
+        .btn-block:active { transform: scale(0.99); }
+
+        /* Bảng kho hàng và danh sách cuộn */
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; }
+        .custom-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        .custom-table th { background: var(--primary-light); padding: 10px; font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--border); }
+        .custom-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        
+        .input-reconcile {
+            width: 70px;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .scroll-box { max-height: 280px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fafafa; }
+        .history-item { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
+        .history-item:last-child { border-bottom: none; }
+
+        /* Tài chính */
+        .finance-summary { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+        .summary-box { padding: 15px; border-radius: var(--radius-md); background: var(--primary-light); border: 1px solid var(--border); }
+        .summary-box.profit { background: #dcfce7; border-color: #bbf7d0; color: #16a34a; }
+        .summary-label { font-size: 11px; text-transform: uppercase; color: var(--text-sub); font-weight: 600; }
+        .summary-value { font-size: 20px; font-weight: 800; margin-top: 2px; }
+
+        /* Thanh điều hướng dưới cùng */
+        .b-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%; height: 65px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
+        }
+        .b-link {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-sub); text-decoration: none; font-size: 11px; cursor: pointer; transition: 0.2s;
+        }
+        .b-link.active { color: var(--primary); font-weight: 700; }
+        .b-link i { font-size: 20px; margin-bottom: 3px; }
+
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-text">SANG PRO AUTO</div>
+    <div class="logo-text"><i class="fa-solid fa-mug-hot"></i> CAFE MANAGER</div>
+    <div id="sync-status" class="sync-badge sync-online">
+        <i class="fa-solid fa-cloud"></i> <span>Đang trực tuyến</span>
+    </div>
 </header>
 
-<div id="showroom-tab" class="container">
-    <button class="calc-toggle-btn" onclick="toggleCalc()">
-        <i class="fa-solid fa-calculator"></i> CÔNG CỤ TÍNH TRẢ GÓP
-    </button>
-
-    <div id="calc-section" class="glass-panel">
-        <h4 style="font-size: 14px; margin-bottom: 15px; text-transform: uppercase;">Dự toán khoản vay trả góp</h4>
-        <div class="grid-filters">
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Giá trị xe (VNĐ)</label>
-                <input type="number" id="loan-price" placeholder="745,000,000" class="sel-custom">
+<div class="container">
+    
+    <!-- TAB 1: NHẬP LIỆU MUA HÀNG -->
+    <div id="tab-input" class="tab-content active">
+        <div class="card">
+            <div class="card-title">Phiếu Nhập Hàng Vào</div>
+            <div class="form-group">
+                <label>Ngày ghi nhận (Tự động)</label>
+                <input type="text" id="inp-date" class="form-control" disabled>
             </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Vay tối đa (%)</label>
-                <input type="number" id="loan-pct" placeholder="70" class="sel-custom">
+            <div class="form-group">
+                <label>Tên mặt hàng</label>
+                <input type="text" id="inp-name" placeholder="Ví dụ: Ổi, Sữa đặc, Cafe hạt..." class="form-control">
             </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Thời hạn (Năm)</label>
-                <input type="number" id="loan-years" placeholder="5" class="sel-custom">
+            <div class="form-group">
+                <label>Số lượng mua</label>
+                <input type="number" id="inp-qty" placeholder="Nhập số lượng" class="form-control" oninput="calcUnitPrice()">
             </div>
-            <div>
-                <label style="font-size: 11px; color: var(--text-sub);">Lãi suất (%/năm)</label>
-                <input type="number" id="loan-rate" placeholder="10.5" class="sel-custom">
+            <div class="form-group">
+                <label>Tổng số tiền (VNĐ)</label>
+                <input type="number" id="inp-total" placeholder="Nhập tổng số tiền" class="form-control" oninput="calcUnitPrice()">
             </div>
-        </div>
-        
-        <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin: 15px 0; cursor:pointer; color: var(--text-main);">
-            <input type="checkbox" id="tpbank-sim" style="width:18px; height:18px;"> 
-            Mô phỏng lãi suất TPBank (10 năm gần nhất)
-        </label>
-
-        <button onclick="calculateLoan()" style="width:100%; background:var(--primary); color:#fff; border:none; padding:14px; border-radius:var(--radius-md); font-weight:700; cursor:pointer; box-shadow: var(--shadow-md);">HOÀN THÀNH & XUẤT KẾT QUẢ</button>
-
-        <div id="loan-result-box" style="display:none; margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
-            <div id="loan-summary" style="background:#f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0;"></div>
-            <table class="calc-result-table">
-                <thead>
-                    <tr>
-                        <th>Năm</th>
-                        <th>Trung bình/Tháng</th>
-                        <th>Tháng Cao nhất</th>
-                        <th>Tháng Thấp nhất</th>
-                    </tr>
-                </thead>
-                <tbody id="loan-table-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="filter-section glass-panel">
-        <div class="search-wrapper">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="sr-search" placeholder="Tìm kiếm tên xe (VD: Mazda 3)..." onkeyup="processFilter()">
-            <button onclick="location.reload()" class="reload-btn" title="Tải lại trang">
-                <i class="fa-solid fa-rotate-right"></i>
+            <div class="form-group">
+                <label>Đơn giá dự kiến trên mỗi đơn vị (Tự động tính)</label>
+                <input type="text" id="inp-unit-price" class="form-control" placeholder="0 đ" disabled>
+            </div>
+            <button onclick="submitPurchase()" class="btn-block" style="margin-top: 10px;">
+                <i class="fa-solid fa-wallet"></i> BẤM THANH TOÁN
             </button>
         </div>
-        <div class="grid-filters" style="grid-template-columns: repeat(2, 1fr);">
-            <select id="f-brand" class="sel-custom" onchange="processFilter()"><option value="">Tất cả Hãng xe</option></select>
-            <select id="f-year" class="sel-custom" onchange="processFilter()"><option value="">Năm Sản Xuất</option></select>
-            <select id="f-price" class="sel-custom" style="grid-column: span 2;" onchange="processFilter()">
-                <option value="">Khoảng giá</option>
-                <option value="0-500">Dưới 500 Triệu</option>
-                <option value="500-1000">500 Triệu - 1 Tỷ</option>
-                <option value="1000-9999">Trên 1 Tỷ</option>
-            </select>
-        </div>
     </div>
-    <div class="main-grid" id="showroom-render"></div>
-</div>
 
-<div id="admin-tab" class="container admin-view">
-    <div class="form-luxury glass-panel">
-        <h3 id="ad-title" style="margin:0 0 20px 0; font-size: 16px; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase;">Đăng Xe Mới</h3>
-        <input type="hidden" id="edit-id">
-        <div class="grid-filters">
-            <input type="text" id="ad-name" placeholder="Tên xe đầy đủ" class="sel-custom" style="grid-column: span 2;">
-            <input type="number" id="ad-price" placeholder="Giá bán (VNĐ)" class="sel-custom">
-            <input type="text" id="ad-brand" placeholder="Hãng xe" class="sel-custom">
-            <input type="number" id="ad-year" placeholder="Năm sản xuất" class="sel-custom">
-            <input type="number" id="ad-odo" placeholder="Số Km đã đi" class="sel-custom">
-            <input type="text" id="ad-fuel" placeholder="Tiêu hao (VD: 6.5L)" class="sel-custom">
-            <select id="ad-transmission" class="sel-custom">
-                <option value="">Chọn Hộp Số</option>
-                <option value="Số Tự Động (AT)">Số Tự Động (AT)</option>
-                <option value="Số Sàn (MT)">Số Sàn (MT)</option>
-            </select>
-            <select id="ad-status" class="sel-custom" style="grid-column: span 2;">
-                <option value="available">Tình trạng: Đang bán</option>
-                <option value="deposit">Tình trạng: Đã nhận cọc</option>
-                <option value="sold">Tình trạng: Đã bán</option>
-            </select>
-        </div>
-        <h4 style="font-size: 13px; margin: 20px 0 10px; color: var(--text-sub);">HỖ TRỢ NGÂN HÀNG</h4>
-        <div class="grid-filters">
-            <input type="number" id="ad-bankp" placeholder="Vay tối đa (%)" class="sel-custom">
-            <input type="number" id="ad-banky" placeholder="Thời hạn vay (Năm)" class="sel-custom">
-            <input type="number" id="ad-bankmin" placeholder="Trả trước tối thiểu (VNĐ)" class="sel-custom" style="grid-column: span 2;">
-        </div>
-        <label style="display:flex; align-items:center; gap:10px; font-weight:600; font-size:14px; margin: 20px 0; padding: 10px; background: rgba(234, 88, 12, 0.05); border-radius: 8px; border: 1px solid rgba(234, 88, 12, 0.2); color: var(--accent);">
-            <input type="checkbox" id="ad-hot" style="width:20px; height:20px; accent-color: #ea580c;"> ƯU TIÊN HIỂN THỊ XE HOT 🔥
-        </label>
-        <textarea id="ad-desc" placeholder="Mô tả tình trạng xe, cam kết, pháp lý, trang bị..." class="sel-custom" style="height:120px; margin-bottom:15px; resize: vertical;"></textarea>
-        
-        <div style="margin-bottom:15px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px;">1. Ảnh hiển thị Công Khai (Tất cả mọi người đều thấy):</label>
-            <input type="file" id="ad-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+    <!-- TAB 2: QUẢN LÝ KHO HÀNG -->
+    <div id="tab-warehouse" class="tab-content">
+        <!-- Bảng kho cố định danh mục -->
+        <div class="card">
+            <div class="card-title">Trạng Thái Kho Hiện Tại</div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Tên hàng</th>
+                            <th>Tồn kho</th>
+                            <th>Đơn giá cuối</th>
+                            <th style="width: 90px; text-align: center;">Đồng kiểm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-render">
+                        <tr><td colspan="4" style="text-align:center; color:var(--text-sub);">Đang tải dữ liệu kho...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div style="margin-bottom:20px; background: rgba(234, 88, 12, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent);">
-            <label style="font-size:13px; font-weight:600; display:block; margin-bottom: 8px; color: var(--accent);"><i class="fa-solid fa-lock"></i> 2. Ảnh Bảo Mật (Chỉ khách gửi link định danh riêng mới thấy):</label>
-            <p style="font-size: 11px; color: var(--text-sub); margin-bottom: 8px;">Dùng up Sổ đăng kiểm, Giấy tờ, Góc lỗi... Khách vào bằng Link Đăng Bài/Showroom sẽ KHÔNG THẤY.</p>
-            <input type="file" id="ad-private-files" multiple accept="image/*" class="sel-custom" style="background: transparent; border: none; padding: 0; box-shadow: none;">
-        </div>
-
-        <div style="display:flex; gap:15px;">
-            <button onclick="saveCar()" id="btn-submit" style="flex:2; background:var(--primary); color:#fff; padding:15px; border:none; border-radius:var(--radius-md); font-weight:700; font-size: 15px; cursor: pointer; box-shadow: var(--shadow-md);">CẬP NHẬT XE</button>
-            <button onclick="clearForm()" style="flex:1; background:#f8fafc; border:1px solid #cbd5e1; border-radius:var(--radius-md); color: var(--text-main); font-weight: 600; cursor: pointer;">RESET LẠI</button>
+        <!-- Lịch sử mua hàng cuộn xem bên dưới -->
+        <div class="card">
+            <div class="card-title">Nhật ký lịch sử mua hàng</div>
+            <div class="scroll-box" id="history-render">
+                <div style="text-align:center; padding: 20px; color:var(--text-sub);">Đang tải nhật ký...</div>
+            </div>
         </div>
     </div>
-    
-    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 16px;">QUẢN LÝ KHO XE</h3>
-    </div>
-    <div id="admin-render"></div>
 
-    <div style="margin-top: 30px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 16px;"><i class="fa-solid fa-chart-line"></i> NHẬT KÝ KHÁCH XEM XE</h3>
-        <button onclick="loadTracking()" style="background:transparent; border:none; color:var(--primary); font-weight:bold; cursor:pointer; font-size: 13px;"><i class="fa-solid fa-rotate"></i> Cập nhật ngay</button>
-    </div>
-    <div id="tracking-render" style="max-height: 300px; overflow-y: auto; background: #fff; border-radius: 12px; padding: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 30px;">
-        <div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>
+    <!-- TAB 3: TÀI CHÍNH HẰNG NGÀY -->
+    <div id="tab-finance" class="tab-content">
+        <div class="card">
+            <div class="card-title">Chốt Sổ Tài Chính Hôm Nay</div>
+            
+            <div class="form-group">
+                <label>Doanh thu bán ra trong ngày (Bán cafe)</label>
+                <input type="number" id="fin-revenue" placeholder="Nhập tổng doanh thu cuối ngày" class="form-control" oninput="recalcFinance()">
+            </div>
+            
+            <div class="form-group">
+                <label>Chi phí nhập hàng hôm nay (Tự động tính từ kho)</label>
+                <input type="text" id="fin-cost" class="form-control" value="0 đ" disabled>
+            </div>
+
+            <div class="finance-summary">
+                <div class="summary-box profit">
+                    <div class="summary-label">Lợi Nhuận Thuần Thực Tế</div>
+                    <div class="summary-value" id="fin-profit">0 đ</div>
+                </div>
+            </div>
+
+            <button onclick="saveDailyFinance()" class="btn-block" style="background: var(--success); box-shadow: 0 4px 12px rgba(22,163,74,0.15);">
+                <i class="fa-solid fa-floppy-disk"></i> LƯU ĐÓNG SỔ NGÀY HÔM NAY
+            </button>
+        </div>
     </div>
 
 </div>
 
-<div id="detail-overlay" class="full-page">
-    <button class="close-circle" onclick="closePage()"><i class="fa-solid fa-xmark"></i></button>
-    
-    <div id="private-badge" style="display: none; background: #ea580c; color: white; text-align: center; padding: 6px; font-size: 11px; font-weight: bold; position: fixed; top: 0; width: 100%; z-index: 2050;">
-        <i class="fa-solid fa-shield-check"></i> ĐANG HIỂN THỊ CHẾ ĐỘ ẢNH CHI TIẾT DÀNH RIÊNG CHO BẠN
-    </div>
-
-    <div id="detail-render-box"></div>
-</div>
-
-<div id="zoom-view">
-    <div class="zoom-close" onclick="closeZoom()"><i class="fa-solid fa-xmark"></i></div>
-    <button class="zoom-nav-btn left" onclick="changeZoomSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button>
-    <button class="zoom-nav-btn right" onclick="changeZoomSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button>
-    <div class="zoom-counter" id="zoom-counter-text">1 / 1</div>
-    <img id="zoom-img" src="" alt="Zoomed Image">
-</div>
-
-<div id="auth-gate">
-    <div class="glass-panel" style="padding: 30px; border-radius: 24px; text-align: center; width: 90%; max-width: 350px;">
-        <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
-        <h3 style="letter-spacing:1px; font-size: 18px; margin-bottom: 20px; color: var(--text-main);">MÃ PIN TRUY CẬP</h3>
-        <input type="password" id="pin-code" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius: 12px; color:var(--text-main); font-size:30px; text-align:center; width:100%; padding: 10px; outline:none; letter-spacing:8px; margin-bottom: 20px;" maxlength="6" inputmode="numeric">
-        <button onclick="checkAuth()" style="background:var(--primary); color:#fff; padding:15px; width: 100%; border:none; border-radius:12px; font-weight:700; font-size: 16px; box-shadow: var(--shadow-md);">XÁC NHẬN ĐĂNG NHẬP</button>
-    </div>
-</div>
-
+<!-- Navigation Bar -->
 <nav class="b-nav">
-    <div class="b-link active" id="n-sr" onclick="switchView('showroom')">
-        <i class="fa-solid fa-car-side"></i><span>Showroom</span>
+    <div class="b-link active" id="btn-tab-input" onclick="switchTab('input')">
+        <i class="fa-solid fa-pen-to-square"></i><span>Nhập liệu</span>
     </div>
-    <div class="b-link" id="n-ad" onclick="switchView('admin')">
-        <i class="fa-solid fa-toolbox"></i><span>Cửa hàng</span>
+    <div class="b-link" id="btn-tab-warehouse" onclick="switchTab('warehouse')">
+        <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+    </div>
+    <div class="b-link" id="btn-tab-finance" onclick="switchTab('finance')">
+        <i class="fa-solid fa-chart-pie"></i><span>Tài chính</span>
     </div>
 </nav>
 
 <script>
-    /* =========================================
-       [LỚP BẢO VỆ CHỐNG XEM CODE - ĐƯỢC THÊM MỚI]
-       ========================================= */
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-        if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && e.keyCode === 85)) { e.preventDefault(); return false; }
-    };
-    (function(){ (function a(){ try { (function b(i){ if((''+(i/i)).length !== 1 || i % 20 === 0) { (function(){}).constructor('debugger')(); } else { debugger; } b(++i); })(0); } catch(e) { setTimeout(a, 5000); } })(); })();
-    /* ========================================= */
-
+    // 1. Cấu hình Firebase giữ nguyên cơ sở từ dự án của bạn
     const firebaseConfig = {
         apiKey: "AIzaSyA0oquSskSYpyQusTZMFiqTLIE9jZcEaTY",
         authDomain: "sang-pro-ab41f.firebaseapp.com",
@@ -887,402 +290,304 @@
         messagingSenderId: "332384180945",
         appId: "1:332384180945:web:999a85760a1909850c83f0"
     };
-    const IMGBB_KEY = "a4b55574ff83037588382d5f83783ea1";
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let allCars = [];
-    let isLogged = false;
-    let initialLoadDone = false;
-    
-    let currentSlideIndex = 0;
-    let totalSlides = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    const PHONE_NUMBER = "0946327164"; 
-    const ZALO_LINK = "https://zalo.me/0946327164"; 
-
-    /* Tính lãi suất */
-    function toggleCalc() { const sec = document.getElementById('calc-section'); sec.style.display = (sec.style.display === 'block') ? 'none' : 'block'; }
-    function calculateLoan() {
-        const price = Number(document.getElementById('loan-price').value) || 0;
-        const pct = Number(document.getElementById('loan-pct').value) || 0;
-        const years = Number(document.getElementById('loan-years').value) || 0;
-        let rateInput = Number(document.getElementById('loan-rate').value) || 0;
-        const isSimTP = document.getElementById('tpbank-sim').checked;
-        if (price === 0 || pct === 0 || years === 0) { alert("Vui lòng nhập đầy đủ Giá xe, % Vay và Thời hạn!"); return; }
-        const loanAmount = price * (pct / 100); const prepayment = price - loanAmount; const totalMonths = years * 12; const monthlyPrincipal = loanAmount / totalMonths;
-        const tpRates = [8.5, 9.0, 10.0, 10.5, 8.0, 7.5, 12.0, 13.5, 10.5, 10.0];
-        let tableBody = ""; let currentBalance = loanAmount; let grandTotalInterest = 0;
-        for (let y = 1; y <= years; y++) {
-            let yearTotalPayments = []; let annualRate = (isSimTP && y <= tpRates.length) ? tpRates[y-1] : rateInput;
-            for (let m = 1; m <= 12; m++) {
-                let monthlyInterest = (currentBalance * (annualRate / 100)) / 12; let totalMonthly = monthlyPrincipal + monthlyInterest;
-                yearTotalPayments.push(totalMonthly); currentBalance -= monthlyPrincipal; grandTotalInterest += monthlyInterest;
-            }
-            tableBody += `<tr><td><b>Năm ${y}</b> <small style="display:block; color:var(--accent)">Lãi suất: ${annualRate}%</small></td><td><b class="highlight-calc">${formatCurrency(yearTotalPayments.reduce((a,b) => a+b, 0) / 12)}</b></td><td>${formatCurrency(Math.max(...yearTotalPayments))}</td><td>${formatCurrency(Math.min(...yearTotalPayments))}</td></tr>`;
+    // 2. KÍCH HOẠT TÍNH NĂNG OFFLINE DATA SYNC CỦA FIRESTORE
+    db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
+        if (err.code == 'failed-precondition') {
+            console.warn("Chế độ lưu offline chỉ hoạt động trên 1 tab trình duyệt tại một thời điểm.");
+        } else if (err.code == 'unimplemented') {
+            console.error("Trình duyệt hiện tại không hỗ trợ bộ nhớ đệm offline.");
         }
-        document.getElementById('loan-summary').innerHTML = `<p style="font-size:13px; color: var(--text-main);">Trả trước (tự có): <b>${formatCurrency(prepayment)}</b></p><p style="font-size:13px; color: var(--text-main);">Số tiền ngân hàng cho vay: <b>${formatCurrency(loanAmount)}</b></p><p style="font-size:13px; color: var(--text-main);">Thời hạn: <b>${years} Năm (${totalMonths} tháng)</b></p><p style="font-size:13px; color:var(--accent)">Tổng tiền lãi phải trả: <b>${formatCurrency(grandTotalInterest)}</b></p>`;
-        document.getElementById('loan-table-body').innerHTML = tableBody; document.getElementById('loan-result-box').style.display = 'block';
-    }
-    function formatCurrency(num) { return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ'; }
+    });
 
-    /* Zoom ảnh */
-    let zoomScale = 1; let zoomStartDist = 0; let isZooming = false; let activeZoomImgs = []; let currentZoomIndex = 0;
-    function openZoom(index) { currentZoomIndex = index; const zv = document.getElementById('zoom-view'); const zi = document.getElementById('zoom-img'); zi.src = activeZoomImgs[currentZoomIndex]; document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`; zv.style.display = 'flex'; zoomScale = 1; zi.style.transform = `scale(${zoomScale})`; document.body.style.overflow = 'hidden'; }
-    function changeZoomSlide(direction, event) { if(event) event.stopPropagation(); currentZoomIndex += direction; if(currentZoomIndex >= activeZoomImgs.length) currentZoomIndex = 0; if(currentZoomIndex < 0) currentZoomIndex = activeZoomImgs.length - 1; const zi = document.getElementById('zoom-img'); zi.src = activeZoomImgs[currentZoomIndex]; zoomScale = 1; zi.style.transform = `scale(${zoomScale})`; document.getElementById('zoom-counter-text').innerText = `${currentZoomIndex + 1} / ${activeZoomImgs.length}`; }
-    function closeZoom() { document.getElementById('zoom-view').style.display = 'none'; if(document.getElementById('detail-overlay').style.display !== 'block') { document.body.style.overflow = 'auto'; } currentSlideIndex = currentZoomIndex; updateSliderDOM(); }
-    const zoomImg = document.getElementById('zoom-img'); const zoomView = document.getElementById('zoom-view'); let zoomTouchStartX = 0;
-    zoomView.addEventListener('touchstart', e => { if (e.touches.length === 1) { zoomTouchStartX = e.touches[0].screenX; } if (e.touches.length === 2) { isZooming = true; zoomStartDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); } });
-    zoomView.addEventListener('touchmove', e => { if (isZooming && e.touches.length === 2) { const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); let delta = dist / zoomStartDist; let newScale = zoomScale * delta; if (newScale < 1) newScale = 1; if (newScale > 4) newScale = 4; zoomImg.style.transform = `scale(${newScale})`; } });
-    zoomView.addEventListener('touchend', e => { if (isZooming) { zoomScale = parseFloat(zoomImg.style.transform.replace('scale(', '').replace(')', '')) || 1; isZooming = false; } else if (e.changedTouches.length === 1 && zoomScale <= 1.1) { let zoomTouchEndX = e.changedTouches[0].screenX; if (zoomTouchEndX < zoomTouchStartX - 50) changeZoomSlide(1, null); if (zoomTouchEndX > zoomTouchStartX + 50) changeZoomSlide(-1, null); } });
-    zoomView.addEventListener('wheel', e => { e.preventDefault(); zoomScale += e.deltaY * -0.001; zoomScale = Math.min(Math.max(1, zoomScale), 4); zoomImg.style.transform = `scale(${zoomScale})`; }, { passive: false });
+    // Các biến lưu trữ tạm thời số liệu cục bộ
+    let costToday = 0;
+    let currentHistory = [];
 
-
-    async function compressImage(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image(); img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height, max = 1200; 
-                    if(w > h) { if(w > max) { h *= max/w; w = max; } } else { if(h > max) { w *= max/h; h = max; } }
-                    canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
-                    canvas.toBlob(b => resolve(new File([b], file.name, {type:'image/jpeg'})), 'image/jpeg', 0.7);
-                };
-            };
-        });
+    // Lấy ngày hiện tại định dạng DD/MM/YYYY
+    function getTodayString() {
+        const d = new Date();
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
     }
 
-    function initData() {
-        db.collection("Cars").orderBy("updatedAt", "desc").onSnapshot(snap => {
-            allCars = []; snap.forEach(doc => allCars.push({id: doc.id, ...doc.data()}));
-            populateFilters(); processFilter();
-            if(document.getElementById('admin-tab').style.display === 'block') { renderAdmin(); loadTracking(); }
-            
-            if (!initialLoadDone) {
-                initialLoadDone = true;
-                const urlParams = new URLSearchParams(window.location.search);
-                const qId = urlParams.get('id');
-                const khach = urlParams.get('khach');
-                
-                // --- LOGIC TRACKING (Ghi nhận lượt xem) ---
-                if (qId && khach) {
-                    const targetCar = allCars.find(c => c.id === qId);
-                    
-                    if (targetCar && targetCar.status !== 'sold') {
-                        const trackingRef = db.collection("Tracking").doc(`${khach}_${qId}`);
-                        trackingRef.set({
-                            carID: qId,
-                            customerName: khach,
-                            views: firebase.firestore.FieldValue.increment(1),
-                            lastView: firebase.firestore.FieldValue.serverTimestamp(),
-                            type: khach === "Link_Dang_Bai" ? "Public" : "Private"
-                        }, { merge: true });
-                    }
-                }
+    // Lấy mã khóa ngày cho Firestore YYYY-MM-DD
+    function getTodayKey() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
 
-                if(qId) setTimeout(() => openPage(qId), 500);
+    // Định dạng tiền tệ VNĐ ngắn gọn
+    function formatVND(num) {
+        return new Intl.NumberFormat('vi-VN').format(Math.round(num)) + ' đ';
+    }
+
+    // Chuyển đổi Tab điều hướng
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.b-link').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        document.getElementById(`btn-tab-${tabName}`).classList.add('active');
+        
+        if(tabName === 'input') {
+            document.getElementById('inp-date').value = getTodayString();
+        }
+    }
+
+    // Theo dõi trạng thái kết nối mạng thực tế và Firestore sync
+    function watchSyncStatus() {
+        const badge = document.getElementById('sync-status');
+        
+        // Lắng nghe sự thay đổi trạng thái mạng của trình duyệt
+        window.addEventListener('online', () => updateBadge("online"));
+        window.addEventListener('offline', () => updateBadge("offline"));
+        
+        if (!navigator.onLine) updateBadge("offline");
+
+        function updateBadge(status) {
+            if(status === "offline") {
+                badge.className = "sync-badge sync-offline";
+                badge.innerHTML = `<i class="fa-solid fa-cloud-moon"></i> <span>Đang ngoại tuyến</span>`;
+            } else {
+                badge.className = "sync-badge sync-online";
+                badge.innerHTML = `<i class="fa-solid fa-cloud"></i> <span>Đang trực tuyến</span>`;
             }
-        });
+        }
     }
 
-    function populateFilters() {
-        const bSet = [...new Set(allCars.map(c => c.brand).filter(Boolean))].sort();
-        const ySet = [...new Set(allCars.map(c => c.year).filter(Boolean))].sort((a,b)=>b-a);
-        const bSel = document.getElementById('f-brand'); const ySel = document.getElementById('f-year');
-        bSel.innerHTML = '<option value="">Tất cả Hãng xe</option>'; bSet.forEach(b => bSel.innerHTML += `<option value="${b}">${b}</option>`);
-        ySel.innerHTML = '<option value="">Năm Sản Xuất</option>'; ySet.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
-    }
-
-    function processFilter() {
-        const kw = document.getElementById('sr-search').value.toLowerCase(); const br = document.getElementById('f-brand').value; const ye = document.getElementById('f-year').value; const pr = document.getElementById('f-price').value;
-        const filtered = allCars.filter(c => {
-            const mKw = c.name && c.name.toLowerCase().includes(kw); const mBr = !br || c.brand === br; const mYe = !ye || String(c.year) === String(ye);
-            let mPr = true; if(pr === '0-500') mPr = c.price < 500000000; if(pr === '500-1000') mPr = c.price >= 500000000 && c.price <= 1000000000; if(pr === '1000-9999') mPr = c.price > 1000000000;
-            return mKw && mBr && mYe && mPr;
-        });
-        filtered.sort((a, b) => (b.isHot === true) - (a.isHot === true));
-        const r = document.getElementById('showroom-render'); r.innerHTML = "";
-        if(filtered.length === 0) { r.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px 20px; color: var(--text-sub);">Không tìm thấy chiếc xe nào phù hợp.</div>`; return; }
-        filtered.forEach(c => {
-            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/400x300?text=Chưa+Có+Ảnh';
-            let priceTxt = c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ';
-            let statusOverlay = '';
-            if (c.status === 'deposit') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(245, 158, 11, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ NHẬN CỌC</div>';
-            else if (c.status === 'sold') statusOverlay = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239, 68, 68, 0.95); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; z-index: 10; text-transform: uppercase; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none; letter-spacing: 1px;">ĐÃ BÁN</div>';
-            
-            r.innerHTML += `
-                <div class="car-card glass-panel" onclick="openPage('${c.id}')">
-                    ${c.isHot ? '<div class="hot-label">HOT 🔥</div>' : ''}
-                    <div class="img-wrap">${statusOverlay}<img src="${thumb}"></div>
-                    <div class="info-wrap">
-                        <div class="name-txt">${c.name || 'Đang cập nhật'}</div>
-                        <div class="price-txt">${priceTxt}</div>
-                        <div class="spec-tags">
-                            <div class="tag-item"><i class="fa-regular fa-calendar"></i> ${c.year || '--'}</div>
-                            <div class="tag-item"><i class="fa-solid fa-gauge-high"></i> ${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'} km</div>
-                            <div class="tag-item"><i class="fa-solid fa-gas-pump"></i> ${c.fuel || '--'}</div>
-                            ${c.transmission ? `<div class="tag-item"><i class="fa-solid fa-gears"></i> ${c.transmission}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="btn-view-car">Xem xe</div>
-                </div>`;
-        });
-    }
-
-    function openPage(id) {
-        const c = allCars.find(x => x.id === id); if(!c) return;
+    // TAB 1 LOGIC: Tự động tính đơn giá khi nhập số liệu
+    function calcUnitPrice() {
+        const qty = Number(document.getElementById('inp-qty').value) || 0;
+        const total = Number(document.getElementById('inp-total').value) || 0;
+        const outBox = document.getElementById('inp-unit-price');
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const khach = urlParams.get('khach');
-        
-        let imgs = (c.images && c.images.length > 0) ? [...c.images] : ['https://via.placeholder.com/800x600?text=Xe+Chưa+Cập+Nhật+Ảnh'];
-        
-        const ogTitle = document.getElementById('og-title');
-        const ogImage = document.getElementById('og-image');
-        const ogDesc = document.getElementById('og-desc');
-        if (ogTitle) ogTitle.content = "SANG PRO AUTO | " + c.name;
-        if (ogImage) ogImage.content = imgs[0];
-        if (ogDesc) ogDesc.content = "Giá bán: " + (c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi');
-
-        if (khach && khach !== "Link_Dang_Bai") {
-            if (c.privateImages && c.privateImages.length > 0) {
-                imgs = imgs.concat(c.privateImages);
-                document.getElementById('private-badge').style.display = 'block';
-            }
+        if(qty > 0 && total > 0) {
+            outBox.value = formatVND(total / qty) + " / đơn vị";
         } else {
-            document.getElementById('private-badge').style.display = 'none';
+            outBox.value = "0 đ";
         }
+    }
+
+    // TAB 1 ACTION: Bấm thanh toán đẩy dữ liệu lên Firestore
+    async function submitPurchase() {
+        const nameInput = document.getElementById('inp-name').value.trim();
+        const qty = Number(document.getElementById('inp-qty').value) || 0;
+        const total = Number(document.getElementById('inp-total').value) || 0;
         
-        activeZoomImgs = imgs; totalSlides = imgs.length; currentSlideIndex = 0; 
+        if(!nameInput || qty <= 0 || total <= 0) {
+            alert("Vui lòng điền đầy đủ thông tin tên hàng, số lượng và số tiền hợp lệ!");
+            return;
+        }
 
-        let slideHtml = imgs.map((img, idx) => `<img src="${img}" class="slide-img" onclick="openZoom(${idx})">`).join('');
-        let navHtml = (totalSlides > 1) ? `<button class="slider-btn left" onclick="changeSlide(-1, event)"><i class="fa-solid fa-chevron-left"></i></button><button class="slider-btn right" onclick="changeSlide(1, event)"><i class="fa-solid fa-chevron-right"></i></button><div class="slide-counter-badge" id="slide-counter">1 / ${totalSlides}</div>` : '';
-        let bankHtml = (c.bankP || c.bankmin) ? `<div class="bank-luxury"><h4><i class="fa-solid fa-building-columns"></i> Hỗ Trợ Ngân Hàng</h4>${c.bankP ? `<p>Vay tối đa: <b>${c.bankP}%</b></p>` : ''}${c.bankY ? `<p>Thời gian: <b>${c.bankY} Năm</b></p>` : ''}${c.bankMin ? `<p>Đưa trước khoảng: <b>${new Intl.NumberFormat('vi-VN').format(c.bankMin)} đ</b></p>` : ''}</div>` : '';
+        const unitPrice = total / qty;
+        const todayStr = getTodayString();
+        const todayKey = getTodayKey();
 
-        document.getElementById('detail-render-box').innerHTML = `
-            <div class="slider-container" id="slider-touch-area" ${khach && khach !== "Link_Dang_Bai" ? 'style="margin-top: 25px;"' : ''}>${navHtml}<div class="slider-track" id="track-box">${slideHtml}</div></div>
-            <div class="detail-body">
-                <div class="main-info-card glass-panel">
-                    <h2>${c.name}</h2>
-                    <h3>${c.price ? new Intl.NumberFormat('vi-VN').format(c.price) + ' đ' : 'Liên hệ trao đổi'}</h3>
-                    <div class="feature-grid">
-                        <div class="f-item"><span>Năm SX</span><b>${c.year || '--'}</b></div>
-                        <div class="f-item"><span>Số Km (Odo)</span><b>${c.odo ? new Intl.NumberFormat('vi-VN').format(c.odo) : '--'}</b></div>
-                        <div class="f-item"><span>Hộp Số</span><b>${c.transmission || '--'}</b></div>
-                        <div class="f-item"><span>Nhiên Liệu</span><b>${c.fuel || '--'}</b></div>
-                        <div class="f-item"><span>Hãng Xe</span><b>${c.brand || '--'}</b></div>
-                    </div>
-                    ${bankHtml}
-                    <div class="desc-box">
-                        <h4 style="font-size:15px; margin-bottom:10px; text-transform:uppercase;"><i class="fa-solid fa-clipboard-list"></i> Thông tin & Tình trạng xe</h4>
-                        <p>${c.desc || 'Chưa có mô tả chi tiết.'}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="contact-group">
-                <a href="tel:${PHONE_NUMBER}" class="c-btn call-bg"><i class="fa-solid fa-phone-volume"></i> Gọi Trực Tiếp</a>
-                <a href="${ZALO_LINK}" target="_blank" class="c-btn zalo-bg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" width="20" height="20" style="filter: brightness(0) invert(1);"> Nhắn Zalo</a>
-            </div>`;
-        document.getElementById('detail-overlay').style.display = 'block'; document.body.style.overflow = 'hidden'; 
-        const touchArea = document.getElementById('slider-touch-area');
-        if(touchArea) { touchArea.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }); touchArea.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); }); }
-    }
-
-    function closePage() { document.getElementById('detail-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
-    function changeSlide(direction, event) { if(event) event.stopPropagation(); currentSlideIndex += direction; if (currentSlideIndex >= totalSlides) currentSlideIndex = 0; if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1; updateSliderDOM(); }
-    function handleSwipe() { const threshold = 50; if (touchEndX < touchStartX - threshold) changeSlide(1); if (touchEndX > touchStartX + threshold) changeSlide(-1); }
-    function updateSliderDOM() { const track = document.getElementById('track-box'); if (track) track.style.transform = `translateX(-${currentSlideIndex * 100}%)`; const counter = document.getElementById('slide-counter'); if (counter) counter.innerText = `${currentSlideIndex + 1} / ${totalSlides}`; }
-
-    function renderAdmin() {
-        const r = document.getElementById('admin-render'); r.innerHTML = "";
-        if(allCars.length === 0) { r.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-sub);">Kho xe đang trống.</div>`; return; }
-        allCars.forEach(c => {
-            const thumb = (c.images && c.images.length > 0) ? c.images[0] : 'https://via.placeholder.com/80x60?text=N/A';
-            let statusBadge = (c.status === 'deposit') ? '<span style="color:#f59e0b; font-size:11px; font-weight:bold;">[ĐÃ CỌC]</span>' : (c.status === 'sold' ? '<span style="color:#ef4444; font-size:11px; font-weight:bold;">[ĐÃ BÁN]</span>' : '');
-            
-            r.innerHTML += `
-                <div class="admin-item glass-panel">
-                    <img src="${thumb}" class="ad-thumb">
-                    <div style="flex:1">
-                        <b style="font-size: 14px;">${c.name} ${statusBadge}</b><br>
-                        <span style="color: var(--accent); font-weight: bold; font-size: 13px;">${new Intl.NumberFormat('vi-VN').format(c.price || 0)} đ</span>
-                        <div class="ad-actions">
-                            <button class="ad-btn" style="background:#e0f2fe; color:#0284c7; border-color:#bae6fd" onclick="copyPublicLink('${c.id}')"><i class="fa-solid fa-earth-asia"></i> Link Đăng Bài</button>
-                            <button class="ad-btn" style="background:#fce7f3; color:#db2777; border-color:#fbcfe8" onclick="copyPrivateLink('${c.id}')"><i class="fa-solid fa-user-lock"></i> Link Gửi Khách</button>
-                            <button class="ad-btn btn-edit" onclick="editMode('${c.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="ad-btn btn-del" onclick="deleteCar('${c.id}')"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function copyPublicLink(id) {
-        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=Link_Dang_Bai`;
-        navigator.clipboard.writeText(shareUrl).then(() => alert("Đã copy [Link Đăng Bài]!\nHệ thống sẽ đếm lượt xem như Khách Vãng Lai và ẩn ảnh bảo mật.")).catch(() => prompt("Copy link:", shareUrl));
-    }
-
-    function copyPrivateLink(id) {
-        let tenKhach = prompt("Nhập Tên Khách hoặc SĐT (Ví dụ: Anh_Tuan_Zalo):");
-        if (!tenKhach) return; 
-        let safeName = tenKhach.trim().replace(/\s+/g, '_'); 
-        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}&khach=${safeName}`;
-        navigator.clipboard.writeText(shareUrl).then(() => alert(`Đã copy Link Cá Nhân cho [${tenKhach}]!\nKhách sẽ xem được CẢ ảnh bảo mật.`)).catch(() => prompt("Copy link:", shareUrl));
-    }
-
-    function loadTracking() {
-        document.getElementById('tracking-render').innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-sub); font-size: 13px;">Đang tải dữ liệu...</div>';
-        db.collection("Tracking").orderBy("lastView", "desc").limit(30).get().then(snap => {
-            let html = "";
-            snap.forEach(doc => {
-                let d = doc.data();
-                let timeStr = d.lastView ? d.lastView.toDate().toLocaleString('vi-VN') : '';
-                let carObj = allCars.find(c => c.id === d.carID);
-                let carName = carObj ? carObj.name : "Xe đã xóa/ẩn";
-                
-                let isPrivate = d.type === 'Private';
-                let icon = isPrivate ? '<i class="fa-solid fa-user-check" style="color:#db2777"></i>' : '<i class="fa-solid fa-earth-asia" style="color:#0284c7"></i>';
-                let name = isPrivate ? `<b style="color:#db2777">${d.customerName.replace(/_/g, ' ')}</b>` : `<b style="color:#0284c7">Khách Vãng Lai (Từ bài đăng)</b>`;
-                
-                html += `
-                    <div style="padding: 12px 5px; border-bottom: 1px solid #f1f5f9; font-size: 13px;">
-                        ${icon} ${name} đang xem:<br>
-                        <span style="color:var(--text-main); font-weight:600;">${carName}</span><br>
-                        <div style="display:flex; justify-content:space-between; margin-top:4px;">
-                            <span style="color:var(--accent); font-weight:bold;">Đã xem: ${d.views} lần</span>
-                            <span style="color:var(--text-sub); font-size:11px;">${timeStr}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('tracking-render').innerHTML = html || "<div style='text-align:center; padding: 10px; color: var(--text-sub); font-size:13px;'>Chưa có ai xem xe.</div>";
-        }).catch(err => {
-            console.error("Lỗi lấy tracking: ", err);
-            document.getElementById('tracking-render').innerHTML = "<div style='text-align:center; padding: 10px; color: red; font-size:13px;'>Lỗi tải dữ liệu. Hãy thử lại.</div>";
-        });
-    }
-
-    async function saveCar() {
-        const id = document.getElementById('edit-id').value;
-        const btn = document.getElementById('btn-submit');
-        const files = document.getElementById('ad-files').files;
-        const privateFiles = document.getElementById('ad-private-files').files; 
-
-        if(!document.getElementById('ad-name').value || !document.getElementById('ad-price').value) { alert("Thiếu tên hoặc giá!"); return; }
-        btn.disabled = true; btn.innerText = "ĐANG XỬ LÝ (Có thể mất lúc nếu up nhiều ảnh)...";
-        
-        const payload = {
-            name: document.getElementById('ad-name').value, price: Number(document.getElementById('ad-price').value),
-            brand: document.getElementById('ad-brand').value, year: document.getElementById('ad-year').value,
-            odo: document.getElementById('ad-odo').value, fuel: document.getElementById('ad-fuel').value, 
-            transmission: document.getElementById('ad-transmission').value,
-            status: document.getElementById('ad-status').value,
-            bankP: document.getElementById('ad-bankp').value, bankY: document.getElementById('ad-banky').value,
-            bankMin: document.getElementById('ad-bankmin').value, isHot: document.getElementById('ad-hot').checked,
-            desc: document.getElementById('ad-desc').value, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        const purchaseData = {
+            itemName: nameInput,
+            quantity: qty,
+            totalAmount: total,
+            unitPrice: unitPrice,
+            dateStr: todayStr,
+            dateKey: todayKey,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
+
         try {
-            if(files.length > 0) {
-                let urls = [];
-                for(let i=0; i < files.length; i++) {
-                    const compressed = await compressImage(files[i]);
-                    const fd = new FormData(); fd.append("image", compressed);
-                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json(); if(d.data?.url) urls.push(d.data.url);
-                }
-                payload.images = urls;
-            }
+            // 1. Thêm vào Nhật ký Lịch sử mua hàng
+            await db.collection("PurchaseHistory").add(purchaseData);
 
-            if(privateFiles.length > 0) {
-                let pUrls = [];
-                for(let i=0; i < privateFiles.length; i++) {
-                    const compressed = await compressImage(privateFiles[i]);
-                    const fd = new FormData(); fd.append("image", compressed);
-                    const r = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {method:"POST", body:fd});
-                    const d = await r.json(); if(d.data?.url) pUrls.push(d.data.url);
-                }
-                payload.privateImages = pUrls;
-            }
+            // 2. Cập nhật hoặc Khởi tạo bảng kho hàng tổng hợp (Sử dụng tên hàng làm Document ID viết thường để tránh trùng lặp)
+            const itemDocRef = db.collection("Inventory").doc(nameInput.toLowerCase());
+            
+            // Dùng FieldValue.increment để tự động cộng dồn số lượng kể cả khi ngoại tuyến
+            await itemDocRef.set({
+                itemName: nameInput,
+                quantity: firebase.firestore.FieldValue.increment(qty),
+                lastUnitPrice: unitPrice,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
 
-            if(id) await db.collection("Cars").doc(id).update(payload);
-            else { payload.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("Cars").add(payload); }
-            alert("Cập nhật thành công!"); clearForm(); window.scrollTo(0, 0);
-        } catch(e) { alert("Lỗi: " + e.message); } finally { btn.disabled = false; btn.innerText = "CẬP NHẬT XE"; }
+            alert(`Đã thanh toán và chuyển kho thành công mặt hàng: ${nameInput}`);
+            
+            // Reset form nhập liệu
+            document.getElementById('inp-name').value = "";
+            document.getElementById('inp-qty').value = "";
+            document.getElementById('inp-total').value = "";
+            document.getElementById('inp-unit-price').value = "0 đ";
+            
+        } catch (error) {
+            console.error("Lỗi lưu trữ: ", error);
+            alert("Có lỗi xảy ra khi lưu dữ liệu!");
+        }
     }
 
-    function editMode(id) {
-        const c = allCars.find(x => x.id === id); if(!c) return;
-        document.getElementById('edit-id').value = c.id;
-        document.getElementById('ad-name').value = c.name || "";
-        document.getElementById('ad-price').value = c.price || "";
-        document.getElementById('ad-brand').value = c.brand || "";
-        document.getElementById('ad-year').value = c.year || "";
-        document.getElementById('ad-odo').value = c.odo || "";
-        document.getElementById('ad-fuel').value = c.fuel || ""; 
-        document.getElementById('ad-transmission').value = c.transmission || "";
-        document.getElementById('ad-status').value = c.status || "available";
-        document.getElementById('ad-bankp').value = c.bankP || "";
-        document.getElementById('ad-banky').value = c.bankY || "";
-        document.getElementById('ad-bankmin').value = c.bankMin || "";
-        document.getElementById('ad-hot').checked = c.isHot || false;
-        document.getElementById('ad-desc').value = c.desc || "";
-        document.getElementById('ad-title').innerText = "SỬA XE: " + c.name;
-        document.getElementById('ad-files').value = "";
-        document.getElementById('ad-private-files').value = "";
-        window.scrollTo(0, 0);
-    }
+    // TAB 2 LOGIC: Lắng nghe dữ liệu Kho và Lịch Sử thời gian thực
+    function startListeningData() {
+        // Realtime Lắng nghe kho hàng hiện tại (Nửa trên)
+        db.collection("Inventory").onSnapshot(snapshot => {
+            const container = document.getElementById('inventory-render');
+            container.innerHTML = "";
+            
+            if(snapshot.empty) {
+                container.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-sub);">Kho hiện tại trống.</td></tr>`;
+                return;
+            }
 
-    async function deleteCar(id) { 
-        if(confirm("Xóa xe này và toàn bộ dữ liệu lượt xem liên quan?")) {
-            try {
-                await db.collection("Cars").doc(id).delete();
+            snapshot.forEach(doc => {
+                const item = doc.data();
+                const docId = doc.id;
                 
-                const trackingSnaps = await db.collection("Tracking").where("carID", "==", id).get();
-                const batch = db.batch();
-                trackingSnaps.forEach(doc => batch.delete(doc.ref));
-                await batch.commit();
-                
-                alert("Đã xoá xe và nhật ký truy cập thành công!");
-            } catch (err) {
-                console.error("Lỗi khi xoá: ", err);
-                alert("Có lỗi xảy ra khi xoá!");
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${item.itemName}</b></td>
+                    <td id="stock-${docId}">${item.quantity}</td>
+                    <td>${formatVND(item.lastUnitPrice || 0)}</td>
+                    <td style="text-align: center;">
+                        <input type="number" class="input-reconcile" placeholder="Thực tế" 
+                               onblur="reconcileStock('${docId}', this.value, ${item.quantity})">
+                    </td>
+                `;
+                container.appendChild(tr);
+            });
+            
+            // Check xem dữ liệu snapshot hiện tại có tiến trình ngầm đang chờ đồng bộ không
+            const badge = document.getElementById('sync-status');
+            if (snapshot.metadata.hasPendingWrites) {
+                badge.className = "sync-badge sync-pending";
+                badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang đồng bộ lên Cloud...</span>`;
+            } else if (navigator.onLine) {
+                badge.className = "sync-badge sync-online";
+                badge.innerHTML = `<i class="fa-solid fa-cloud"></i> <span>Đã đồng bộ thành công</span>`;
             }
-        } 
+        });
+
+        // Realtime Lắng nghe lịch sử mua hàng cuộn (Nửa dưới)
+        db.collection("PurchaseHistory").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+            const container = document.getElementById('history-render');
+            container.innerHTML = "";
+            
+            currentHistory = [];
+            costToday = 0;
+            const todayKey = getTodayKey();
+
+            if(snapshot.empty) {
+                container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-sub);">Chưa có giao dịch mua hàng nào.</div>`;
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                currentHistory.push(data);
+
+                // Tính toán tổng chi phí nhập hàng riêng cho ngày hôm nay phục vụ cho Tab 3
+                if(data.dateKey === todayKey) {
+                    costToday += data.totalAmount;
+                }
+
+                const div = document.createElement('div');
+                div.className = "history-item";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 2px;">
+                        <span style="color:var(--text-sub); font-weight:500;">[ ${data.dateStr} ]</span>
+                        <b style="color:var(--accent); font-size:13px;">-${formatVND(data.totalAmount)}</b>
+                    </div>
+                    <div>Mua <b>${data.itemName}</b> (Số lượng: ${data.quantity}) &rarr; <span style="color:var(--text-sub);">${formatVND(data.unitPrice)}/đơn vị</span></div>
+                `;
+                container.appendChild(div);
+            });
+
+            // Cập nhật ngay chi phí vào Tab 3 nếu có thay đổi
+            document.getElementById('fin-cost').value = formatVND(costToday);
+            recalcFinance();
+        });
     }
 
-    function clearForm() { 
-        document.getElementById('edit-id').value = ""; 
-        document.querySelectorAll('.admin-view input:not([type="checkbox"]):not([type="file"]), .admin-view textarea').forEach(i => i.value = ""); 
-        document.getElementById('ad-transmission').value = "";
-        document.getElementById('ad-hot').checked = false;
-        document.getElementById('ad-files').value = "";
-        document.getElementById('ad-private-files').value = "";
-        document.getElementById('ad-title').innerText = "ĐĂNG XE MỚI"; 
+    // TAB 2 ACTION: Logic Đồng Kiểm Kho Thực Tế của Nhân viên
+    async function reconcileStock(docId, newValue, oldValue) {
+        if(newValue === "" || newValue === null) return;
+        
+        const targetQty = Number(newValue);
+        if(targetQty < 0 || isNaN(targetQty)) {
+            alert("Số lượng đồng kiểm thực tế không hợp lệ!");
+            return;
+        }
+
+        // Nếu số lượng nhập vào trùng số lượng cũ thì không cần thực thi ghi đè
+        if(targetQty === oldValue) return;
+
+        try {
+            // Thay đổi trực tiếp số lượng hiển thị trong kho thành số lượng thực tế nhân viên kiểm đếm
+            await db.collection("Inventory").doc(docId).update({
+                quantity: targetQty,
+                reconciledAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log(`Đồng kiểm thành công kho mặt hàng ${docId} thành: ${targetQty}`);
+        } catch (error) {
+            console.error("Lỗi đồng kiểm kho: ", error);
+        }
     }
 
-    function switchView(v) {
-        if(v === 'admin' && !isLogged) { document.getElementById('auth-gate').style.display='flex'; return; }
-        document.querySelectorAll('.b-link').forEach(l => l.classList.remove('active'));
-        document.getElementById('showroom-tab').style.display = (v === 'showroom' ? 'block' : 'none');
-        document.getElementById('admin-tab').style.display = (v === 'admin' ? 'block' : 'none');
-        document.getElementById(v === 'showroom' ? 'n-sr' : 'n-ad').classList.add('active');
-        if(v === 'admin') { renderAdmin(); loadTracking(); }
-        window.scrollTo(0,0);
+    // TAB 3 LOGIC: Tự động tính toán lợi nhuận thuần hằng ngày
+    function recalcFinance() {
+        const rev = Number(document.getElementById('fin-revenue').value) || 0;
+        const profitBox = document.getElementById('fin-profit');
+        
+        const netProfit = rev - costToday;
+        profitBox.innerText = formatVND(netProfit);
+        
+        if(netProfit < 0) {
+            profitBox.parentElement.style.background = "#fee2e2";
+            profitBox.parentElement.style.color = "#b91c1c";
+            profitBox.parentElement.style.borderColor = "#fca5a5";
+        } else {
+            profitBox.parentElement.style.background = "#dcfce7";
+            profitBox.parentElement.style.color = "#16a34a";
+            profitBox.parentElement.style.borderColor = "#bbf7d0";
+        }
     }
 
-    function checkAuth() {
-        if(document.getElementById('pin-code').value === "190525") { 
-            isLogged = true; document.getElementById('auth-gate').style.display='none'; 
-            switchView('admin');
-        } else alert("Sai PIN!");
-        document.getElementById('pin-code').value = '';
+    // TAB 3 ACTION: Lưu báo cáo doanh thu tài chính ngày hôm nay
+    async function saveDailyFinance() {
+        const rev = Number(document.getElementById('fin-revenue').value) || 0;
+        if(rev <= 0) {
+            alert("Vui lòng nhập doanh thu bán hàng hôm nay trước khi đóng sổ ngày!");
+            return;
+        }
+
+        const todayKey = getTodayKey();
+        const todayStr = getTodayString();
+        const netProfit = rev - costToday;
+
+        const dailyReport = {
+            dateStr: todayStr,
+            revenue: rev,
+            costs: costToday,
+            profit: netProfit,
+            closedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            await db.collection("DailyFinance").doc(todayKey).set(dailyReport);
+            alert(`Đã hoàn tất lưu đóng sổ ngày hôm nay (${todayStr}) thành công!`);
+        } catch (error) {
+            console.error("Lỗi lưu sổ tài chính: ", error);
+            alert("Có lỗi xảy ra khi lưu báo cáo tài chính!");
+        }
     }
 
-    window.onload = initData;
+    // Khởi tạo ứng dụng khi tải trang xong
+    window.onload = function() {
+        document.getElementById('inp-date').value = getTodayString();
+        watchSyncStatus();
+        startListeningData();
+    };
 </script>
 </body>
 </html>
