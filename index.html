@@ -120,6 +120,7 @@
         .btn-danger { background: var(--danger); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-accent { background: var(--accent); color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
 
         /* Bảng kho hàng mở rộng phong cách Excel */
         .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; border-radius: var(--radius-md); border: 1px solid var(--border); }
@@ -139,6 +140,7 @@
             font-weight: 600;
         }
         .input-table:disabled { background: transparent; border: none; color: var(--text-main); }
+        .input-report { width: 100%; text-align: right; border: 1px solid #cbd5e1; padding: 6px; border-radius: 4px; font-weight: 600;}
 
         .need-buy-alert { background-color: var(--danger-light) !important; color: var(--danger); font-weight: 700; text-align: center; border-radius: 4px; padding: 2px 6px; }
 
@@ -180,23 +182,17 @@
         .modal-content { background: white; padding: 20px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
         
-        .excel-report-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .excel-report-table th, .excel-report-table td {
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-        }
-        .excel-report-table th {
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
+        .excel-report-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .excel-report-table th, .excel-report-table td { padding: 10px 12px; border: 1px solid #cbd5e1; }
+        .excel-report-table th { background: var(--primary); color: white; font-weight: 600; }
         .bg-group { background: #f1f5f9; font-weight: 600; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
+        
+        .top-10-table th { background: #f8fafc; color: var(--text-main); font-size: 12px;}
+        .top-10-table td { padding: 6px 12px; font-size: 12px;}
+        .badge-closed { background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
+        .badge-open { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
     </style>
 </head>
 <body>
@@ -256,7 +252,7 @@
             <div class="card-title">
                 <span><i class="fa-solid fa-table"></i> Bảng tính kho nguyên liệu</span>
                 <div style="display:flex; gap: 8px;">
-                    <button class="btn-sm btn-accent" id="btn-edit-mode" onclick="toggleEditMode()"><i class="fa-solid fa-lock"></i> Chỉnh sửa kho</button>
+                    <button class="btn-sm btn-accent" id="btn-edit-mode" onclick="toggleEditMode()"><i class="fa-solid fa-lock"></i> Chỉnh sửa thông số</button>
                     <button class="btn-sm btn-success" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Thêm món mới</button>
                 </div>
             </div>
@@ -278,7 +274,7 @@
                 </table>
             </div>
             <button id="btn-save-warehouse" class="btn-block btn-success" style="width: 100%; display: none;" onclick="saveWarehouseData()">
-                <i class="fa-solid fa-floppy-disk"></i> LƯU THÔNG TIN CHỈNH SỬA KHO
+                <i class="fa-solid fa-floppy-disk"></i> LƯU THÔNG TIN CHỈNH SỬA
             </button>
         </div>
     </div>
@@ -316,7 +312,10 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Báo Cáo Tài Chính Quản Trị Hệ Thống</div>
+            <div class="card-title">
+                <span>Báo Cáo Tài Chính Quản Trị Hệ Thống</span>
+                <span id="report-badge"></span>
+            </div>
             
             <div style="margin-bottom: 15px; background: var(--primary-light); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
                 <label style="display: block; font-size: 12px; color: var(--text-main); margin-bottom: 6px; font-weight: 700;">CHỌN KỲ BÁO CÁO (THÁNG):</label>
@@ -346,7 +345,31 @@
                         </tr>
                     </thead>
                     <tbody id="monthly-report-body">
-                        </tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="btn-close-month-container" style="display: none; margin-bottom: 15px;">
+                <button onclick="closeMonthlyReport()" class="btn-block btn-warning" style="width: 100%;">
+                    <i class="fa-solid fa-lock"></i> CHỐT SỐ LIỆU BÁO CÁO THÁNG NÀY
+                </button>
+                <p style="font-size: 11px; color: var(--text-sub); text-align: center; margin-top: 5px;">*Lưu ý: Sau khi chốt, số liệu bảng trên sẽ được lưu cứng thành dạng tĩnh và không thể chỉnh sửa.</p>
+            </div>
+
+            <h4 style="font-size: 13px; color: var(--primary); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">
+                <i class="fa-solid fa-fire"></i> TOP 10 CHI PHÍ NGUYÊN LIỆU TRONG THÁNG
+            </h4>
+            <div class="table-responsive">
+                <table class="excel-report-table top-10-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;" class="text-center">#</th>
+                            <th>Tên Hàng / Nguyên Liệu</th>
+                            <th class="text-right">Tổng Tiền Đã Chi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top10-report-body">
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -423,18 +446,18 @@
     let rawDailyFinanceList = []; 
     let rawPurchaseHistoryList = [];
 
-    // Cấu hình định mức chi phí cố định cố định theo tháng giống file Excel quản lý của quán
-    const FIXED_BUDGET_CONFIG = {
+    // Mặc định cho các khoản cố định (Khi chưa chốt báo cáo)
+    const DEFAULT_FIXED_COSTS = {
+        rent: 10000000,    // Mặt bằng
         staff: 15400000,   // Lương nhân viên
-        rent: 10000000,    // Tiền thuê mặt bằng
-        electric: 3500000, // Tiền điện nước
-        internet: 250000,  // Cáp quang / Internet
-        gas: 400000,       // Chi phí Gas
-        printing: 150000,  // Giấy KT / Giấy in bill
-        bhxh: 0,           // Bảo hiểm xã hội
-        vat: 0,            // Thuế GTGT
-        monbai: 0          // Thuế môn bài
+        electric: 3500000, // Điện nước
+        internet: 250000,  // Internet
+        bhxh: 0,           // BHXH
+        tax: 0             // Thuế
     };
+
+    // Lưu trữ tạm dữ liệu báo cáo tháng hiện hành để tính toán và lưu
+    let currentMonthReportData = {};
 
     function getTodayString() {
         const d = new Date();
@@ -473,7 +496,7 @@
         window.addEventListener('offline', () => { badge.className="sync-badge sync-offline"; badge.innerHTML=`<i class="fa-solid fa-cloud-moon"></i> <span>Đang ngoại tuyến</span>`; });
     }
 
-    // --- LOGIC TAB 2: QUẢN LÝ KHO HÀNG (ĐÃ THAY ĐỔI THỨ TỰ CỘT) ---
+    // --- LOGIC TAB 2: QUẢN LÝ KHO HÀNG ---
     
     function startListeningInventory() {
         db.collection("NewInventory").orderBy("itemName", "asc").onSnapshot(snapshot => {
@@ -494,7 +517,7 @@
                 categories[type].push({id, ...data});
             });
 
-            const catNames = { "tươi": "NGUYÊN LIỆU TƯƠI (HÀNG TƯƠI KHÔNG CỘNG DỒN KHO)", "khô": "NGUYÊN LIỆU KHÔ", "dụng cụ": "DỤNG CỤ & KHÁC" };
+            const catNames = { "tươi": "NGUYÊN LIỆU TƯƠI (NHẬP TỒN KHO THỦ CÔNG)", "khô": "NGUYÊN LIỆU KHÔ", "dụng cụ": "DỤNG CỤ & KHÁC" };
             
             for (let cat in categories) {
                 if (categories[cat].length === 0) continue;
@@ -519,11 +542,11 @@
                     }
 
                     let tr = document.createElement('tr');
-                    // THỨ TỰ CỘT MỚI GIAO DIỆN: Tên -> Tồn -> Tiêu chuẩn -> Cần nhập -> ĐVT -> Giá -> Giá trị tồn
+                    // Ghi chú: Cột Tồn Kho đã xóa disabled đối với hàng tươi, cho phép nhập tay.
                     tr.innerHTML = `
                         <td><b>${item.itemName}</b></td>
                         <td>
-                            <input type="number" class="input-table" style="background:#fffbeb; border:1px solid #fef08a;" id="stock-${item.id}" value="${stock}" onchange="updateLocalStockOnly('${item.id}', this.value)" ${item.itemType === 'tươi' ? 'disabled' : ''}>
+                            <input type="number" class="input-table" style="background:#fffbeb; border:1px solid #fef08a;" id="stock-${item.id}" value="${stock}" onchange="updateLocalStockOnly('${item.id}', this.value)">
                         </td>
                         <td>
                             <input type="number" class="input-table" id="standard-${item.id}" value="${standard}" disabled>
@@ -551,10 +574,6 @@
             tbody.appendChild(totalTr);
             
             renderItemSelectOptions();
-            
-            if (snapshot.metadata.hasPendingWrites) {
-                document.getElementById('sync-status').className = "sync-badge sync-pending";
-            }
         });
     }
 
@@ -600,7 +619,7 @@
 
     function lockWarehouseInputs() {
         isEditSessionActive = false;
-        document.getElementById('btn-edit-mode').innerHTML = `<i class="fa-solid fa-lock"></i> Chỉnh sửa kho`;
+        document.getElementById('btn-edit-mode').innerHTML = `<i class="fa-solid fa-lock"></i> Chỉnh sửa thông số`;
         document.getElementById('btn-save-warehouse').style.display = "none";
         for (let id in localInventory) {
             document.getElementById(`unit-${id}`).disabled = true;
@@ -651,7 +670,7 @@
         if(!name || !unit) { alert("Vui lòng nhập tên món và đơn vị tính!"); return; }
 
         let id = name.toLowerCase().replace(/\s+/g, '_');
-        if(type === 'tươi') id = 'nguyen_lieu_tuoi'; // Khóa cố định cho nguyên liệu tươi gộp
+        if(type === 'tươi') id = 'nguyen_lieu_tuoi'; 
         
         try {
             await db.collection("NewInventory").doc(id).set({
@@ -671,14 +690,12 @@
         }
     }
 
-    // --- LOGIC TAB 1: PHIẾU NHẬP HÀNG (CẢI TIẾN HÀNG TƯƠI) ---
+    // --- LOGIC TAB 1: PHIẾU NHẬP HÀNG ---
     
     function renderItemSelectOptions() {
         let select = document.getElementById('inp-item-select');
         if(!select) return;
         select.innerHTML = `<option value="">-- Chọn mặt hàng muốn nhập --</option>`;
-        
-        // Đảm bảo luôn xuất hiện tùy chọn Nguyên Liệu Tươi đầu tiên
         select.innerHTML += `<option value="nguyen_lieu_tuoi" style="font-weight:bold; color:var(--accent);">[HÀNG TƯƠI] NHẬP NGUYÊN LIỆU TƯƠI</option>`;
         
         for(let id in localInventory) {
@@ -697,14 +714,12 @@
         let gComputedTotal = document.getElementById('group-computed-total');
 
         if(id === "nguyen_lieu_tuoi") {
-            // Hiển thị form hàng tươi: Nhập thẳng tên và số tiền
             gFreshName.style.display = "block";
             gFreshTotal.style.display = "block";
             gQty.style.display = "none";
             gPrice.style.display = "none";
             gComputedTotal.style.display = "none";
         } else {
-            // Form hàng khô/dụng cụ bình thường
             gFreshName.style.display = "none";
             gFreshTotal.style.display = "none";
             gQty.style.display = "block";
@@ -749,15 +764,16 @@
             }
             
             purchaseData.itemId = "nguyen_lieu_tuoi";
-            purchaseData.itemName = "Nguyên liệu tươi (" + freshName + ")";
+            purchaseData.itemName = freshName; // Lưu tên trực tiếp để filter Báo Cáo
             purchaseData.quantity = 1; 
             purchaseData.unitPrice = freshTotal;
             purchaseData.totalAmount = freshTotal;
-            purchaseData.isFresh = true; // Đánh dấu hàng tươi để bộ lọc tính toán
+            purchaseData.isFresh = true; 
 
             try {
+                // Hàng tươi: Thêm vào lịch sử mua hàng NHƯNG KHÔNG CỘNG DỒN KHO.
                 await db.collection("NewPurchaseHistory").add(purchaseData);
-                alert(`Đã thanh toán chi phí hàng tươi: ${freshName} -> ${formatVND(freshTotal)} (Không tính cộng dồn kho)`);
+                alert(`Đã thanh toán chi phí hàng tươi: ${freshName} -> ${formatVND(freshTotal)} (Không cộng vào kho)`);
                 document.getElementById('inp-fresh-name').value = "";
                 document.getElementById('inp-fresh-total-val').value = "";
             } catch(e) {
@@ -765,7 +781,6 @@
             }
 
         } else {
-            // LOGIC NHẬP HÀNG KHÔ/DỤNG CỤ GIỮ NGUYÊN BẢN CŨ
             let qty = Number(document.getElementById('inp-qty').value) || 0;
             let inputPrice = Number(document.getElementById('inp-price-base').value) || 0; 
             
@@ -787,6 +802,7 @@
                 let updateData = { quantity: firebase.firestore.FieldValue.increment(qty) };
                 if (item.price > 0) updateData.price = inputPrice;
 
+                // Cộng dồn kho cho Hàng khô / Dụng cụ
                 await db.collection("NewInventory").doc(id).update(updateData);
                 alert(`Đã thanh toán & cộng kho: +${qty} ${item.unit} ${item.itemName}`);
                 
@@ -799,12 +815,11 @@
         }
     }
 
-    // --- LOGIC TAB 3: KẾ TOÁN & BÁO CÁO QUẢN TRỊ TÀI CHÍNH THEO THÁNG ---
+    // --- LOGIC TAB 3: KẾ TOÁN & LỊCH SỬ ---
 
     function startListeningHistoryAndFinance() {
         let todayKey = getTodayKey();
 
-        // Lắng nghe lịch sử mua hàng
         db.collection("NewPurchaseHistory").orderBy("createdAt", "desc").onSnapshot(snapshot => {
             const container = document.getElementById('history-render');
             container.innerHTML = "";
@@ -820,21 +835,21 @@
                 }
             });
 
-            // Chỉ hiển thị lịch sử nhập hàng của ngày hôm nay ra màn hình
             let todayRecords = rawPurchaseHistoryList.filter(r => r.dateKey === todayKey);
             if(todayRecords.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có phiếu nhập hàng nào trong ngày hôm nay.</div>`;
             } else {
                 todayRecords.forEach(data => {
+                    let badge = data.isFresh ? '<span style="color:#16a34a; font-weight:bold;">[TƯƠI]</span>' : '';
                     let div = document.createElement('div');
                     div.className = "history-item";
                     div.innerHTML = `
                         <div>
                             <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
-                            <div><b>${data.itemName}</b> &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
+                            <div>${badge} <b>${data.itemName}</b> &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
                         </div>
                         <div>
-                            <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${data.id}', '${data.itemId}', ${data.quantity}, ${data.isFresh || false})"><i class="fa-solid fa-trash"></i> Xóa</button>
+                            <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${data.id}', '${data.itemId}', ${data.quantity}, ${data.isFresh || false})"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     `;
                     container.appendChild(div);
@@ -843,10 +858,9 @@
 
             document.getElementById('fin-cost').value = formatVND(costToday);
             recalcFinance();
-            buildMonthlyFinanceReport(); // Tự động load lại báo cáo tháng khi có đơn hàng mới
+            buildMonthlyFinanceReport(); 
         });
 
-        // Lắng nghe danh sách chốt doanh thu hàng ngày
         db.collection("NewDailyFinance").orderBy("closedAt", "desc").onSnapshot(snapshot => {
             rawDailyFinanceList = [];
             snapshot.forEach(doc => {
@@ -892,7 +906,6 @@
         
         try {
             if(!isFresh) {
-                // Hoàn tác kho nếu là hàng khô
                 await db.collection("NewInventory").doc(itemId).update({
                     quantity: firebase.firestore.FieldValue.increment(-qty)
                 });
@@ -904,117 +917,262 @@
         }
     }
 
-    // --- HÀM TRIỂN KHAI BÁO CÁO KẾ TOÁN QUẢN TRỊ THEO THÁNG CHUYÊN NGHIỆP ---
-    function buildMonthlyFinanceReport() {
-        let selectedMonth = document.getElementById('report-month-select').value; // Định dạng "YYYY-MM"
+    // --- BÁO CÁO THÁNG MỚI (CÓ THỂ CHỐT TĨNH LẠI) ---
+    async function buildMonthlyFinanceReport() {
+        let selectedMonth = document.getElementById('report-month-select').value; 
         
-        // 1. Tính tổng doanh thu trong tháng từ NewDailyFinance
+        // 1. Tính toán Doanh thu và Tiền Nhập nguyên liệu (Động)
         let monthRevenue = 0;
         rawDailyFinanceList.forEach(r => {
-            if(r.id.startsWith(selectedMonth)) {
-                monthRevenue += (r.revenue || 0);
-            }
+            if(r.id.startsWith(selectedMonth)) monthRevenue += (r.revenue || 0);
         });
 
-        // 2. Tính tổng chi phí nguyên liệu trong tháng từ NewPurchaseHistory
         let monthCOGS = 0;
+        let expenseMap = {};
         rawPurchaseHistoryList.forEach(p => {
             if(p.dateKey && p.dateKey.startsWith(selectedMonth)) {
                 monthCOGS += (p.totalAmount || 0);
+                
+                // Gom nhóm để lấy Top 10
+                let name = p.itemName;
+                if(!expenseMap[name]) expenseMap[name] = 0;
+                expenseMap[name] += (p.totalAmount || 0);
             }
         });
 
-        // Định dạng an toàn cho tỷ lệ % tránh lỗi chia cho số 0
-        const calcPercent = (amount) => {
-            if (monthRevenue === 0) return "0.0%";
-            return ((amount / monthRevenue) * 100).toFixed(1) + "%";
-        };
+        // Xử lý mảng Top 10
+        let top10Arr = Object.keys(expenseMap).map(k => ({ name: k, total: expenseMap[k] }))
+            .sort((a, b) => b.total - a.total).slice(0, 10);
 
-        // 3. Tính toán các chi phí cố định theo tháng cố định
-        let cStaff = FIXED_BUDGET_CONFIG.staff;
-        let cRent = FIXED_BUDGET_CONFIG.rent;
-        let cElec = FIXED_BUDGET_CONFIG.electric;
-        let cNet = FIXED_BUDGET_CONFIG.internet;
-        let cGas = FIXED_BUDGET_CONFIG.gas;
-        let cPrint = FIXED_BUDGET_CONFIG.printing;
-        let cBhxh = FIXED_BUDGET_CONFIG.bhxh;
-        let cVat = FIXED_BUDGET_CONFIG.vat;
-        let cMonbai = FIXED_BUDGET_CONFIG.monbai;
+        currentMonthReportData.monthRevenue = monthRevenue;
+        currentMonthReportData.monthCOGS = monthCOGS;
+        currentMonthReportData.top10 = top10Arr;
 
-        let totalFixedCosts = cStaff + cRent + cElec + cNet + cGas + cPrint + cBhxh + cVat + cMonbai;
-        let totalAllCosts = monthCOGS + totalFixedCosts;
-        let netProfit = monthRevenue - totalAllCosts;
+        // Render Top 10 Table
+        let top10Tbody = document.getElementById('top10-report-body');
+        top10Tbody.innerHTML = '';
+        if(top10Arr.length === 0) {
+            top10Tbody.innerHTML = `<tr><td colspan="3" class="text-center">Chưa có chi phí nguyên liệu trong tháng này.</td></tr>`;
+        } else {
+            top10Arr.forEach((item, index) => {
+                top10Tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center font-bold">${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td class="text-right" style="color:var(--danger); font-weight:600;">${formatVND(item.total)}</td>
+                    </tr>
+                `;
+            });
+        }
 
-        // Render bảng HTML báo cáo quản trị cấu trúc chuyên nghiệp giống hình ảnh Excel
+        // 2. Kiểm tra DB xem tháng này đã bị CHỐT (Khóa) chưa?
+        let reportDoc = await db.collection("NewMonthlyReports").doc(selectedMonth).get();
+        
+        if (reportDoc.exists && reportDoc.data().isClosed) {
+            // TRẠNG THÁI TĨNH ĐÃ CHỐT
+            document.getElementById('report-badge').innerHTML = '<span class="badge-closed"><i class="fa-solid fa-lock"></i> Đã Chốt Báo Cáo</span>';
+            document.getElementById('btn-close-month-container').style.display = 'none';
+            renderStaticReportTable(reportDoc.data());
+        } else {
+            // TRẠNG THÁI MỞ CHỜ CHỐT (Hiển thị Input)
+            document.getElementById('report-badge').innerHTML = '<span class="badge-open"><i class="fa-solid fa-pen"></i> Đang mở (Tự động)</span>';
+            document.getElementById('btn-close-month-container').style.display = 'block';
+            renderEditableReportTable();
+        }
+    }
+
+    const calcPercentStr = (amount, totalRev) => {
+        if (totalRev === 0) return "0.0%";
+        return ((amount / totalRev) * 100).toFixed(1) + "%";
+    };
+
+    function renderEditableReportTable() {
+        let rev = currentMonthReportData.monthRevenue;
+        let cogs = currentMonthReportData.monthCOGS;
         let tbody = document.getElementById('monthly-report-body');
+
+        // Giao diện chỉnh sửa cho 6 khoản
         tbody.innerHTML = `
             <tr class="bg-group">
                 <td>I. TỔNG DOANH THU</td>
-                <td class="text-right" style="color:var(--success); font-weight:700;">${formatVND(monthRevenue)}</td>
+                <td class="text-right" style="color:var(--success); font-weight:700;" id="rep-rev">${formatVND(rev)}</td>
                 <td class="text-center">100%</td>
             </tr>
             <tr class="bg-group">
-                <td>II. GIÁ VỐN HÀNG BÁN (Chi phí nguyên liệu)</td>
-                <td class="text-right" style="color:var(--danger); font-weight:700;">${formatVND(monthCOGS)}</td>
-                <td class="text-center" style="color:var(--danger); font-weight:700;">${calcPercent(monthCOGS)}</td>
+                <td>II. GIÁ VỐN HÀNG BÁN (Chi phí NL)</td>
+                <td class="text-right" style="color:var(--danger); font-weight:700;">${formatVND(cogs)}</td>
+                <td class="text-center" style="color:var(--danger); font-weight:700;">${calcPercentStr(cogs, rev)}</td>
             </tr>
             <tr class="bg-group">
-                <td colspan="3">III. CHI PHÍ CỐ ĐỊNH QUÁN KHÁC</td>
+                <td colspan="3">III. CHI PHÍ CỐ ĐỊNH (Nhập tay số liệu thực tế)</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">1. Lương nhân viên</td>
-                <td class="text-right">${formatVND(cStaff)}</td>
-                <td class="text-center">${calcPercent(cStaff)}</td>
+                <td style="padding-left: 25px;">1. Tiền thuê mặt bằng</td>
+                <td><input type="number" id="inp-rep-rent" class="input-report" value="${DEFAULT_FIXED_COSTS.rent}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-rent">${calcPercentStr(DEFAULT_FIXED_COSTS.rent, rev)}</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">2. Tiền thuê mặt bằng</td>
-                <td class="text-right">${formatVND(cRent)}</td>
-                <td class="text-center">${calcPercent(cRent)}</td>
+                <td style="padding-left: 25px;">2. Lương nhân viên</td>
+                <td><input type="number" id="inp-rep-staff" class="input-report" value="${DEFAULT_FIXED_COSTS.staff}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-staff">${calcPercentStr(DEFAULT_FIXED_COSTS.staff, rev)}</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">3. Điện nước & Tiện ích</td>
-                <td class="text-right">${formatVND(cElec)}</td>
-                <td class="text-center">${calcPercent(cElec)}</td>
+                <td style="padding-left: 25px;">3. Điện nước</td>
+                <td><input type="number" id="inp-rep-electric" class="input-report" value="${DEFAULT_FIXED_COSTS.electric}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-elec">${calcPercentStr(DEFAULT_FIXED_COSTS.electric, rev)}</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">4. Chi phí Mạng Internet</td>
-                <td class="text-right">${formatVND(cNet)}</td>
-                <td class="text-center">${calcPercent(cNet)}</td>
+                <td style="padding-left: 25px;">4. Internet</td>
+                <td><input type="number" id="inp-rep-internet" class="input-report" value="${DEFAULT_FIXED_COSTS.internet}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-net">${calcPercentStr(DEFAULT_FIXED_COSTS.internet, rev)}</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">5. Chi phí Đốt Gas</td>
-                <td class="text-right">${formatVND(cGas)}</td>
-                <td class="text-center">${calcPercent(cGas)}</td>
+                <td style="padding-left: 25px;">5. Bảo hiểm xã hội</td>
+                <td><input type="number" id="inp-rep-bhxh" class="input-report" value="${DEFAULT_FIXED_COSTS.bhxh}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-bhxh">${calcPercentStr(DEFAULT_FIXED_COSTS.bhxh, rev)}</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px;">6. Giấy KT / Giấy in bill</td>
-                <td class="text-right">${formatVND(cPrint)}</td>
-                <td class="text-center">${calcPercent(cPrint)}</td>
-            </tr>
-            <tr>
-                <td style="padding-left: 25px;">7. Bảo hiểm xã hội (BHXH)</td>
-                <td class="text-right">${formatVND(cBhxh)}</td>
-                <td class="text-center">${calcPercent(cBhxh)}</td>
-            </tr>
-            <tr>
-                <td style="padding-left: 25px;">8. Thuế giá trị gia tăng (GTGT)</td>
-                <td class="text-right">${formatVND(cVat)}</td>
-                <td class="text-center">${calcPercent(cVat)}</td>
-            </tr>
-            <tr>
-                <td style="padding-left: 25px;">9. Thuế môn bài</td>
-                <td class="text-right">${formatVND(cMonbai)}</td>
-                <td class="text-center">${calcPercent(cMonbai)}</td>
+                <td style="padding-left: 25px;">6. Thuế các loại</td>
+                <td><input type="number" id="inp-rep-tax" class="input-report" value="${DEFAULT_FIXED_COSTS.tax}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-tax">${calcPercentStr(DEFAULT_FIXED_COSTS.tax, rev)}</td>
             </tr>
             <tr class="bg-group" style="background:#fbcfe8;">
                 <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
-                <td class="text-right" style="color:var(--danger);">${formatVND(totalAllCosts)}</td>
-                <td class="text-center">${calcPercent(totalAllCosts)}</td>
+                <td class="text-right" style="color:var(--danger);" id="rep-total-cost">...</td>
+                <td class="text-center" id="pc-total-cost">...</td>
             </tr>
             <tr style="background:#dcfce7; font-weight:800; font-size:14px; border-top:2px solid var(--success);">
-                <td style="color:var(--success);">IV. LỢI NHUẬN THUẦN THỰC TẾ (EBIT)</td>
-                <td class="text-right" style="color:${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(netProfit)}</td>
-                <td class="text-center" style="color:${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${calcPercent(netProfit)}</td>
+                <td style="color:var(--success);">IV. LỢI NHUẬN THUẦN (EBIT)</td>
+                <td class="text-right" id="rep-net-profit">...</td>
+                <td class="text-center" id="pc-net-profit">...</td>
+            </tr>
+        `;
+        recalcEditableReport();
+    }
+
+    function recalcEditableReport() {
+        let rev = currentMonthReportData.monthRevenue;
+        let cogs = currentMonthReportData.monthCOGS;
+        
+        let cRent = Number(document.getElementById('inp-rep-rent').value) || 0;
+        let cStaff = Number(document.getElementById('inp-rep-staff').value) || 0;
+        let cElec = Number(document.getElementById('inp-rep-electric').value) || 0;
+        let cNet = Number(document.getElementById('inp-rep-internet').value) || 0;
+        let cBhxh = Number(document.getElementById('inp-rep-bhxh').value) || 0;
+        let cTax = Number(document.getElementById('inp-rep-tax').value) || 0;
+
+        document.getElementById('pc-rent').innerText = calcPercentStr(cRent, rev);
+        document.getElementById('pc-staff').innerText = calcPercentStr(cStaff, rev);
+        document.getElementById('pc-elec').innerText = calcPercentStr(cElec, rev);
+        document.getElementById('pc-net').innerText = calcPercentStr(cNet, rev);
+        document.getElementById('pc-bhxh').innerText = calcPercentStr(cBhxh, rev);
+        document.getElementById('pc-tax').innerText = calcPercentStr(cTax, rev);
+
+        let totalCosts = cogs + cRent + cStaff + cElec + cNet + cBhxh + cTax;
+        let netProfit = rev - totalCosts;
+
+        document.getElementById('rep-total-cost').innerText = formatVND(totalCosts);
+        document.getElementById('pc-total-cost').innerText = calcPercentStr(totalCosts, rev);
+
+        let elProfit = document.getElementById('rep-net-profit');
+        elProfit.innerText = formatVND(netProfit);
+        elProfit.style.color = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('pc-net-profit').innerText = calcPercentStr(netProfit, rev);
+        document.getElementById('pc-net-profit').style.color = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+
+    async function closeMonthlyReport() {
+        let pass = prompt("Nhập mật mã xác nhận chốt tháng (Lưu ý: Không thể sửa sau khi chốt):");
+        if(pass !== "1905") { alert("Mật mã không đúng!"); return; }
+
+        let selectedMonth = document.getElementById('report-month-select').value; 
+        
+        // Lấy số liệu trên form hiện tại
+        let dataToSave = {
+            isClosed: true,
+            revenue: currentMonthReportData.monthRevenue,
+            cogs: currentMonthReportData.monthCOGS,
+            rent: Number(document.getElementById('inp-rep-rent').value) || 0,
+            staff: Number(document.getElementById('inp-rep-staff').value) || 0,
+            electric: Number(document.getElementById('inp-rep-electric').value) || 0,
+            internet: Number(document.getElementById('inp-rep-internet').value) || 0,
+            bhxh: Number(document.getElementById('inp-rep-bhxh').value) || 0,
+            tax: Number(document.getElementById('inp-rep-tax').value) || 0,
+            closedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        let totalCosts = dataToSave.cogs + dataToSave.rent + dataToSave.staff + dataToSave.electric + dataToSave.internet + dataToSave.bhxh + dataToSave.tax;
+        dataToSave.netProfit = dataToSave.revenue - totalCosts;
+
+        try {
+            await db.collection("NewMonthlyReports").doc(selectedMonth).set(dataToSave);
+            alert("Đã chốt báo cáo thành công! Số liệu đã được lưu cứng dưới dạng tĩnh.");
+            buildMonthlyFinanceReport(); // Tải lại giao diện tĩnh
+        } catch(e) {
+            alert("Lỗi khi chốt số liệu báo cáo!");
+            console.error(e);
+        }
+    }
+
+    function renderStaticReportTable(data) {
+        let rev = data.revenue;
+        let cogs = data.cogs;
+        let totalCosts = cogs + data.rent + data.staff + data.electric + data.internet + data.bhxh + data.tax;
+        let tbody = document.getElementById('monthly-report-body');
+
+        tbody.innerHTML = `
+            <tr class="bg-group">
+                <td>I. TỔNG DOANH THU</td>
+                <td class="text-right" style="color:var(--success); font-weight:700;">${formatVND(rev)}</td>
+                <td class="text-center">100%</td>
+            </tr>
+            <tr class="bg-group">
+                <td>II. GIÁ VỐN HÀNG BÁN (Chi phí NL)</td>
+                <td class="text-right" style="color:var(--danger); font-weight:700;">${formatVND(cogs)}</td>
+                <td class="text-center" style="color:var(--danger); font-weight:700;">${calcPercentStr(cogs, rev)}</td>
+            </tr>
+            <tr class="bg-group">
+                <td colspan="3">III. CHI PHÍ CỐ ĐỊNH KHÁC</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">1. Tiền thuê mặt bằng</td>
+                <td class="text-right">${formatVND(data.rent)}</td>
+                <td class="text-center">${calcPercentStr(data.rent, rev)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">2. Lương nhân viên</td>
+                <td class="text-right">${formatVND(data.staff)}</td>
+                <td class="text-center">${calcPercentStr(data.staff, rev)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">3. Điện nước</td>
+                <td class="text-right">${formatVND(data.electric)}</td>
+                <td class="text-center">${calcPercentStr(data.electric, rev)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">4. Internet</td>
+                <td class="text-right">${formatVND(data.internet)}</td>
+                <td class="text-center">${calcPercentStr(data.internet, rev)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">5. Bảo hiểm xã hội</td>
+                <td class="text-right">${formatVND(data.bhxh)}</td>
+                <td class="text-center">${calcPercentStr(data.bhxh, rev)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">6. Thuế các loại</td>
+                <td class="text-right">${formatVND(data.tax)}</td>
+                <td class="text-center">${calcPercentStr(data.tax, rev)}</td>
+            </tr>
+            <tr class="bg-group" style="background:#fbcfe8;">
+                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
+                <td class="text-right" style="color:var(--danger);">${formatVND(totalCosts)}</td>
+                <td class="text-center">${calcPercentStr(totalCosts, rev)}</td>
+            </tr>
+            <tr style="background:#dcfce7; font-weight:800; font-size:14px; border-top:2px solid var(--success);">
+                <td style="color:var(--success);">IV. LỢI NHUẬN THUẦN (EBIT)</td>
+                <td class="text-right" style="color:${data.netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(data.netProfit)}</td>
+                <td class="text-center" style="color:${data.netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${calcPercentStr(data.netProfit, rev)}</td>
             </tr>
         `;
     }
