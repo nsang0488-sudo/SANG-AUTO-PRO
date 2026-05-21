@@ -142,7 +142,7 @@
 
         .need-buy-alert { background-color: var(--danger-light) !important; color: var(--danger); font-weight: 700; text-align: center; border-radius: 4px; padding: 2px 6px; }
 
-        .scroll-box { max-height: 350px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fafafa; }
+        .scroll-box { max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fafafa; }
         
         /* Item lịch sử */
         .history-item { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
@@ -180,13 +180,23 @@
         .modal-content { background: white; padding: 20px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
         
-        /* Layout chi phí cố định */
-        .fixed-costs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
+        .excel-report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
         }
+        .excel-report-table th, .excel-report-table td {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+        }
+        .excel-report-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        .bg-group { background: #f1f5f9; font-weight: 600; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
@@ -211,15 +221,27 @@
                 <label>Mặt hàng nhập kho</label>
                 <select id="inp-item-select" class="form-control" onchange="autoFillForm()"></select>
             </div>
-            <div class="form-group">
+            
+            <div class="form-group" id="group-fresh-name" style="display: none;">
+                <label>Tên loại nguyên liệu tươi thực tế</label>
+                <input type="text" id="inp-fresh-name" placeholder="Ví dụ: Ổi, cà rốt, chanh dây..." class="form-control">
+            </div>
+
+            <div class="form-group" id="group-qty">
                 <label>Số lượng mua</label>
                 <input type="number" id="inp-qty" placeholder="Nhập số lượng thực mua" class="form-control" oninput="calcTotalAndUnit()">
             </div>
-            <div class="form-group">
+            <div class="form-group" id="group-price">
                 <label>Giá mua / Đơn vị gốc (Cập nhật theo từng đợt phiếu)</label>
                 <input type="number" id="inp-price-base" class="form-control" placeholder="Nhập giá mua đợt này" oninput="calcTotalAndUnit()">
             </div>
-            <div class="form-group">
+            
+            <div class="form-group" id="group-fresh-total" style="display: none;">
+                <label>Tổng số tiền nhập hàng tươi thanh toán</label>
+                <input type="number" id="inp-fresh-total-val" placeholder="Nhập thẳng số tiền thanh toán" class="form-control">
+            </div>
+
+            <div class="form-group" id="group-computed-total">
                 <label>Tổng số tiền thanh toán (Tự động tính = Số lượng × Giá)</label>
                 <input type="text" id="inp-total-computed" class="form-control" placeholder="0 đ" disabled>
             </div>
@@ -243,10 +265,10 @@
                     <thead>
                         <tr>
                             <th>Tên nguyên liệu</th>
-                            <th style="width: 70px;">ĐVT</th>
                             <th>Tồn kho</th>
                             <th>Tiêu chuẩn</th>
                             <th>Cần nhập</th>
+                            <th style="width: 70px;">ĐVT</th>
                             <th>Giá / ĐVT</th>
                             <th>Giá trị tồn</th>
                         </tr>
@@ -263,42 +285,27 @@
 
     <div id="tab-finance" class="tab-content">
         <div class="card">
-            <div class="card-title">Báo Cáo Kế Toán Hôm Nay</div>
+            <div class="card-title">Ghi Nhận Doanh Thu Hôm Nay</div>
             
             <div class="form-group">
                 <label>Doanh thu bán lẻ trong ngày (Bán cafe)</label>
-                <input type="number" id="fin-revenue" placeholder="Nhập tổng doanh thu" class="form-control" oninput="recalcFinance()">
-            </div>
-            
-            <div class="fixed-costs-grid">
-                <div class="form-group">
-                    <label>CP Nhân viên / Ngày</label>
-                    <input type="number" id="fin-cost-staff" placeholder="0" class="form-control" oninput="recalcFinance()">
-                </div>
-                <div class="form-group">
-                    <label>CP Mặt bằng / Ngày</label>
-                    <input type="number" id="fin-cost-rent" placeholder="0" class="form-control" oninput="recalcFinance()">
-                </div>
-                <div class="form-group">
-                    <label>CP Điện nước / Ngày</label>
-                    <input type="number" id="fin-cost-elec" placeholder="0" class="form-control" oninput="recalcFinance()">
-                </div>
+                <input type="number" id="fin-revenue" placeholder="Nhập tổng doanh thu hôm nay" class="form-control" oninput="recalcFinance()">
             </div>
             
             <div class="form-group">
-                <label>Chi phí chi ra nhập hàng hôm nay (Tự động tính từ lịch sử)</label>
+                <label>Chi phí chi ra nhập hàng hôm nay (Tự động gom từ lịch sử phiếu)</label>
                 <input type="text" id="fin-cost" class="form-control" value="0 đ" disabled>
             </div>
 
             <div class="finance-summary">
                 <div class="summary-box profit">
-                    <div class="summary-label">Lợi Nhuận Thuần Thực Tế</div>
+                    <div class="summary-label">Lợi Nhuận Ước Tính Hôm Nay (Thu - Chi hàng)</div>
                     <div class="summary-value" id="fin-profit">0 đ</div>
                 </div>
             </div>
 
             <button onclick="saveDailyFinance()" class="btn-block btn-success" style="width:100%;">
-                <i class="fa-solid fa-box-archive"></i> CHỐT SỔ & LƯU BÁO CÁO NGÀY
+                <i class="fa-solid fa-box-archive"></i> CHỐT SỔ & LƯU DOANH THU NGÀY
             </button>
         </div>
 
@@ -309,36 +316,37 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Lịch sử đóng sổ kế toán</div>
+            <div class="card-title">Báo Cáo Tài Chính Quản Trị Hệ Thống</div>
             
-            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; background: var(--primary-light); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                <div style="flex: 1; min-width: 130px;">
-                    <label style="display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600;">Từ ngày:</label>
-                    <input type="date" id="filter-start-date" class="form-control" style="padding: 6px 10px; font-size: 13px;" onchange="filterFinanceHistory()">
-                </div>
-                <div style="flex: 1; min-width: 130px;">
-                    <label style="display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600;">Đến ngày:</label>
-                    <input type="date" id="filter-end-date" class="form-control" style="padding: 6px 10px; font-size: 13px;" onchange="filterFinanceHistory()">
-                </div>
-                <div style="display: flex; align-items: flex-end;">
-                    <button class="btn-sm btn-danger" style="padding: 8px 12px; display: flex; align-items: center; gap: 4px;" onclick="clearFinanceFilter()">
-                        <i class="fa-solid fa-filter-circle-xmark"></i> Xóa lọc
-                    </button>
-                </div>
+            <div style="margin-bottom: 15px; background: var(--primary-light); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                <label style="display: block; font-size: 12px; color: var(--text-main); margin-bottom: 6px; font-weight: 700;">CHỌN KỲ BÁO CÁO (THÁNG):</label>
+                <select id="report-month-select" class="form-control" onchange="buildMonthlyFinanceReport()">
+                    <option value="2026-01">Tháng 1 / 2026</option>
+                    <option value="2026-02">Tháng 2 / 2026</option>
+                    <option value="2026-03">Tháng 3 / 2026</option>
+                    <option value="2026-04">Tháng 4 / 2026</option>
+                    <option value="2026-05" selected>Tháng 5 / 2026</option>
+                    <option value="2026-06">Tháng 6 / 2026</option>
+                    <option value="2026-07">Tháng 7 / 2026</option>
+                    <option value="2026-08">Tháng 8 / 2026</option>
+                    <option value="2026-09">Tháng 9 / 2026</option>
+                    <option value="2026-10">Tháng 10 / 2026</option>
+                    <option value="2026-11">Tháng 11 / 2026</option>
+                    <option value="2026-12">Tháng 12 / 2026</option>
+                </select>
             </div>
 
             <div class="table-responsive">
-                <table class="custom-table">
+                <table class="excel-report-table">
                     <thead>
                         <tr>
-                            <th>Ngày</th>
-                            <th>Doanh thu</th>
-                            <th>Chi phí</th>
-                            <th>Lợi nhuận</th>
+                            <th>HẠNG MỤC TÀI CHÍNH</th>
+                            <th class="text-right">SỐ TIỀN</th>
+                            <th class="text-center" style="width: 80px;">TỶ LỆ %</th>
                         </tr>
                     </thead>
-                    <tbody id="finance-history-body">
-                    </tbody>
+                    <tbody id="monthly-report-body">
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -412,7 +420,21 @@
     let costToday = 0;
     let localInventory = {}; 
     let isEditSessionActive = false; 
-    let allFinanceRecords = []; // Lưu trữ toàn bộ dữ liệu kế toán phục vụ bộ lọc
+    let rawDailyFinanceList = []; 
+    let rawPurchaseHistoryList = [];
+
+    // Cấu hình định mức chi phí cố định cố định theo tháng giống file Excel quản lý của quán
+    const FIXED_BUDGET_CONFIG = {
+        staff: 15400000,   // Lương nhân viên
+        rent: 10000000,    // Tiền thuê mặt bằng
+        electric: 3500000, // Tiền điện nước
+        internet: 250000,  // Cáp quang / Internet
+        gas: 400000,       // Chi phí Gas
+        printing: 150000,  // Giấy KT / Giấy in bill
+        bhxh: 0,           // Bảo hiểm xã hội
+        vat: 0,            // Thuế GTGT
+        monbai: 0          // Thuế môn bài
+    };
 
     function getTodayString() {
         const d = new Date();
@@ -438,6 +460,10 @@
         if(tabName === 'input') {
             document.getElementById('inp-date').value = getTodayString();
             renderItemSelectOptions();
+            autoFillForm();
+        }
+        if(tabName === 'finance') {
+            buildMonthlyFinanceReport();
         }
     }
 
@@ -447,7 +473,7 @@
         window.addEventListener('offline', () => { badge.className="sync-badge sync-offline"; badge.innerHTML=`<i class="fa-solid fa-cloud-moon"></i> <span>Đang ngoại tuyến</span>`; });
     }
 
-    // --- LOGIC TAB 2: QUẢN LÝ KHO HÀNG ---
+    // --- LOGIC TAB 2: QUẢN LÝ KHO HÀNG (ĐÃ THAY ĐỔI THỨ TỰ CỘT) ---
     
     function startListeningInventory() {
         db.collection("NewInventory").orderBy("itemName", "asc").onSnapshot(snapshot => {
@@ -468,7 +494,7 @@
                 categories[type].push({id, ...data});
             });
 
-            const catNames = { "tươi": "NGUYÊN LIỆU TƯƠI", "khô": "NGUYÊN LIỆU KHÔ", "dụng cụ": "DỤNG CỤ & KHÁC" };
+            const catNames = { "tươi": "NGUYÊN LIỆU TƯƠI (HÀNG TƯƠI KHÔNG CỘNG DỒN KHO)", "khô": "NGUYÊN LIỆU KHÔ", "dụng cụ": "DỤNG CỤ & KHÁC" };
             
             for (let cat in categories) {
                 if (categories[cat].length === 0) continue;
@@ -486,29 +512,30 @@
                     let needBuyStr = needBuy > 0 ? `<span class="need-buy-alert">${needBuy}</span>` : "0";
                     
                     let totalValue = stock * price;
-                    
                     let totalValueDisplay = price === 0 ? "-" : formatVND(totalValue);
-                    if (price > 0) {
+                    
+                    if (price > 0 && item.itemType !== "tươi") {
                         totalWarehouseValue += totalValue;
                     }
 
                     let tr = document.createElement('tr');
+                    // THỨ TỰ CỘT MỚI GIAO DIỆN: Tên -> Tồn -> Tiêu chuẩn -> Cần nhập -> ĐVT -> Giá -> Giá trị tồn
                     tr.innerHTML = `
                         <td><b>${item.itemName}</b></td>
                         <td>
-                            <input type="text" class="input-table" id="unit-${item.id}" value="${item.unit || ''}" disabled>
-                        </td>
-                        <td>
-                            <input type="number" class="input-table" style="background:#fffbeb; border:1px solid #fef08a;" id="stock-${item.id}" value="${stock}" onchange="updateLocalStockOnly('${item.id}', this.value)">
+                            <input type="number" class="input-table" style="background:#fffbeb; border:1px solid #fef08a;" id="stock-${item.id}" value="${stock}" onchange="updateLocalStockOnly('${item.id}', this.value)" ${item.itemType === 'tươi' ? 'disabled' : ''}>
                         </td>
                         <td>
                             <input type="number" class="input-table" id="standard-${item.id}" value="${standard}" disabled>
                         </td>
-                        <td id="need-${item.id}">${needBuyStr}</td>
+                        <td id="need-${item.id}">${item.itemType === 'tươi' ? '-' : needBuyStr}</td>
+                        <td>
+                            <input type="text" class="input-table" id="unit-${item.id}" value="${item.unit || ''}" disabled>
+                        </td>
                         <td>
                             <input type="number" class="input-table" id="price-${item.id}" value="${price}" disabled>
                         </td>
-                        <td id="totalval-${item.id}" style="font-weight:600;">${totalValueDisplay}</td>
+                        <td id="totalval-${item.id}" style="font-weight:600;">${item.itemType === 'tươi' ? '-' : totalValueDisplay}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -518,7 +545,7 @@
             totalTr.style.fontWeight = "700";
             totalTr.style.background = "var(--primary-light)";
             totalTr.innerHTML = `
-                <td colspan="6" style="text-align: right; color: var(--primary); padding: 12px 10px;">TỔNG GIÁ TRỊ KHO HÀNG:</td>
+                <td colspan="6" style="text-align: right; color: var(--primary); padding: 12px 10px;">TỔNG GIÁ TRỊ KHO (KHÔ & DỤNG CỤ):</td>
                 <td style="color: var(--accent); font-weight: 800; padding: 12px 10px;">${formatVND(totalWarehouseValue)}</td>
             `;
             tbody.appendChild(totalTr);
@@ -539,8 +566,12 @@
             let price = localInventory[id].price || 0;
             let needBuy = standard - newStock;
             
-            document.getElementById(`need-${id}`).innerHTML = needBuy > 0 ? `<span class="need-buy-alert">${needBuy}</span>` : "0";
-            document.getElementById(`totalval-${id}`).innerText = price === 0 ? "-" : formatVND(newStock * price);
+            if(document.getElementById(`need-${id}`)) {
+                document.getElementById(`need-${id}`).innerHTML = needBuy > 0 ? `<span class="need-buy-alert">${needBuy}</span>` : "0";
+            }
+            if(document.getElementById(`totalval-${id}`)) {
+                document.getElementById(`totalval-${id}`).innerText = price === 0 ? "-" : formatVND(newStock * price);
+            }
         } catch (e) {
             console.error(e);
         }
@@ -620,6 +651,7 @@
         if(!name || !unit) { alert("Vui lòng nhập tên món và đơn vị tính!"); return; }
 
         let id = name.toLowerCase().replace(/\s+/g, '_');
+        if(type === 'tươi') id = 'nguyen_lieu_tuoi'; // Khóa cố định cho nguyên liệu tươi gộp
         
         try {
             await db.collection("NewInventory").doc(id).set({
@@ -639,233 +671,195 @@
         }
     }
 
-    // --- LOGIC TAB 1: NHẬP LIỆU MUA HÀNG ---
+    // --- LOGIC TAB 1: PHIẾU NHẬP HÀNG (CẢI TIẾN HÀNG TƯƠI) ---
     
     function renderItemSelectOptions() {
         let select = document.getElementById('inp-item-select');
         if(!select) return;
         select.innerHTML = `<option value="">-- Chọn mặt hàng muốn nhập --</option>`;
+        
+        // Đảm bảo luôn xuất hiện tùy chọn Nguyên Liệu Tươi đầu tiên
+        select.innerHTML += `<option value="nguyen_lieu_tuoi" style="font-weight:bold; color:var(--accent);">[HÀNG TƯƠI] NHẬP NGUYÊN LIỆU TƯƠI</option>`;
+        
         for(let id in localInventory) {
+            if(id === 'nguyen_lieu_tuoi') continue;
             select.innerHTML += `<option value="${id}">${localInventory[id].itemName} (${localInventory[id].unit})</option>`;
         }
     }
 
     function autoFillForm() {
         let id = document.getElementById('inp-item-select').value;
-        if(!id) {
-            document.getElementById('inp-price-base').value = "";
-            return;
+        
+        let gFreshName = document.getElementById('group-fresh-name');
+        let gQty = document.getElementById('group-qty');
+        let gPrice = document.getElementById('group-price');
+        let gFreshTotal = document.getElementById('group-fresh-total');
+        let gComputedTotal = document.getElementById('group-computed-total');
+
+        if(id === "nguyen_lieu_tuoi") {
+            // Hiển thị form hàng tươi: Nhập thẳng tên và số tiền
+            gFreshName.style.display = "block";
+            gFreshTotal.style.display = "block";
+            gQty.style.display = "none";
+            gPrice.style.display = "none";
+            gComputedTotal.style.display = "none";
+        } else {
+            // Form hàng khô/dụng cụ bình thường
+            gFreshName.style.display = "none";
+            gFreshTotal.style.display = "none";
+            gQty.style.display = "block";
+            gPrice.style.display = "block";
+            gComputedTotal.style.display = "block";
+            
+            if(!id) {
+                document.getElementById('inp-price-base').value = "";
+                return;
+            }
+            document.getElementById('inp-price-base').value = localInventory[id].price || 0;
+            calcTotalAndUnit();
         }
-        document.getElementById('inp-price-base').value = localInventory[id].price || 0;
-        calcTotalAndUnit();
     }
 
     function calcTotalAndUnit() {
         let qty = Number(document.getElementById('inp-qty').value) || 0;
         let priceBase = Number(document.getElementById('inp-price-base').value) || 0;
         let totalBox = document.getElementById('inp-total-computed');
-        
         totalBox.value = formatVND(qty * priceBase);
     }
 
     async function submitPurchase() {
         let id = document.getElementById('inp-item-select').value;
-        let qty = Number(document.getElementById('inp-qty').value) || 0;
-        let inputPrice = Number(document.getElementById('inp-price-base').value) || 0; 
-        
-        if(!id || qty <= 0) {
-            alert("Vui lòng chọn mặt hàng và nhập số lượng mua hợp lệ!");
-            return;
-        }
+        if(!id) { alert("Vui lòng lựa chọn loại mặt hàng nhập!"); return; }
 
-        let item = localInventory[id];
-        let totalAmount = qty * inputPrice; 
         let todayStr = getTodayString();
         let todayKey = getTodayKey();
-
         let purchaseData = {
-            itemId: id,
-            itemName: item.itemName,
-            quantity: qty,
-            totalAmount: totalAmount,
-            unitPrice: inputPrice, 
             dateStr: todayStr,
             dateKey: todayKey,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        try {
-            await db.collection("NewPurchaseHistory").add(purchaseData);
-
-            // LOGIC CẬP NHẬT KHO: Nếu giá trong kho ban đầu là 0, thì khi nhập hàng sẽ KHÔNG cộng giá vào kho mà giữ nguyên là 0 đ
-            let updateData = {
-                quantity: firebase.firestore.FieldValue.increment(qty)
-            };
+        if(id === "nguyen_lieu_tuoi") {
+            let freshName = document.getElementById('inp-fresh-name').value.trim();
+            let freshTotal = Number(document.getElementById('inp-fresh-total-val').value) || 0;
             
-            if (item.price > 0) {
-                updateData.price = inputPrice;
-            }
-
-            await db.collection("NewInventory").doc(id).update(updateData);
-
-            if (item.price > 0) {
-                alert(`Đã thanh toán và cộng vào kho: +${qty} ${item.unit} ${item.itemName} (Giá kho cập nhật: ${formatVND(inputPrice)})`);
-            } else {
-                alert(`Đã thanh toán và cộng vào kho: +${qty} ${item.unit} ${item.itemName} (Cấu hình giá kho giữ nguyên là 0 đ)`);
+            if(!freshName || freshTotal <= 0) {
+                alert("Vui lòng điền tên nguyên liệu tươi và số tiền nhập hợp lệ!");
+                return;
             }
             
-            document.getElementById('inp-qty').value = "";
-            document.getElementById('inp-price-base').value = "";
-            document.getElementById('inp-total-computed').value = "0 đ";
-        } catch(e) {
-            alert("Lỗi hệ thống khi thanh toán!");
+            purchaseData.itemId = "nguyen_lieu_tuoi";
+            purchaseData.itemName = "Nguyên liệu tươi (" + freshName + ")";
+            purchaseData.quantity = 1; 
+            purchaseData.unitPrice = freshTotal;
+            purchaseData.totalAmount = freshTotal;
+            purchaseData.isFresh = true; // Đánh dấu hàng tươi để bộ lọc tính toán
+
+            try {
+                await db.collection("NewPurchaseHistory").add(purchaseData);
+                alert(`Đã thanh toán chi phí hàng tươi: ${freshName} -> ${formatVND(freshTotal)} (Không tính cộng dồn kho)`);
+                document.getElementById('inp-fresh-name').value = "";
+                document.getElementById('inp-fresh-total-val').value = "";
+            } catch(e) {
+                alert("Lỗi hệ thống khi thanh toán hàng tươi!");
+            }
+
+        } else {
+            // LOGIC NHẬP HÀNG KHÔ/DỤNG CỤ GIỮ NGUYÊN BẢN CŨ
+            let qty = Number(document.getElementById('inp-qty').value) || 0;
+            let inputPrice = Number(document.getElementById('inp-price-base').value) || 0; 
+            
+            if(qty <= 0) { alert("Vui lòng nhập số lượng mua hợp lệ!"); return; }
+
+            let item = localInventory[id];
+            let totalAmount = qty * inputPrice; 
+
+            purchaseData.itemId = id;
+            purchaseData.itemName = item.itemName;
+            purchaseData.quantity = qty;
+            purchaseData.unitPrice = inputPrice;
+            purchaseData.totalAmount = totalAmount;
+            purchaseData.isFresh = false;
+
+            try {
+                await db.collection("NewPurchaseHistory").add(purchaseData);
+
+                let updateData = { quantity: firebase.firestore.FieldValue.increment(qty) };
+                if (item.price > 0) updateData.price = inputPrice;
+
+                await db.collection("NewInventory").doc(id).update(updateData);
+                alert(`Đã thanh toán & cộng kho: +${qty} ${item.unit} ${item.itemName}`);
+                
+                document.getElementById('inp-qty').value = "";
+                document.getElementById('inp-price-base').value = "";
+                document.getElementById('inp-total-computed').value = "0 đ";
+            } catch(e) {
+                alert("Lỗi hệ thống khi thanh toán!");
+            }
         }
     }
 
-    // --- LOGIC TAB 3: KẾ TOÁN & CHI PHÍ CỐ ĐỊNH ---
-
-    function loadSavedFixedCosts() {
-        document.getElementById('fin-cost-staff').value = localStorage.getItem('fc_staff') || "";
-        document.getElementById('fin-cost-rent').value = localStorage.getItem('fc_rent') || "";
-        document.getElementById('fin-cost-elec').value = localStorage.getItem('fc_elec') || "";
-    }
+    // --- LOGIC TAB 3: KẾ TOÁN & BÁO CÁO QUẢN TRỊ TÀI CHÍNH THEO THÁNG ---
 
     function startListeningHistoryAndFinance() {
         let todayKey = getTodayKey();
 
+        // Lắng nghe lịch sử mua hàng
         db.collection("NewPurchaseHistory").orderBy("createdAt", "desc").onSnapshot(snapshot => {
             const container = document.getElementById('history-render');
             container.innerHTML = "";
             costToday = 0;
-
-            if(snapshot.empty) {
-                container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có lịch sử nhập hàng hôm nay.</div>`;
-            }
+            rawPurchaseHistoryList = [];
 
             snapshot.forEach(doc => {
                 let data = doc.data();
-                let docId = doc.id;
+                rawPurchaseHistoryList.push({ id: doc.id, ...data });
 
                 if (data.dateKey === todayKey) {
                     costToday += data.totalAmount;
                 }
-
-                let div = document.createElement('div');
-                div.className = "history-item";
-                div.innerHTML = `
-                    <div>
-                        <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
-                        <div>Mua <b>${data.itemName}</b> (SL: ${data.quantity}) &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
-                    </div>
-                    <div style="display:flex; gap:6px;">
-                        <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${docId}', '${data.itemId}', ${data.quantity})"><i class="fa-solid fa-trash"></i> Xóa</button>
-                    </div>
-                `;
-                container.appendChild(div);
             });
+
+            // Chỉ hiển thị lịch sử nhập hàng của ngày hôm nay ra màn hình
+            let todayRecords = rawPurchaseHistoryList.filter(r => r.dateKey === todayKey);
+            if(todayRecords.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có phiếu nhập hàng nào trong ngày hôm nay.</div>`;
+            } else {
+                todayRecords.forEach(data => {
+                    let div = document.createElement('div');
+                    div.className = "history-item";
+                    div.innerHTML = `
+                        <div>
+                            <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
+                            <div><b>${data.itemName}</b> &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
+                        </div>
+                        <div>
+                            <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${data.id}', '${data.itemId}', ${data.quantity}, ${data.isFresh || false})"><i class="fa-solid fa-trash"></i> Xóa</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
 
             document.getElementById('fin-cost').value = formatVND(costToday);
             recalcFinance();
+            buildMonthlyFinanceReport(); // Tự động load lại báo cáo tháng khi có đơn hàng mới
         });
 
-        // Đọc toàn bộ báo cáo để phục vụ bộ lọc thời gian tùy chỉnh linh hoạt hơn
+        // Lắng nghe danh sách chốt doanh thu hàng ngày
         db.collection("NewDailyFinance").orderBy("closedAt", "desc").onSnapshot(snapshot => {
-            allFinanceRecords = [];
+            rawDailyFinanceList = [];
             snapshot.forEach(doc => {
-                let f = doc.data();
-                allFinanceRecords.push({ id: doc.id, ...f });
+                rawDailyFinanceList.push({ id: doc.id, ...doc.data() });
             });
-            filterFinanceHistory(); 
+            buildMonthlyFinanceReport();
         });
-    }
-
-    // LOGIC LỌC THỜI GIAN VÀ HIỂN THỊ TỔNG CỘNG MỚI THÊM
-    function filterFinanceHistory() {
-        let start = document.getElementById('filter-start-date').value; // Định dạng YYYY-MM-DD
-        let end = document.getElementById('filter-end-date').value;     // Định dạng YYYY-MM-DD
-        
-        let filtered = allFinanceRecords;
-        if (start) {
-            filtered = filtered.filter(r => r.id >= start);
-        }
-        if (end) {
-            filtered = filtered.filter(r => r.id <= end);
-        }
-        
-        renderFinanceTable(filtered);
-    }
-
-    function renderFinanceTable(records) {
-        let tbody = document.getElementById('finance-history-body');
-        tbody.innerHTML = "";
-        
-        let totalRev = 0;
-        let totalCost = 0;
-        let totalProfit = 0;
-        
-        records.forEach(f => {
-            totalRev += f.revenue || 0;
-            totalCost += f.costs || 0;
-            totalProfit += f.profit || 0;
-            
-            let tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>${f.dateStr}</b></td>
-                <td style="color:var(--success); font-weight:600;">${formatVND(f.revenue)}</td>
-                <td style="color:var(--danger);">${formatVND(f.costs)}</td>
-                <td style="font-weight:700; color:${f.profit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(f.profit)}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-        
-        // Thêm dòng tổng cộng dưới cùng bảng
-        let totalTr = document.createElement('tr');
-        totalTr.style.fontWeight = "700";
-        totalTr.style.background = "var(--primary-light)";
-        totalTr.innerHTML = `
-            <td><b style="color: var(--primary);">TỔNG CỘNG</b></td>
-            <td style="color:var(--success); font-weight:700;">${formatVND(totalRev)}</td>
-            <td style="color:var(--danger); font-weight:700;">${formatVND(totalCost)}</td>
-            <td style="font-weight:800; color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(totalProfit)}</td>
-        `;
-        tbody.appendChild(totalTr);
-    }
-
-    function clearFinanceFilter() {
-        document.getElementById('filter-start-date').value = "";
-        document.getElementById('filter-end-date').value = "";
-        filterFinanceHistory();
-    }
-
-    async function deleteHistoryItem(docId, itemId, qty) {
-        if(!confirm("Bạn có chắc chắn muốn xóa phiếu nhập hàng này không? Số lượng tồn trong kho sẽ tự động hoàn tác trừ đi.")) return;
-        
-        try {
-            await db.collection("NewInventory").doc(itemId).update({
-                quantity: firebase.firestore.FieldValue.increment(-qty)
-            });
-            await db.collection("NewPurchaseHistory").doc(docId).delete();
-            alert("Đã xóa bản ghi nhập hàng và đồng bộ lại kho!");
-        } catch(e) {
-            alert("Không thể xóa bản ghi dữ liệu!");
-        }
     }
 
     function recalcFinance() {
         let rev = Number(document.getElementById('fin-revenue').value) || 0;
-        
-        let staffCost = Number(document.getElementById('fin-cost-staff').value) || 0;
-        let rentCost = Number(document.getElementById('fin-cost-rent').value) || 0;
-        let elecCost = Number(document.getElementById('fin-cost-elec').value) || 0;
-        
-        localStorage.setItem('fc_staff', document.getElementById('fin-cost-staff').value);
-        localStorage.setItem('fc_rent', document.getElementById('fin-cost-rent').value);
-        localStorage.setItem('fc_elec', document.getElementById('fin-cost-elec').value);
-
-        let totalFixedCosts = staffCost + rentCost + elecCost;
         let profitBox = document.getElementById('fin-profit');
-        
-        let netProfit = rev - costToday - totalFixedCosts;
+        let netProfit = rev - costToday;
 
         profitBox.innerText = formatVND(netProfit);
         profitBox.parentElement.style.background = netProfit < 0 ? "#fee2e2" : "#dcfce7";
@@ -878,36 +872,157 @@
 
         let todayKey = getTodayKey();
         let todayStr = getTodayString();
-        
-        let staffCost = Number(document.getElementById('fin-cost-staff').value) || 0;
-        let rentCost = Number(document.getElementById('fin-cost-rent').value) || 0;
-        let elecCost = Number(document.getElementById('fin-cost-elec').value) || 0;
-        let totalFixedCosts = staffCost + rentCost + elecCost;
-        
-        let totalCostsCombined = costToday + totalFixedCosts;
-        let netProfit = rev - totalCostsCombined;
 
         let report = {
             dateStr: todayStr,
             revenue: rev,
-            costs: totalCostsCombined, 
-            profit: netProfit,
             closedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
         try {
             await db.collection("NewDailyFinance").doc(todayKey).set(report);
-            alert(`Đã chốt sổ thành công ngày hôm nay (${todayStr})! Lãi thuần thực tế: ${formatVND(netProfit)}`);
+            alert(`Đã lưu doanh thu ngày (${todayStr}) thành công: ${formatVND(rev)}`);
         } catch(e) {
-            alert("Lỗi khi lưu đóng sổ!");
+            alert("Lỗi khi lưu doanh thu!");
         }
+    }
+
+    async function deleteHistoryItem(docId, itemId, qty, isFresh) {
+        if(!confirm("Bạn có chắc chắn muốn xóa phiếu nhập hàng này không?")) return;
+        
+        try {
+            if(!isFresh) {
+                // Hoàn tác kho nếu là hàng khô
+                await db.collection("NewInventory").doc(itemId).update({
+                    quantity: firebase.firestore.FieldValue.increment(-qty)
+                });
+            }
+            await db.collection("NewPurchaseHistory").doc(docId).delete();
+            alert("Đã xóa bản ghi nhập hàng thành công!");
+        } catch(e) {
+            alert("Không thể xóa dữ liệu!");
+        }
+    }
+
+    // --- HÀM TRIỂN KHAI BÁO CÁO KẾ TOÁN QUẢN TRỊ THEO THÁNG CHUYÊN NGHIỆP ---
+    function buildMonthlyFinanceReport() {
+        let selectedMonth = document.getElementById('report-month-select').value; // Định dạng "YYYY-MM"
+        
+        // 1. Tính tổng doanh thu trong tháng từ NewDailyFinance
+        let monthRevenue = 0;
+        rawDailyFinanceList.forEach(r => {
+            if(r.id.startsWith(selectedMonth)) {
+                monthRevenue += (r.revenue || 0);
+            }
+        });
+
+        // 2. Tính tổng chi phí nguyên liệu trong tháng từ NewPurchaseHistory
+        let monthCOGS = 0;
+        rawPurchaseHistoryList.forEach(p => {
+            if(p.dateKey && p.dateKey.startsWith(selectedMonth)) {
+                monthCOGS += (p.totalAmount || 0);
+            }
+        });
+
+        // Định dạng an toàn cho tỷ lệ % tránh lỗi chia cho số 0
+        const calcPercent = (amount) => {
+            if (monthRevenue === 0) return "0.0%";
+            return ((amount / monthRevenue) * 100).toFixed(1) + "%";
+        };
+
+        // 3. Tính toán các chi phí cố định theo tháng cố định
+        let cStaff = FIXED_BUDGET_CONFIG.staff;
+        let cRent = FIXED_BUDGET_CONFIG.rent;
+        let cElec = FIXED_BUDGET_CONFIG.electric;
+        let cNet = FIXED_BUDGET_CONFIG.internet;
+        let cGas = FIXED_BUDGET_CONFIG.gas;
+        let cPrint = FIXED_BUDGET_CONFIG.printing;
+        let cBhxh = FIXED_BUDGET_CONFIG.bhxh;
+        let cVat = FIXED_BUDGET_CONFIG.vat;
+        let cMonbai = FIXED_BUDGET_CONFIG.monbai;
+
+        let totalFixedCosts = cStaff + cRent + cElec + cNet + cGas + cPrint + cBhxh + cVat + cMonbai;
+        let totalAllCosts = monthCOGS + totalFixedCosts;
+        let netProfit = monthRevenue - totalAllCosts;
+
+        // Render bảng HTML báo cáo quản trị cấu trúc chuyên nghiệp giống hình ảnh Excel
+        let tbody = document.getElementById('monthly-report-body');
+        tbody.innerHTML = `
+            <tr class="bg-group">
+                <td>I. TỔNG DOANH THU</td>
+                <td class="text-right" style="color:var(--success); font-weight:700;">${formatVND(monthRevenue)}</td>
+                <td class="text-center">100%</td>
+            </tr>
+            <tr class="bg-group">
+                <td>II. GIÁ VỐN HÀNG BÁN (Chi phí nguyên liệu)</td>
+                <td class="text-right" style="color:var(--danger); font-weight:700;">${formatVND(monthCOGS)}</td>
+                <td class="text-center" style="color:var(--danger); font-weight:700;">${calcPercent(monthCOGS)}</td>
+            </tr>
+            <tr class="bg-group">
+                <td colspan="3">III. CHI PHÍ CỐ ĐỊNH QUÁN KHÁC</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">1. Lương nhân viên</td>
+                <td class="text-right">${formatVND(cStaff)}</td>
+                <td class="text-center">${calcPercent(cStaff)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">2. Tiền thuê mặt bằng</td>
+                <td class="text-right">${formatVND(cRent)}</td>
+                <td class="text-center">${calcPercent(cRent)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">3. Điện nước & Tiện ích</td>
+                <td class="text-right">${formatVND(cElec)}</td>
+                <td class="text-center">${calcPercent(cElec)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">4. Chi phí Mạng Internet</td>
+                <td class="text-right">${formatVND(cNet)}</td>
+                <td class="text-center">${calcPercent(cNet)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">5. Chi phí Đốt Gas</td>
+                <td class="text-right">${formatVND(cGas)}</td>
+                <td class="text-center">${calcPercent(cGas)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">6. Giấy KT / Giấy in bill</td>
+                <td class="text-right">${formatVND(cPrint)}</td>
+                <td class="text-center">${calcPercent(cPrint)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">7. Bảo hiểm xã hội (BHXH)</td>
+                <td class="text-right">${formatVND(cBhxh)}</td>
+                <td class="text-center">${calcPercent(cBhxh)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">8. Thuế giá trị gia tăng (GTGT)</td>
+                <td class="text-right">${formatVND(cVat)}</td>
+                <td class="text-center">${calcPercent(cVat)}</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 25px;">9. Thuế môn bài</td>
+                <td class="text-right">${formatVND(cMonbai)}</td>
+                <td class="text-center">${calcPercent(cMonbai)}</td>
+            </tr>
+            <tr class="bg-group" style="background:#fbcfe8;">
+                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
+                <td class="text-right" style="color:var(--danger);">${formatVND(totalAllCosts)}</td>
+                <td class="text-center">${calcPercent(totalAllCosts)}</td>
+            </tr>
+            <tr style="background:#dcfce7; font-weight:800; font-size:14px; border-top:2px solid var(--success);">
+                <td style="color:var(--success);">IV. LỢI NHUẬN THUẦN THỰC TẾ (EBIT)</td>
+                <td class="text-right" style="color:${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatVND(netProfit)}</td>
+                <td class="text-center" style="color:${netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${calcPercent(netProfit)}</td>
+            </tr>
+        `;
     }
 
     window.onload = function() {
         document.getElementById('inp-date').value = getTodayString();
         watchSyncStatus();
         startListeningInventory();
-        loadSavedFixedCosts(); 
         startListeningHistoryAndFinance();
     };
 </script>
