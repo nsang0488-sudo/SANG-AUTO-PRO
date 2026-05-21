@@ -306,7 +306,23 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Nhật ký lịch sử mua hàng ngày hôm nay</div>
+            <div class="card-title">Tra Cứu Lịch Sử Nhập Hàng</div>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                    <label style="font-size: 11px; color: var(--text-sub); font-weight: 600; display: block; margin-bottom: 4px;">Từ ngày</label>
+                    <input type="date" id="filter-start" class="form-control" onchange="filterHistory()">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 11px; color: var(--text-sub); font-weight: 600; display: block; margin-bottom: 4px;">Đến ngày</label>
+                    <input type="date" id="filter-end" class="form-control" onchange="filterHistory()">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 10px; font-weight: bold; color: var(--danger); font-size: 14px; text-align: right; border-bottom: 1px dashed var(--border); padding-bottom: 8px;">
+                Tổng chi trong khoảng: <span id="filtered-total-cost">0 đ</span>
+            </div>
+
             <div class="scroll-box" id="history-render">
             </div>
         </div>
@@ -446,17 +462,16 @@
     let rawDailyFinanceList = []; 
     let rawPurchaseHistoryList = [];
 
-    // Mặc định cho các khoản cố định (Khi chưa chốt báo cáo)
+    // Mặc định cho các khoản cố định (Khi chưa nhập gì)
     const DEFAULT_FIXED_COSTS = {
-        rent: 10000000,    // Mặt bằng
-        staff: 15400000,   // Lương nhân viên
-        electric: 3500000, // Điện nước
-        internet: 250000,  // Internet
-        bhxh: 0,           // BHXH
-        tax: 0             // Thuế
+        rent: 10000000,
+        staff: 15400000,
+        electric: 3500000,
+        internet: 250000,
+        bhxh: 0,
+        tax: 0
     };
 
-    // Lưu trữ tạm dữ liệu báo cáo tháng hiện hành để tính toán và lưu
     let currentMonthReportData = {};
 
     function getTodayString() {
@@ -542,7 +557,7 @@
                     }
 
                     let tr = document.createElement('tr');
-                    // Ghi chú: Cột Tồn Kho đã xóa disabled đối với hàng tươi, cho phép nhập tay.
+                    // Ghi chú: Đã sửa lại để Hàng Tươi vẫn hiển thị "Cần Nhập" như Hàng Khô
                     tr.innerHTML = `
                         <td><b>${item.itemName}</b></td>
                         <td>
@@ -551,7 +566,7 @@
                         <td>
                             <input type="number" class="input-table" id="standard-${item.id}" value="${standard}" disabled>
                         </td>
-                        <td id="need-${item.id}">${item.itemType === 'tươi' ? '-' : needBuyStr}</td>
+                        <td id="need-${item.id}">${needBuyStr}</td>
                         <td>
                             <input type="text" class="input-table" id="unit-${item.id}" value="${item.unit || ''}" disabled>
                         </td>
@@ -764,7 +779,7 @@
             }
             
             purchaseData.itemId = "nguyen_lieu_tuoi";
-            purchaseData.itemName = freshName; // Lưu tên trực tiếp để filter Báo Cáo
+            purchaseData.itemName = freshName; 
             purchaseData.quantity = 1; 
             purchaseData.unitPrice = freshTotal;
             purchaseData.totalAmount = freshTotal;
@@ -817,12 +832,50 @@
 
     // --- LOGIC TAB 3: KẾ TOÁN & LỊCH SỬ ---
 
+    function filterHistory() {
+        let start = document.getElementById('filter-start').value;
+        let end = document.getElementById('filter-end').value;
+        let container = document.getElementById('history-render');
+        container.innerHTML = "";
+        let filteredTotal = 0;
+
+        let filteredRecords = rawPurchaseHistoryList;
+        
+        if (start) {
+            filteredRecords = filteredRecords.filter(r => r.dateKey >= start);
+        }
+        if (end) {
+            filteredRecords = filteredRecords.filter(r => r.dateKey <= end);
+        }
+
+        if(filteredRecords.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Không có dữ liệu chi phí trong khoảng thời gian này.</div>`;
+        } else {
+            filteredRecords.forEach(data => {
+                filteredTotal += (data.totalAmount || 0);
+                let badge = data.isFresh ? '<span style="color:#16a34a; font-weight:bold;">[TƯƠI]</span>' : '';
+                let div = document.createElement('div');
+                div.className = "history-item";
+                div.innerHTML = `
+                    <div>
+                        <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
+                        <div>${badge} <b>${data.itemName}</b> &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
+                    </div>
+                    <div>
+                        <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${data.id}', '${data.itemId}', ${data.quantity}, ${data.isFresh || false})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        document.getElementById('filtered-total-cost').innerText = formatVND(filteredTotal);
+    }
+
     function startListeningHistoryAndFinance() {
         let todayKey = getTodayKey();
 
         db.collection("NewPurchaseHistory").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-            const container = document.getElementById('history-render');
-            container.innerHTML = "";
             costToday = 0;
             rawPurchaseHistoryList = [];
 
@@ -830,31 +883,14 @@
                 let data = doc.data();
                 rawPurchaseHistoryList.push({ id: doc.id, ...data });
 
+                // Vẫn tính costToday để dùng cho khung Ghi Nhận Doanh Thu Hôm Nay
                 if (data.dateKey === todayKey) {
                     costToday += data.totalAmount;
                 }
             });
 
-            let todayRecords = rawPurchaseHistoryList.filter(r => r.dateKey === todayKey);
-            if(todayRecords.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có phiếu nhập hàng nào trong ngày hôm nay.</div>`;
-            } else {
-                todayRecords.forEach(data => {
-                    let badge = data.isFresh ? '<span style="color:#16a34a; font-weight:bold;">[TƯƠI]</span>' : '';
-                    let div = document.createElement('div');
-                    div.className = "history-item";
-                    div.innerHTML = `
-                        <div>
-                            <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
-                            <div>${badge} <b>${data.itemName}</b> &rarr; <b style="color:var(--danger);">${formatVND(data.totalAmount)}</b></div>
-                        </div>
-                        <div>
-                            <button class="btn-sm btn-danger" onclick="deleteHistoryItem('${data.id}', '${data.itemId}', ${data.quantity}, ${data.isFresh || false})"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-            }
+            // Gọi hàm render lịch sử theo bộ lọc ngày
+            filterHistory();
 
             document.getElementById('fin-cost').value = formatVND(costToday);
             recalcFinance();
@@ -921,7 +957,6 @@
     async function buildMonthlyFinanceReport() {
         let selectedMonth = document.getElementById('report-month-select').value; 
         
-        // 1. Tính toán Doanh thu và Tiền Nhập nguyên liệu (Động)
         let monthRevenue = 0;
         rawDailyFinanceList.forEach(r => {
             if(r.id.startsWith(selectedMonth)) monthRevenue += (r.revenue || 0);
@@ -933,14 +968,12 @@
             if(p.dateKey && p.dateKey.startsWith(selectedMonth)) {
                 monthCOGS += (p.totalAmount || 0);
                 
-                // Gom nhóm để lấy Top 10
                 let name = p.itemName;
                 if(!expenseMap[name]) expenseMap[name] = 0;
                 expenseMap[name] += (p.totalAmount || 0);
             }
         });
 
-        // Xử lý mảng Top 10
         let top10Arr = Object.keys(expenseMap).map(k => ({ name: k, total: expenseMap[k] }))
             .sort((a, b) => b.total - a.total).slice(0, 10);
 
@@ -948,7 +981,6 @@
         currentMonthReportData.monthCOGS = monthCOGS;
         currentMonthReportData.top10 = top10Arr;
 
-        // Render Top 10 Table
         let top10Tbody = document.getElementById('top10-report-body');
         top10Tbody.innerHTML = '';
         if(top10Arr.length === 0) {
@@ -965,16 +997,13 @@
             });
         }
 
-        // 2. Kiểm tra DB xem tháng này đã bị CHỐT (Khóa) chưa?
         let reportDoc = await db.collection("NewMonthlyReports").doc(selectedMonth).get();
         
         if (reportDoc.exists && reportDoc.data().isClosed) {
-            // TRẠNG THÁI TĨNH ĐÃ CHỐT
             document.getElementById('report-badge').innerHTML = '<span class="badge-closed"><i class="fa-solid fa-lock"></i> Đã Chốt Báo Cáo</span>';
             document.getElementById('btn-close-month-container').style.display = 'none';
             renderStaticReportTable(reportDoc.data());
         } else {
-            // TRẠNG THÁI MỞ CHỜ CHỐT (Hiển thị Input)
             document.getElementById('report-badge').innerHTML = '<span class="badge-open"><i class="fa-solid fa-pen"></i> Đang mở (Tự động)</span>';
             document.getElementById('btn-close-month-container').style.display = 'block';
             renderEditableReportTable();
@@ -987,11 +1016,15 @@
     };
 
     function renderEditableReportTable() {
+        let selectedMonth = document.getElementById('report-month-select').value;
+        let draftKey = `draft_costs_${selectedMonth}`;
+        // Load số liệu nháp đã lưu, nếu không có thì lấy mặc định
+        let savedDraft = JSON.parse(localStorage.getItem(draftKey)) || DEFAULT_FIXED_COSTS;
+
         let rev = currentMonthReportData.monthRevenue;
         let cogs = currentMonthReportData.monthCOGS;
         let tbody = document.getElementById('monthly-report-body');
 
-        // Giao diện chỉnh sửa cho 6 khoản
         tbody.innerHTML = `
             <tr class="bg-group">
                 <td>I. TỔNG DOANH THU</td>
@@ -1008,33 +1041,33 @@
             </tr>
             <tr>
                 <td style="padding-left: 25px;">1. Tiền thuê mặt bằng</td>
-                <td><input type="number" id="inp-rep-rent" class="input-report" value="${DEFAULT_FIXED_COSTS.rent}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-rent">${calcPercentStr(DEFAULT_FIXED_COSTS.rent, rev)}</td>
+                <td><input type="number" id="inp-rep-rent" class="input-report" value="${savedDraft.rent}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-rent">${calcPercentStr(savedDraft.rent, rev)}</td>
             </tr>
             <tr>
                 <td style="padding-left: 25px;">2. Lương nhân viên</td>
-                <td><input type="number" id="inp-rep-staff" class="input-report" value="${DEFAULT_FIXED_COSTS.staff}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-staff">${calcPercentStr(DEFAULT_FIXED_COSTS.staff, rev)}</td>
+                <td><input type="number" id="inp-rep-staff" class="input-report" value="${savedDraft.staff}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-staff">${calcPercentStr(savedDraft.staff, rev)}</td>
             </tr>
             <tr>
                 <td style="padding-left: 25px;">3. Điện nước</td>
-                <td><input type="number" id="inp-rep-electric" class="input-report" value="${DEFAULT_FIXED_COSTS.electric}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-elec">${calcPercentStr(DEFAULT_FIXED_COSTS.electric, rev)}</td>
+                <td><input type="number" id="inp-rep-electric" class="input-report" value="${savedDraft.electric}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-elec">${calcPercentStr(savedDraft.electric, rev)}</td>
             </tr>
             <tr>
                 <td style="padding-left: 25px;">4. Internet</td>
-                <td><input type="number" id="inp-rep-internet" class="input-report" value="${DEFAULT_FIXED_COSTS.internet}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-net">${calcPercentStr(DEFAULT_FIXED_COSTS.internet, rev)}</td>
+                <td><input type="number" id="inp-rep-internet" class="input-report" value="${savedDraft.internet}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-net">${calcPercentStr(savedDraft.internet, rev)}</td>
             </tr>
             <tr>
                 <td style="padding-left: 25px;">5. Bảo hiểm xã hội</td>
-                <td><input type="number" id="inp-rep-bhxh" class="input-report" value="${DEFAULT_FIXED_COSTS.bhxh}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-bhxh">${calcPercentStr(DEFAULT_FIXED_COSTS.bhxh, rev)}</td>
+                <td><input type="number" id="inp-rep-bhxh" class="input-report" value="${savedDraft.bhxh}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-bhxh">${calcPercentStr(savedDraft.bhxh, rev)}</td>
             </tr>
             <tr>
                 <td style="padding-left: 25px;">6. Thuế các loại</td>
-                <td><input type="number" id="inp-rep-tax" class="input-report" value="${DEFAULT_FIXED_COSTS.tax}" oninput="recalcEditableReport()"></td>
-                <td class="text-center" id="pc-tax">${calcPercentStr(DEFAULT_FIXED_COSTS.tax, rev)}</td>
+                <td><input type="number" id="inp-rep-tax" class="input-report" value="${savedDraft.tax}" oninput="recalcEditableReport()"></td>
+                <td class="text-center" id="pc-tax">${calcPercentStr(savedDraft.tax, rev)}</td>
             </tr>
             <tr class="bg-group" style="background:#fbcfe8;">
                 <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
@@ -1060,6 +1093,11 @@
         let cNet = Number(document.getElementById('inp-rep-internet').value) || 0;
         let cBhxh = Number(document.getElementById('inp-rep-bhxh').value) || 0;
         let cTax = Number(document.getElementById('inp-rep-tax').value) || 0;
+
+        // Tự động lưu nháp số liệu đang gõ
+        let selectedMonth = document.getElementById('report-month-select').value;
+        let draftData = { rent: cRent, staff: cStaff, electric: cElec, internet: cNet, bhxh: cBhxh, tax: cTax };
+        localStorage.setItem(`draft_costs_${selectedMonth}`, JSON.stringify(draftData));
 
         document.getElementById('pc-rent').innerText = calcPercentStr(cRent, rev);
         document.getElementById('pc-staff').innerText = calcPercentStr(cStaff, rev);
@@ -1087,7 +1125,6 @@
 
         let selectedMonth = document.getElementById('report-month-select').value; 
         
-        // Lấy số liệu trên form hiện tại
         let dataToSave = {
             isClosed: true,
             revenue: currentMonthReportData.monthRevenue,
@@ -1107,7 +1144,9 @@
         try {
             await db.collection("NewMonthlyReports").doc(selectedMonth).set(dataToSave);
             alert("Đã chốt báo cáo thành công! Số liệu đã được lưu cứng dưới dạng tĩnh.");
-            buildMonthlyFinanceReport(); // Tải lại giao diện tĩnh
+            // Xóa bản nháp sau khi chốt thành công
+            localStorage.removeItem(`draft_costs_${selectedMonth}`);
+            buildMonthlyFinanceReport(); 
         } catch(e) {
             alert("Lỗi khi chốt số liệu báo cáo!");
             console.error(e);
@@ -1178,7 +1217,13 @@
     }
 
     window.onload = function() {
+        let today = getTodayKey();
         document.getElementById('inp-date').value = getTodayString();
+        
+        // Mặc định load filter ngày hôm nay
+        document.getElementById('filter-start').value = today;
+        document.getElementById('filter-end').value = today;
+
         watchSyncStatus();
         startListeningInventory();
         startListeningHistoryAndFinance();
