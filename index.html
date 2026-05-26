@@ -300,9 +300,17 @@
                 </div>
             </div>
 
-            <button onclick="saveDailyFinance()" class="btn-block btn-success" style="width:100%;">
+            <button onclick="saveDailyFinance()" class="btn-block btn-success" style="width:100%; margin-bottom: 15px;">
                 <i class="fa-solid fa-box-archive"></i> CHỐT SỔ & LƯU DOANH THU NGÀY
             </button>
+
+            <div style="border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+                <h4 style="font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Doanh Thu Đã Chốt
+                </h4>
+                <div class="scroll-box" id="daily-finance-history" style="max-height: 200px;">
+                    </div>
+            </div>
         </div>
 
         <div class="card">
@@ -557,7 +565,6 @@
                     }
 
                     let tr = document.createElement('tr');
-                    // Ghi chú: Đã sửa lại để Hàng Tươi vẫn hiển thị "Cần Nhập" như Hàng Khô
                     tr.innerHTML = `
                         <td><b>${item.itemName}</b></td>
                         <td>
@@ -872,6 +879,43 @@
         document.getElementById('filtered-total-cost').innerText = formatVND(filteredTotal);
     }
 
+    // Tách riêng logic render danh sách doanh thu
+    function renderDailyFinanceHistory() {
+        let container = document.getElementById('daily-finance-history');
+        if (!container) return;
+        container.innerHTML = "";
+
+        if (rawDailyFinanceList.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub); font-size:12px;">Chưa có dữ liệu chốt ca/ngày nào.</div>`;
+            return;
+        }
+
+        rawDailyFinanceList.forEach(data => {
+            let div = document.createElement('div');
+            div.className = "history-item";
+            div.innerHTML = `
+                <div>
+                    <span style="color:var(--text-sub); font-size:11px;">[${data.dateStr}]</span>
+                    <div>Doanh thu: <b style="color:var(--success);">${formatVND(data.revenue)}</b></div>
+                </div>
+                <div>
+                    <button class="btn-sm btn-danger" onclick="deleteDailyFinance('${data.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Hàm xoá doanh thu nếu chốt nhầm
+    async function deleteDailyFinance(docId) {
+        if(!confirm("Bạn có chắc chắn muốn xóa bản ghi doanh thu ngày này không? Xóa xong sẽ ảnh hưởng báo cáo tháng.")) return;
+        try {
+            await db.collection("NewDailyFinance").doc(docId).delete();
+        } catch(e) {
+            alert("Không thể xóa dữ liệu doanh thu!");
+        }
+    }
+
     function startListeningHistoryAndFinance() {
         let todayKey = getTodayKey();
 
@@ -902,6 +946,8 @@
             snapshot.forEach(doc => {
                 rawDailyFinanceList.push({ id: doc.id, ...doc.data() });
             });
+            // Gọi hàm render lịch sử doanh thu
+            renderDailyFinanceHistory();
             buildMonthlyFinanceReport();
         });
     }
@@ -932,6 +978,8 @@
         try {
             await db.collection("NewDailyFinance").doc(todayKey).set(report);
             alert(`Đã lưu doanh thu ngày (${todayStr}) thành công: ${formatVND(rev)}`);
+            document.getElementById('fin-revenue').value = ""; // Xoá input sau khi lưu
+            recalcFinance();
         } catch(e) {
             alert("Lỗi khi lưu doanh thu!");
         }
