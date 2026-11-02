@@ -7,8 +7,6 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-    <!-- Thư viện hỗ trợ xuất PDF giữ nguyên định dạng màu sắc -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -195,11 +193,34 @@
         .top-10-table td { padding: 6px 12px; font-size: 12px;}
         .badge-closed { background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
         .badge-open { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
+
+        /* Cấu hình chuyên biệt khi in/xuất PDF: Chỉ in đúng mục báo cáo, ẩn toàn bộ phần còn lại */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-report-area, #printable-report-area * {
+                visibility: visible;
+            }
+            #printable-report-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            /* Ẩn các nút bấm và chọn tháng dạng dropdown trong bản in nếu không cần */
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<header class="no-print">
     <div class="logo-text"><i class="fa-solid fa-mug-hot"></i> UYÊN COFFEE MANAGEMENT</div>
     <div id="sync-status" class="sync-badge sync-online">
         <i class="fa-solid fa-cloud"></i> <span>Đang trực tuyến</span>
@@ -208,7 +229,7 @@
 
 <div class="container">
     
-    <div id="tab-input" class="tab-content active">
+    <div id="tab-input" class="tab-content active no-print">
         <div class="card">
             <div class="card-title">Phiếu Nhập Hàng Vào</div>
             <div class="form-group">
@@ -249,7 +270,7 @@
         </div>
     </div>
 
-    <div id="tab-warehouse" class="tab-content">
+    <div id="tab-warehouse" class="tab-content no-print">
         <div class="card">
             <div class="card-title">
                 <span><i class="fa-solid fa-table"></i> Bảng tính kho nguyên liệu</span>
@@ -282,7 +303,7 @@
     </div>
 
     <div id="tab-finance" class="tab-content">
-        <div class="card">
+        <div class="card no-print">
             <div class="card-title">Ghi Nhận Doanh Thu Hôm Nay</div>
             
             <div class="form-group">
@@ -315,7 +336,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card no-print">
             <div class="card-title">Tra Cứu Lịch Sử Nhập Hàng</div>
             
             <div style="display: flex; gap: 10px; margin-bottom: 12px;">
@@ -337,7 +358,7 @@
             </div>
         </div>
 
-        <!-- KHUNG BÁO CÁO TÀI CHÍNH CÓ NÚT TẢI PDF -->
+        <!-- KHUNG BÁO CÁO TÀI CHÍNH (ĐƯỢC CHỌN ĐỂ IN/LƯU PDF) -->
         <div class="card" id="printable-report-area">
             <div class="card-title">
                 <span>Báo Cáo Tài Chính Quản Trị Hệ Thống</span>
@@ -351,12 +372,12 @@
                     <option value="2026-02">Tháng 2 / 2026</option>
                     <option value="2026-03">Tháng 3 / 2026</option>
                     <option value="2026-04">Tháng 4 / 2026</option>
-                    <option value="2026-05" selected>Tháng 5 / 2026</option>
+                    <option value="2026-05">Tháng 5 / 2026</option>
                     <option value="2026-06">Tháng 6 / 2026</option>
                     <option value="2026-07">Tháng 7 / 2026</option>
                     <option value="2026-08">Tháng 8 / 2026</option>
                     <option value="2026-09">Tháng 9 / 2026</option>
-                    <option value="2026-10">Tháng 10 / 2026</option>
+                    <option value="2026-10" selected>Tháng 10 / 2026</option>
                     <option value="2026-11">Tháng 11 / 2026</option>
                     <option value="2026-12">Tháng 12 / 2026</option>
                 </select>
@@ -376,7 +397,7 @@
                 </table>
             </div>
 
-            <div id="btn-close-month-container" style="display: none; margin-bottom: 15px;">
+            <div id="btn-close-month-container" class="no-print" style="display: none; margin-bottom: 15px;">
                 <button onclick="closeMonthlyReport()" class="btn-block btn-warning" style="width: 100%;">
                     <i class="fa-solid fa-lock"></i> CHỐT SỐ LIỆU BÁO CÁO THÁNG NÀY
                 </button>
@@ -400,16 +421,16 @@
                 </table>
             </div>
 
-            <!-- Nút tải file PDF cho báo cáo -->
-            <button onclick="downloadPDFReport()" class="btn-block btn-accent" style="width: 100%; margin-top: 15px;">
-                <i class="fa-solid fa-file-pdf"></i> TẢI XUỐNG BÁO CÁO PDF (ĐÚNG 1 THÁNG)
+            <!-- Nút gọi lệnh In/Lưu PDF chuẩn xác -->
+            <button onclick="window.print()" class="btn-block btn-accent no-print" style="width: 100%; margin-top: 15px;">
+                <i class="fa-solid fa-print"></i> TẢI XUỐNG / IN BÁO CÁO PDF (ĐÚNG 1 THÁNG)
             </button>
         </div>
     </div>
 
 </div>
 
-<div class="modal" id="add-item-modal">
+<div class="modal no-print" id="add-item-modal">
     <div class="modal-content">
         <h3 style="margin-bottom:15px; color:var(--primary);">Thêm Nguyên Liệu Mới</h3>
         <div class="form-group">
@@ -443,7 +464,7 @@
     </div>
 </div>
 
-<nav class="b-nav">
+<nav class="b-nav no-print">
     <div class="b-link active" id="btn-tab-input" onclick="switchTab('input')">
         <i class="fa-solid fa-pen-to-square"></i><span>Nhập liệu</span>
     </div>
@@ -1217,7 +1238,7 @@
                 <td class="text-center">${calcPercentStr(data.tax, rev)}</td>
             </tr>
             <tr class="bg-group" style="background:#fbcfe8;">
-                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + 코 định)</td>
+                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
                 <td class="text-right" style="color:var(--danger);">${formatVND(totalCosts)}</td>
                 <td class="text-center">${calcPercentStr(totalCosts, rev)}</td>
             </tr>
@@ -1227,57 +1248,6 @@
                 <td class="text-center" style="color:${data.netProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">${calcPercentStr(data.netProfit, rev)}</td>
             </tr>
         `;
-    }
-
-    // Hàm thực hiện tải PDF: Tự động chuyển đổi các ô input thành chữ để chụp ảnh không bị trống
-    function downloadPDFReport() {
-        let selectedMonth = document.getElementById('report-month-select').value;
-        let originalElement = document.getElementById('printable-report-area');
-        
-        // Tạo một bản sao (clone) của khung báo cáo để xử lý riêng cho bản in PDF không làm ảnh hưởng giao diện web
-        let cloneContainer = originalElement.cloneNode(true);
-        
-        // Ẩn nút tải PDF ở trong bản sao để file PDF không hiện lại nút bấm
-        let pdfBtn = cloneContainer.querySelector('button[onclick="downloadPDFReport()"]');
-        if(pdfBtn) pdfBtn.remove();
-
-        // Ẩn luôn phần chọn tháng và nút chốt nếu muốn gọn, hoặc giữ nguyên tùy ý. Ở đây giữ nguyên thông tin tháng đang mở.
-        // Chuyển đổi các thẻ input dạng nhập liệu thành thẻ span văn bản chứa giá trị để xuất ra PDF không bị trắng
-        let inputs = cloneContainer.querySelectorAll('input.input-report');
-        inputs.forEach(input => {
-            let val = input.value || "0";
-            let span = document.createElement('span');
-            span.style.fontWeight = "600";
-            span.style.float = "right";
-            span.innerText = new Intl.NumberFormat('vi-VN').format(Number(val)) + " đ";
-            input.parentNode.replaceChild(span, input);
-        });
-
-        // Ẩn phần chọn tháng dạng select box trong bản in, thay bằng chữ tên tháng đang mở cho chuyên nghiệp
-        let selectMonthEl = cloneContainer.querySelector('#report-month-select');
-        if(selectMonthEl) {
-            let selectedText = selectMonthEl.options[selectMonthEl.selectedIndex].text;
-            let monthSpan = document.createElement('div');
-            monthSpan.style.fontWeight = "bold";
-            monthSpan.style.color = "var(--primary)";
-            monthSpan.style.fontSize = "14px";
-            monthSpan.innerText = `Kỳ báo cáo: ${selectedText}`;
-            selectMonthEl.parentNode.replaceChild(monthSpan, selectMonthEl);
-        }
-
-        let opt = {
-            margin:       10,
-            filename:     `Bao_Cao_Tai_Chinh_${selectedMonth}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        alert("Đang tạo file PDF cho tháng " + selectedMonth + ", vui lòng đợi trong giây lát...");
-        
-        html2pdf().from(cloneContainer).set(opt).save().then(() => {
-            console.log("Xuất PDF thành công!");
-        });
     }
 
     window.onload = function() {
