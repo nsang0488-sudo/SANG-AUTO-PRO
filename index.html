@@ -7,6 +7,8 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+    <!-- Thư viện hỗ trợ xuất PDF giữ nguyên định dạng màu sắc -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -335,7 +337,8 @@
             </div>
         </div>
 
-        <div class="card">
+        <!-- KHUNG BÁO CÁO TÀI CHÍNH CÓ NÚT TẢI PDF -->
+        <div class="card" id="printable-report-area">
             <div class="card-title">
                 <span>Báo Cáo Tài Chính Quản Trị Hệ Thống</span>
                 <span id="report-badge"></span>
@@ -396,6 +399,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Nút tải file PDF cho báo cáo -->
+            <button onclick="downloadPDFReport()" class="btn-block btn-accent" style="width: 100%; margin-top: 15px;">
+                <i class="fa-solid fa-file-pdf"></i> TẢI XUỐNG BÁO CÁO PDF
+            </button>
         </div>
     </div>
 
@@ -470,7 +478,6 @@
     let rawDailyFinanceList = []; 
     let rawPurchaseHistoryList = [];
 
-    // Mặc định cho các khoản cố định (Khi chưa nhập gì)
     const DEFAULT_FIXED_COSTS = {
         rent: 10000000,
         staff: 15400000,
@@ -487,7 +494,6 @@
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    // Chuyển đổi định dạng từ YYYY-MM-DD sang DD/MM/YYYY để hiển thị đẹp mắt
     function formatDateStr(dateInputStr) {
         if(!dateInputStr) return "";
         let parts = dateInputStr.split("-");
@@ -509,7 +515,6 @@
         document.getElementById(`btn-tab-${tabName}`).classList.add('active');
         
         if(tabName === 'input') {
-            // Nếu chưa có giá trị trong ô chọn ngày (hoặc lần đầu mở), set mặc định ngày hôm nay
             let dateInp = document.getElementById('inp-date');
             if(!dateInp.value) {
                 dateInp.value = getTodayKey();
@@ -528,8 +533,7 @@
         window.addEventListener('offline', () => { badge.className="sync-badge sync-offline"; badge.innerHTML=`<i class="fa-solid fa-cloud-moon"></i> <span>Đang ngoại tuyến</span>`; });
     }
 
-    // --- LOGIC TAB 2: QUẢN LÝ KHO HÀNG ---
-    
+    // --- LOGIC KHO ---
     function startListeningInventory() {
         db.collection("NewInventory").orderBy("itemName", "asc").onSnapshot(snapshot => {
             const tbody = document.getElementById('inventory-table-body');
@@ -661,7 +665,6 @@
 
     async function saveWarehouseData() {
         if (!isEditSessionActive) return;
-        
         let batch = db.batch();
         for (let id in localInventory) {
             let unit = document.getElementById(`unit-${id}`).value;
@@ -670,21 +673,14 @@
             let stock = Number(document.getElementById(`stock-${id}`).value) || 0;
 
             let docRef = db.collection("NewInventory").doc(id);
-            batch.update(docRef, {
-                unit: unit,
-                standard: standard,
-                price: price,
-                quantity: stock
-            });
+            batch.update(docRef, { unit: unit, standard: standard, price: price, quantity: stock });
         }
-
         try {
             await batch.commit();
             alert("Đã lưu toàn bộ cấu hình kho thành công!");
             lockWarehouseInputs();
         } catch (e) {
             alert("Lỗi khi lưu dữ liệu kho!");
-            console.error(e);
         }
     }
 
@@ -699,18 +695,12 @@
         let price = Number(document.getElementById('modal-price').value) || 0;
 
         if(!name || !unit) { alert("Vui lòng nhập tên món và đơn vị tính!"); return; }
-
         let id = name.toLowerCase().replace(/\s+/g, '_');
         if(type === 'tươi') id = 'nguyen_lieu_tuoi'; 
         
         try {
             await db.collection("NewInventory").doc(id).set({
-                itemName: name,
-                itemType: type,
-                unit: unit,
-                standard: standard,
-                price: price,
-                quantity: 0
+                itemName: name, itemType: type, unit: unit, standard: standard, price: price, quantity: 0
             });
             alert("Đã thêm món mới vào danh mục kho thành công!");
             closeAddModal();
@@ -721,8 +711,7 @@
         }
     }
 
-    // --- LOGIC TAB 1: PHIẾU NHẬP HÀNG ---
-    
+    // --- LOGIC NHẬP HÀNG ---
     function renderItemSelectOptions() {
         let select = document.getElementById('inp-item-select');
         if(!select) return;
@@ -737,7 +726,6 @@
 
     function autoFillForm() {
         let id = document.getElementById('inp-item-select').value;
-        
         let gFreshName = document.getElementById('group-fresh-name');
         let gQty = document.getElementById('group-qty');
         let gPrice = document.getElementById('group-price');
@@ -777,7 +765,6 @@
         let id = document.getElementById('inp-item-select').value;
         if(!id) { alert("Vui lòng lựa chọn loại mặt hàng nhập!"); return; }
 
-        // Lấy ngày từ ô input tuỳ chỉnh (nếu người dùng đổi)
         let selectedDateVal = document.getElementById('inp-date').value || getTodayKey();
         let formattedDateStr = formatDateStr(selectedDateVal);
 
@@ -805,13 +792,12 @@
 
             try {
                 await db.collection("NewPurchaseHistory").add(purchaseData);
-                alert(`Đã thanh toán chi phí hàng tươi ngày ${formattedDateStr}: ${freshName} -> ${formatVND(freshTotal)} (Không cộng vào kho)`);
+                alert(`Đã thanh toán chi phí hàng tươi ngày ${formattedDateStr}: ${freshName} -> ${formatVND(freshTotal)}`);
                 document.getElementById('inp-fresh-name').value = "";
                 document.getElementById('inp-fresh-total-val').value = "";
             } catch(e) {
                 alert("Lỗi hệ thống khi thanh toán hàng tươi!");
             }
-
         } else {
             let qty = Number(document.getElementById('inp-qty').value) || 0;
             let inputPrice = Number(document.getElementById('inp-price-base').value) || 0; 
@@ -830,11 +816,9 @@
 
             try {
                 await db.collection("NewPurchaseHistory").add(purchaseData);
-
                 let updateData = { quantity: firebase.firestore.FieldValue.increment(qty) };
                 if (item.price > 0) updateData.price = inputPrice;
 
-                // Cộng dồn kho cho Hàng khô / Dụng cụ
                 await db.collection("NewInventory").doc(id).update(updateData);
                 alert(`Đã thanh toán & cộng kho ngày ${formattedDateStr}: +${qty} ${item.unit} ${item.itemName}`);
                 
@@ -847,23 +831,17 @@
         }
     }
 
-    // --- LOGIC TAB 3: KẾ TOÁN & LỊCH SỬ ---
-
+    // --- LOGIC KẾ TOÁN & LỊCH SỬ ---
     function filterHistory() {
         let start = document.getElementById('filter-start').value;
         let end = document.getElementById('filter-end').value;
         let container = document.getElementById('history-render');
         container.innerHTML = "";
         let filteredTotal = 0;
-
         let filteredRecords = rawPurchaseHistoryList;
         
-        if (start) {
-            filteredRecords = filteredRecords.filter(r => r.dateKey >= start);
-        }
-        if (end) {
-            filteredRecords = filteredRecords.filter(r => r.dateKey <= end);
-        }
+        if (start) filteredRecords = filteredRecords.filter(r => r.dateKey >= start);
+        if (end) filteredRecords = filteredRecords.filter(r => r.dateKey <= end);
 
         if(filteredRecords.length === 0) {
             container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-sub);">Không có dữ liệu chi phí trong khoảng thời gian này.</div>`;
@@ -885,7 +863,6 @@
                 container.appendChild(div);
             });
         }
-        
         document.getElementById('filtered-total-cost').innerText = formatVND(filteredTotal);
     }
 
@@ -934,14 +911,10 @@
             snapshot.forEach(doc => {
                 let data = doc.data();
                 rawPurchaseHistoryList.push({ id: doc.id, ...data });
-
-                if (data.dateKey === todayKey) {
-                    costToday += data.totalAmount;
-                }
+                if (data.dateKey === todayKey) costToday += data.totalAmount;
             });
 
             filterHistory();
-
             document.getElementById('fin-cost').value = formatVND(costToday);
             recalcFinance();
             buildMonthlyFinanceReport(); 
@@ -973,12 +946,7 @@
 
         let todayKey = getTodayKey();
         let todayStr = formatDateStr(todayKey);
-
-        let report = {
-            dateStr: todayStr,
-            revenue: rev,
-            closedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
+        let report = { dateStr: todayStr, revenue: rev, closedAt: firebase.firestore.FieldValue.serverTimestamp() };
 
         try {
             await db.collection("NewDailyFinance").doc(todayKey).set(report);
@@ -992,7 +960,6 @@
 
     async function deleteHistoryItem(docId, itemId, qty, isFresh) {
         if(!confirm("Bạn có chắc chắn muốn xóa phiếu nhập hàng này không?")) return;
-        
         try {
             if(!isFresh) {
                 await db.collection("NewInventory").doc(itemId).update({
@@ -1006,7 +973,7 @@
         }
     }
 
-    // --- BÁO CÁO THÁNG ---
+    // --- BÁO CÁO THÁNG & XUẤT PDF ---
     async function buildMonthlyFinanceReport() {
         let selectedMonth = document.getElementById('report-month-select').value; 
         
@@ -1020,7 +987,6 @@
         rawPurchaseHistoryList.forEach(p => {
             if(p.dateKey && p.dateKey.startsWith(selectedMonth)) {
                 monthCOGS += (p.totalAmount || 0);
-                
                 let name = p.itemName;
                 if(!expenseMap[name]) expenseMap[name] = 0;
                 expenseMap[name] += (p.totalAmount || 0);
@@ -1051,7 +1017,6 @@
         }
 
         let reportDoc = await db.collection("NewMonthlyReports").doc(selectedMonth).get();
-        
         if (reportDoc.exists && reportDoc.data().isClosed) {
             document.getElementById('report-badge').innerHTML = '<span class="badge-closed"><i class="fa-solid fa-lock"></i> Đã Chốt Báo Cáo</span>';
             document.getElementById('btn-close-month-container').style.display = 'none';
@@ -1171,11 +1136,10 @@
     }
 
     async function closeMonthlyReport() {
-        let pass = prompt("Nhập mật mã xác nhận chốt tháng (Lưu ý: Không thể sửa sau khi chốt):");
+        let pass = prompt("Nhập mật mã xác nhận chốt tháng:");
         if(pass !== "1905") { alert("Mật mã không đúng!"); return; }
 
         let selectedMonth = document.getElementById('report-month-select').value; 
-        
         let dataToSave = {
             isClosed: true,
             revenue: currentMonthReportData.monthRevenue,
@@ -1194,12 +1158,11 @@
 
         try {
             await db.collection("NewMonthlyReports").doc(selectedMonth).set(dataToSave);
-            alert("Đã chốt báo cáo thành công! Số liệu đã được lưu cứng dưới dạng tĩnh.");
+            alert("Đã chốt báo cáo thành công!");
             localStorage.removeItem(`draft_costs_${selectedMonth}`);
             buildMonthlyFinanceReport(); 
         } catch(e) {
             alert("Lỗi khi chốt số liệu báo cáo!");
-            console.error(e);
         }
     }
 
@@ -1266,13 +1229,30 @@
         `;
     }
 
+    // Hàm thực hiện tải PDF giữ nguyên toàn bộ màu sắc và giao diện
+    function downloadPDFReport() {
+        let element = document.getElementById('printable-report-area');
+        let selectedMonth = document.getElementById('report-month-select').value;
+        
+        let opt = {
+            margin:       10,
+            filename:     `Bao_Cao_Tai_Chinh_${selectedMonth}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Thông báo cho người dùng đang xử lý
+        alert("Đang tạo file PDF, vui lòng đợi trong giây lát...");
+        
+        html2pdf().from(element).set(opt).save().then(() => {
+            console.log("Xuất PDF thành công!");
+        });
+    }
+
     window.onload = function() {
         let today = getTodayKey();
-        
-        // Đặt mặc định ngày hôm nay cho ô nhập phiếu (chỉ set khi khởi động/tải lại trang)
         document.getElementById('inp-date').value = today;
-        
-        // Mặc định load filter ngày hôm nay
         document.getElementById('filter-start').value = today;
         document.getElementById('filter-end').value = today;
 
