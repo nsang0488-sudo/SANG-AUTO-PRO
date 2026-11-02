@@ -210,8 +210,8 @@
         <div class="card">
             <div class="card-title">Phiếu Nhập Hàng Vào</div>
             <div class="form-group">
-                <label>Ngày ghi nhận</label>
-                <input type="text" id="inp-date" class="form-control" disabled>
+                <label>Ngày ghi nhận (Có thể chỉnh sửa tuỳ ý)</label>
+                <input type="date" id="inp-date" class="form-control">
             </div>
             <div class="form-group">
                 <label>Mặt hàng nhập kho</label>
@@ -482,14 +482,19 @@
 
     let currentMonthReportData = {};
 
-    function getTodayString() {
-        const d = new Date();
-        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-    }
-
     function getTodayKey() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    // Chuyển đổi định dạng từ YYYY-MM-DD sang DD/MM/YYYY để hiển thị đẹp mắt
+    function formatDateStr(dateInputStr) {
+        if(!dateInputStr) return "";
+        let parts = dateInputStr.split("-");
+        if(parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return dateInputStr;
     }
 
     function formatVND(num) {
@@ -504,7 +509,11 @@
         document.getElementById(`btn-tab-${tabName}`).classList.add('active');
         
         if(tabName === 'input') {
-            document.getElementById('inp-date').value = getTodayString();
+            // Nếu chưa có giá trị trong ô chọn ngày (hoặc lần đầu mở), set mặc định ngày hôm nay
+            let dateInp = document.getElementById('inp-date');
+            if(!dateInp.value) {
+                dateInp.value = getTodayKey();
+            }
             renderItemSelectOptions();
             autoFillForm();
         }
@@ -768,11 +777,13 @@
         let id = document.getElementById('inp-item-select').value;
         if(!id) { alert("Vui lòng lựa chọn loại mặt hàng nhập!"); return; }
 
-        let todayStr = getTodayString();
-        let todayKey = getTodayKey();
+        // Lấy ngày từ ô input tuỳ chỉnh (nếu người dùng đổi)
+        let selectedDateVal = document.getElementById('inp-date').value || getTodayKey();
+        let formattedDateStr = formatDateStr(selectedDateVal);
+
         let purchaseData = {
-            dateStr: todayStr,
-            dateKey: todayKey,
+            dateStr: formattedDateStr,
+            dateKey: selectedDateVal,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
@@ -793,9 +804,8 @@
             purchaseData.isFresh = true; 
 
             try {
-                // Hàng tươi: Thêm vào lịch sử mua hàng NHƯNG KHÔNG CỘNG DỒN KHO.
                 await db.collection("NewPurchaseHistory").add(purchaseData);
-                alert(`Đã thanh toán chi phí hàng tươi: ${freshName} -> ${formatVND(freshTotal)} (Không cộng vào kho)`);
+                alert(`Đã thanh toán chi phí hàng tươi ngày ${formattedDateStr}: ${freshName} -> ${formatVND(freshTotal)} (Không cộng vào kho)`);
                 document.getElementById('inp-fresh-name').value = "";
                 document.getElementById('inp-fresh-total-val').value = "";
             } catch(e) {
@@ -826,7 +836,7 @@
 
                 // Cộng dồn kho cho Hàng khô / Dụng cụ
                 await db.collection("NewInventory").doc(id).update(updateData);
-                alert(`Đã thanh toán & cộng kho: +${qty} ${item.unit} ${item.itemName}`);
+                alert(`Đã thanh toán & cộng kho ngày ${formattedDateStr}: +${qty} ${item.unit} ${item.itemName}`);
                 
                 document.getElementById('inp-qty').value = "";
                 document.getElementById('inp-price-base').value = "";
@@ -879,7 +889,6 @@
         document.getElementById('filtered-total-cost').innerText = formatVND(filteredTotal);
     }
 
-    // Tách riêng logic render danh sách doanh thu
     function renderDailyFinanceHistory() {
         let container = document.getElementById('daily-finance-history');
         if (!container) return;
@@ -906,9 +915,8 @@
         });
     }
 
-    // Hàm xoá doanh thu nếu chốt nhầm
     async function deleteDailyFinance(docId) {
-        if(!confirm("Bạn có chắc chắn muốn xóa bản ghi doanh thu ngày này không? Xóa xong sẽ ảnh hưởng báo cáo tháng.")) return;
+        if(!confirm("Bạn có chắc chắn muốn xóa bản ghi doanh thu ngày này không?")) return;
         try {
             await db.collection("NewDailyFinance").doc(docId).delete();
         } catch(e) {
@@ -927,13 +935,11 @@
                 let data = doc.data();
                 rawPurchaseHistoryList.push({ id: doc.id, ...data });
 
-                // Vẫn tính costToday để dùng cho khung Ghi Nhận Doanh Thu Hôm Nay
                 if (data.dateKey === todayKey) {
                     costToday += data.totalAmount;
                 }
             });
 
-            // Gọi hàm render lịch sử theo bộ lọc ngày
             filterHistory();
 
             document.getElementById('fin-cost').value = formatVND(costToday);
@@ -946,7 +952,6 @@
             snapshot.forEach(doc => {
                 rawDailyFinanceList.push({ id: doc.id, ...doc.data() });
             });
-            // Gọi hàm render lịch sử doanh thu
             renderDailyFinanceHistory();
             buildMonthlyFinanceReport();
         });
@@ -967,7 +972,7 @@
         if(rev <= 0) { alert("Vui lòng điền doanh thu hôm nay trước khi đóng sổ!"); return; }
 
         let todayKey = getTodayKey();
-        let todayStr = getTodayString();
+        let todayStr = formatDateStr(todayKey);
 
         let report = {
             dateStr: todayStr,
@@ -978,7 +983,7 @@
         try {
             await db.collection("NewDailyFinance").doc(todayKey).set(report);
             alert(`Đã lưu doanh thu ngày (${todayStr}) thành công: ${formatVND(rev)}`);
-            document.getElementById('fin-revenue').value = ""; // Xoá input sau khi lưu
+            document.getElementById('fin-revenue').value = ""; 
             recalcFinance();
         } catch(e) {
             alert("Lỗi khi lưu doanh thu!");
@@ -1001,7 +1006,7 @@
         }
     }
 
-    // --- BÁO CÁO THÁNG MỚI (CÓ THỂ CHỐT TĨNH LẠI) ---
+    // --- BÁO CÁO THÁNG ---
     async function buildMonthlyFinanceReport() {
         let selectedMonth = document.getElementById('report-month-select').value; 
         
@@ -1066,7 +1071,6 @@
     function renderEditableReportTable() {
         let selectedMonth = document.getElementById('report-month-select').value;
         let draftKey = `draft_costs_${selectedMonth}`;
-        // Load số liệu nháp đã lưu, nếu không có thì lấy mặc định
         let savedDraft = JSON.parse(localStorage.getItem(draftKey)) || DEFAULT_FIXED_COSTS;
 
         let rev = currentMonthReportData.monthRevenue;
@@ -1142,7 +1146,6 @@
         let cBhxh = Number(document.getElementById('inp-rep-bhxh').value) || 0;
         let cTax = Number(document.getElementById('inp-rep-tax').value) || 0;
 
-        // Tự động lưu nháp số liệu đang gõ
         let selectedMonth = document.getElementById('report-month-select').value;
         let draftData = { rent: cRent, staff: cStaff, electric: cElec, internet: cNet, bhxh: cBhxh, tax: cTax };
         localStorage.setItem(`draft_costs_${selectedMonth}`, JSON.stringify(draftData));
@@ -1192,7 +1195,6 @@
         try {
             await db.collection("NewMonthlyReports").doc(selectedMonth).set(dataToSave);
             alert("Đã chốt báo cáo thành công! Số liệu đã được lưu cứng dưới dạng tĩnh.");
-            // Xóa bản nháp sau khi chốt thành công
             localStorage.removeItem(`draft_costs_${selectedMonth}`);
             buildMonthlyFinanceReport(); 
         } catch(e) {
@@ -1266,7 +1268,9 @@
 
     window.onload = function() {
         let today = getTodayKey();
-        document.getElementById('inp-date').value = getTodayString();
+        
+        // Đặt mặc định ngày hôm nay cho ô nhập phiếu (chỉ set khi khởi động/tải lại trang)
+        document.getElementById('inp-date').value = today;
         
         // Mặc định load filter ngày hôm nay
         document.getElementById('filter-start').value = today;
