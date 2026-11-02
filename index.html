@@ -402,7 +402,7 @@
 
             <!-- Nút tải file PDF cho báo cáo -->
             <button onclick="downloadPDFReport()" class="btn-block btn-accent" style="width: 100%; margin-top: 15px;">
-                <i class="fa-solid fa-file-pdf"></i> TẢI XUỐNG BÁO CÁO PDF
+                <i class="fa-solid fa-file-pdf"></i> TẢI XUỐNG BÁO CÁO PDF (ĐÚNG 1 THÁNG)
             </button>
         </div>
     </div>
@@ -1217,7 +1217,7 @@
                 <td class="text-center">${calcPercentStr(data.tax, rev)}</td>
             </tr>
             <tr class="bg-group" style="background:#fbcfe8;">
-                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + Cố định)</td>
+                <td>TỔNG CHI PHÍ THÁNG (Giá vốn + 코 định)</td>
                 <td class="text-right" style="color:var(--danger);">${formatVND(totalCosts)}</td>
                 <td class="text-center">${calcPercentStr(totalCosts, rev)}</td>
             </tr>
@@ -1229,11 +1229,42 @@
         `;
     }
 
-    // Hàm thực hiện tải PDF giữ nguyên toàn bộ màu sắc và giao diện
+    // Hàm thực hiện tải PDF: Tự động chuyển đổi các ô input thành chữ để chụp ảnh không bị trống
     function downloadPDFReport() {
-        let element = document.getElementById('printable-report-area');
         let selectedMonth = document.getElementById('report-month-select').value;
+        let originalElement = document.getElementById('printable-report-area');
         
+        // Tạo một bản sao (clone) của khung báo cáo để xử lý riêng cho bản in PDF không làm ảnh hưởng giao diện web
+        let cloneContainer = originalElement.cloneNode(true);
+        
+        // Ẩn nút tải PDF ở trong bản sao để file PDF không hiện lại nút bấm
+        let pdfBtn = cloneContainer.querySelector('button[onclick="downloadPDFReport()"]');
+        if(pdfBtn) pdfBtn.remove();
+
+        // Ẩn luôn phần chọn tháng và nút chốt nếu muốn gọn, hoặc giữ nguyên tùy ý. Ở đây giữ nguyên thông tin tháng đang mở.
+        // Chuyển đổi các thẻ input dạng nhập liệu thành thẻ span văn bản chứa giá trị để xuất ra PDF không bị trắng
+        let inputs = cloneContainer.querySelectorAll('input.input-report');
+        inputs.forEach(input => {
+            let val = input.value || "0";
+            let span = document.createElement('span');
+            span.style.fontWeight = "600";
+            span.style.float = "right";
+            span.innerText = new Intl.NumberFormat('vi-VN').format(Number(val)) + " đ";
+            input.parentNode.replaceChild(span, input);
+        });
+
+        // Ẩn phần chọn tháng dạng select box trong bản in, thay bằng chữ tên tháng đang mở cho chuyên nghiệp
+        let selectMonthEl = cloneContainer.querySelector('#report-month-select');
+        if(selectMonthEl) {
+            let selectedText = selectMonthEl.options[selectMonthEl.selectedIndex].text;
+            let monthSpan = document.createElement('div');
+            monthSpan.style.fontWeight = "bold";
+            monthSpan.style.color = "var(--primary)";
+            monthSpan.style.fontSize = "14px";
+            monthSpan.innerText = `Kỳ báo cáo: ${selectedText}`;
+            selectMonthEl.parentNode.replaceChild(monthSpan, selectMonthEl);
+        }
+
         let opt = {
             margin:       10,
             filename:     `Bao_Cao_Tai_Chinh_${selectedMonth}.pdf`,
@@ -1242,10 +1273,9 @@
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Thông báo cho người dùng đang xử lý
-        alert("Đang tạo file PDF, vui lòng đợi trong giây lát...");
+        alert("Đang tạo file PDF cho tháng " + selectedMonth + ", vui lòng đợi trong giây lát...");
         
-        html2pdf().from(element).set(opt).save().then(() => {
+        html2pdf().from(cloneContainer).set(opt).save().then(() => {
             console.log("Xuất PDF thành công!");
         });
     }
