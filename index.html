@@ -191,8 +191,8 @@
         
         .top-10-table th { background: #f8fafc; color: var(--text-main); font-size: 12px;}
         .top-10-table td { padding: 6px 12px; font-size: 12px;}
-        .badge-closed { background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
-        .badge-open { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; float: right; }
+        .badge-closed { background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+        .badge-open { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
 
         /* Cấu hình chuyên biệt khi in/xuất PDF: Chỉ in đúng mục báo cáo, ẩn toàn bộ phần còn lại */
         @media print {
@@ -211,7 +211,6 @@
                 border: none !important;
                 padding: 0 !important;
             }
-            /* Ẩn các nút bấm và chọn tháng dạng dropdown trong bản in nếu không cần */
             .no-print {
                 display: none !important;
             }
@@ -1039,13 +1038,36 @@
 
         let reportDoc = await db.collection("NewMonthlyReports").doc(selectedMonth).get();
         if (reportDoc.exists && reportDoc.data().isClosed) {
-            document.getElementById('report-badge').innerHTML = '<span class="badge-closed"><i class="fa-solid fa-lock"></i> Đã Chốt Báo Cáo</span>';
+            // Hiển thị huy hiệu đã chốt kèm nút Mở khóa chỉnh sửa khi cần
+            document.getElementById('report-badge').innerHTML = `
+                <span class="badge-closed" onclick="unlockClosedReport()" title="Bấm để mở khóa chỉnh sửa">
+                    <i class="fa-solid fa-lock"></i> Đã Chốt (Bấm mở khóa)
+                </span>
+            `;
             document.getElementById('btn-close-month-container').style.display = 'none';
             renderStaticReportTable(reportDoc.data());
         } else {
             document.getElementById('report-badge').innerHTML = '<span class="badge-open"><i class="fa-solid fa-pen"></i> Đang mở (Tự động)</span>';
             document.getElementById('btn-close-month-container').style.display = 'block';
             renderEditableReportTable();
+        }
+    }
+
+    // Hàm mở khóa tháng đã chốt
+    async function unlockClosedReport() {
+        let pass = prompt("Nhập mật mã quản trị để mở khóa chỉnh sửa tháng này:");
+        if (pass !== "1905") {
+            alert("Mật mã không đúng!");
+            return;
+        }
+
+        let selectedMonth = document.getElementById('report-month-select').value;
+        try {
+            await db.collection("NewMonthlyReports").doc(selectedMonth).update({ isClosed: false });
+            alert("Đã mở khóa tháng thành công! Bây giờ bạn có thể chỉnh sửa lại số liệu.");
+            buildMonthlyFinanceReport();
+        } catch(e) {
+            alert("Không thể mở khóa báo cáo tháng này!");
         }
     }
 
